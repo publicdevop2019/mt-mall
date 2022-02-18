@@ -1,0 +1,9 @@
+<form class="example-container">
+    <div style="display: flex;justify-content: right;">
+        <div (click)="toggleLang()" style="cursor: pointer; text-align: right;margin-top: 8px;margin-right: 8px;">
+            {{'CURRENT_LANG' | translate}}</div>
+    </div>
+    <div class="example-container2 mobile-view">
+        <button mat-raised-button (click)="login()" color="primary">{{'LOGIN'| translate}}</button>
+    </div>
+</form>
