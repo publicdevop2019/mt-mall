@@ -1,10 +1,46 @@
 {
-    "/proxy/*": {
-      "target": "http://localhost:8111/",
+    "/proxy/product-svc": {
+      "target": "http://localhost:8083/",
       "secure": false,
       "changeOrigin": true,
       "pathRewrite": {
-        "^/proxy/": ""
+        "^/proxy/product-svc": ""
+      },
+      "logLevel": "info"
+    },
+    "/proxy/profile-svc": {
+      "target": "http://localhost:8082/",
+      "secure": false,
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/proxy/profile-svc": ""
+      },
+      "logLevel": "info"
+    },
+    "/proxy/saga-svc": {
+      "target": "http://localhost:8089/",
+      "secure": false,
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/proxy/saga-svc": ""
+      },
+      "logLevel": "info"
+    },
+    "/proxy/payment-svc": {
+      "target": "http://localhost:8087/",
+      "secure": false,
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/proxy/payment-svc": ""
+      },
+      "logLevel": "info"
+    },
+    "/proxy/file-upload-svc": {
+      "target": "http://localhost:8086/",
+      "secure": false,
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/proxy/file-upload-svc": ""
       },
       "logLevel": "info"
     }
