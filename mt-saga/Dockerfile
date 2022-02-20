@@ -32,7 +32,7 @@ ENV PATH="$PATH:$JAVA_HOME/bin"
 
 COPY --from=jlink-package /opt/jdk-11-mini-runtime /opt/jdk-11-mini-runtime
 
-COPY --from=maven ./mt-saga/target/UserProfile.jar ./
+COPY --from=maven ./mt-saga/target/Saga.jar ./
 
 EXPOSE 8089
 
