@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>mt-saga</artifactId>
+    <version>0.0.0a</version>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>com.mt</groupId>
+        <artifactId>parent-pom</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../common/parent-pom.xml</relativePath>
+    </parent>
+
+    <build>
+        <finalName>Saga</finalName>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.statemachine</groupId>
+            <artifactId>spring-statemachine-core</artifactId>
+            <version>2.2.0.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.15.4</version>
+        </dependency>
+    </dependencies>
+</project>
