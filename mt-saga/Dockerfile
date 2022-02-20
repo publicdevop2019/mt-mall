@@ -1,10 +1,12 @@
 FROM maven:3.6.0-jdk-11 AS maven
 
-COPY ./src ./src
+COPY ./mt-saga/src ./mt-saga/src
 
-COPY ./pom.xml ./pom.xml
+COPY ./mt-saga/pom.xml ./mt-saga/pom.xml
 
-COPY ./shared/parent-pom.xml ./shared/parent-pom.xml
+COPY ./common/parent-pom.xml ./common/parent-pom.xml
+
+WORKDIR "/mt-saga"
 
 # build all dependencies for offline use
 RUN mvn dependency:go-offline -B
@@ -30,7 +32,7 @@ ENV PATH="$PATH:$JAVA_HOME/bin"
 
 COPY --from=jlink-package /opt/jdk-11-mini-runtime /opt/jdk-11-mini-runtime
 
-COPY --from=maven ./target/Saga.jar ./
+COPY --from=maven ./mt-saga/target/UserProfile.jar ./
 
 EXPOSE 8089
 
