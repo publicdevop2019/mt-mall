@@ -1,10 +1,12 @@
 FROM maven:3.6.0-jdk-11 AS maven
 
-COPY ./src ./src
+COPY ./mt-file/src ./mt-file/src
 
-COPY ./pom.xml ./pom.xml
+COPY ./mt-file/pom.xml ./mt-file/pom.xml
 
-COPY ./shared/parent-pom.xml ./shared/parent-pom.xml
+COPY ./common/parent-pom.xml ./common/parent-pom.xml
+
+WORKDIR "/mt-file"
 
 # build all dependencies for offline use
 RUN mvn dependency:go-offline -B
