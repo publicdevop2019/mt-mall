@@ -32,7 +32,7 @@ ENV PATH="$PATH:$JAVA_HOME/bin"
 
 COPY --from=jlink-package /opt/jdk-11-mini-runtime /opt/jdk-11-mini-runtime
 
-COPY --from=maven ./target/FileUpload.jar ./
+COPY --from=maven ./mt-file/target/FileUpload.jar ./
 
 EXPOSE 8086
 
