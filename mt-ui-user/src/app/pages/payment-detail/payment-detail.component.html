@@ -1,0 +1,21 @@
+<div>
+    <ng-container *ngIf="!paymentLink && !systemError">
+        <div style="display: flex;flex-direction: column;align-items: center;">
+            <mat-spinner></mat-spinner>
+            <div style="font-size: 16px;margin-top: 16px;">{{'PLACING_ORDER'| translate}}</div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="systemError">
+        <div style="display: flex;flex-direction: column;align-items: center;">
+            <div style="font-size: 24px;margin: auto 10%;line-height: 1.3;">{{'ORDER_PLACEMENT_FAILED_MSG'|translate}}</div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="paymentLink">
+        <section style="display: flex;flex-direction: column;align-items: center;">
+            <div style="font-size: 24px; margin-bottom: 16px;">{{'ASK_PAYMENT'|translate}}</div>
+            <canvas #qrCodeFrame></canvas>
+        </section>
+        <app-btn label="{{'PAY_YES'|translate}}" (click)="confirmPayment()"></app-btn>
+        <app-btn label="{{'PAY_LATER'|translate}}" [routerLink]="'/home'"></app-btn>
+    </ng-container>
+</div>

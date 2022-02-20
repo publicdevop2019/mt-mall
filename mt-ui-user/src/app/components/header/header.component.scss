@@ -1,0 +1,19 @@
+.search-mobile-input{
+    padding-left: 16px;
+    font-size: 16px;
+}
+.header-mobile-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 36px;
+}
+.search-mobile-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: black;
+}
+.mat-toolbar-row, .mat-toolbar-single-row {
+    height: 36px;
+}

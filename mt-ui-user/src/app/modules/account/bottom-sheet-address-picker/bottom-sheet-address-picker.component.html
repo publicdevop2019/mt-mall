@@ -1,0 +1,21 @@
+<ng-container *ngIf="!address">
+    <div>
+        {{"LOADING"|translate}}
+    </div>
+</ng-container>
+<div *ngIf="address && address.length == 0">
+    <app-btn
+        label="{{'ADD_NEW_ADDRESS'|translate}}"
+        [routerLink]="'account/address'"
+        [queryParams]="{ callbackUrl: 'order' }"
+        (click)="dismiss()"
+    ></app-btn>
+</div>
+<ng-container *ngIf="address && address.length != 0">
+    <app-card-address
+        *ngFor="let el of address"
+        [address]="el"
+        (click)="addressPicked($event, el)"
+    >
+    </app-card-address>
+</ng-container>

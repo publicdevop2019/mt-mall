@@ -1,0 +1,19 @@
+<mat-tab-group mat-align-tabs="center">
+    <mat-tab label="{{'PAID_LABEL'|translate}}">
+        <div class="card-list">
+            <app-card-order *ngFor="let el of paiedOrders" [order]="el"></app-card-order>
+        </div>
+
+        <div *ngIf="paiedOrders && paiedOrders.length === 0" class="empty-item-container-create">
+            <span>{{'NO_ITEM_TO_DISPLAY'|translate}}</span>
+        </div>
+    </mat-tab>
+    <mat-tab label="{{'UNPAID_LABEL'|translate}}">
+        <div class="card-list">
+            <app-card-order *ngFor="let el of unpaiedOrders" [order]="el"></app-card-order>
+        </div>
+        <div *ngIf="unpaiedOrders && unpaiedOrders.length === 0" class="empty-item-container-create">
+            <span>{{'NO_ITEM_TO_DISPLAY'|translate}}</span>
+        </div>
+    </mat-tab>
+</mat-tab-group>

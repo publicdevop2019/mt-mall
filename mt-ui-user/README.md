@@ -1,0 +1,22 @@
+# Feature
+- Angular, scss, typescript
+- Multi language support, i18n
+- Dark theme
+- Lazy loading
+- Infinite scroll
+- Ghost element
+- Service worker, SPA
+- Angular material
+- Animation
+- Server side rendering
+# 中文
+- Angular, scss, typescript
+- 多语言支持, i18n
+- 夜间模式
+- 路由以及图片懒加载
+- 无限滚动条
+- 页面骨架
+- Service worker, SPA
+- Angular material
+- 页面动画
+- 服务端渲染

@@ -1,0 +1,11 @@
+{
+    "/proxy/*": {
+      "target": "https://api.duoshu.org/",
+      "secure": false,
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/proxy/": ""
+      },
+      "logLevel": "debug"
+    }
+  }

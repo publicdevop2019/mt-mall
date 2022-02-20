@@ -1,0 +1,47 @@
+<div *ngIf="orderSvc.order.productList" class="order-detail-container">
+    <div style="text-align: right;">{{'ORDER_ID'|translate}} {{orderSvc.order.id}}</div>
+    <div *ngIf="orderSvc.order.productList.length !== 0" class="cart-list">
+        <app-card-cart *ngFor="let el of orderSvc.order.productList" [cartItemDetails]="el">
+        </app-card-cart>
+    </div>
+    <mat-divider></mat-divider>
+    <div role="list" class="order-detail-price-container">
+        <div role="listitem" class="order-detail-price-item" style="font-weight: 600;">
+            <span >{{"TOTAL"|translate}}</span> <span>{{ calcTotal()}}</span>
+        </div>
+    </div>
+
+    <div >
+        <div class="order-address-title" >{{"SHIPPING_DETAILS"|translate}}</div>
+        <ng-container *ngIf="!updatingAddress">
+            <app-card-address *ngIf="orderSvc.order.address" [address]="orderSvc.order.address" [editable]="false">
+            </app-card-address>
+        </ng-container>
+        <ng-container *ngIf="updatingAddress && !systemError">
+            <div style="display: flex;flex-direction: column;align-items: center;">
+                <mat-spinner></mat-spinner>
+                <div style="font-size: 16px;margin-top: 16px;">{{'UPDATE_ADDRESS_WIP'|translate}}</div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="systemError">
+            <div style="display: flex;flex-direction: column;align-items: center;">
+                <div style="font-size: 16px;margin-top: 16px;">{{'UPDATE_ADDRESS_FAILED'|translate}}</div>
+            </div>
+        </ng-container>
+        <app-btn *ngIf="editable" (click)="openAddressPicker()" label="{{'PICK_ADDRESS'|translate}}"></app-btn>
+    </div>
+
+    <div>
+        <div class="order-payment-title">{{'PAYMENT_DETAILS'|translate}}</div>
+        <mat-card *ngIf="orderSvc.order.paymentType==='WECHAT_PAY'" class="card-container-action"
+            matRipple>
+            <img src="../../../assets/imgs/wechat_pay.png" 
+                style="max-width: 100%;">
+        </mat-card>
+        <app-btn *ngIf="editable" (click)="openPaymentPicker()" label="{{'PICK_PAYMENT'|translate}}"></app-btn>
+    </div>
+    <ng-container *ngIf="editable">
+        <mat-divider></mat-divider>
+        <app-btn (click)="placeOrder()" label="{{'PLACE_ORDER'|translate}}"></app-btn>
+    </ng-container>
+</div>

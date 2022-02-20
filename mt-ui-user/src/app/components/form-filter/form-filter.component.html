@@ -1,0 +1,30 @@
+<button mat-button color="primary" class="filter-btn" (click)="emitEvent()" >
+    {{"SORT_CLOSE"|translate}}
+</button>
+<div [formGroup]="filterSvc.filterForm">
+    <mat-form-field style="width: 100%;">
+        <mat-label>{{"SORT_LABEL"|translate}}</mat-label>
+        <mat-select formControlName="sortBy">
+            <mat-option value="price_low_to_high" >{{"PRICE_LOW_TO_HIGH"|translate}}</mat-option>
+            <mat-option value="price_high_to_low" >{{"PRICE_HIGH_TO_LOW"|translate}}</mat-option>
+            <mat-option value="name_A_Z" >{{"NAME_A_Z"|translate}}</mat-option>
+            <mat-option value="name_Z_A" >{{"NAME_Z_A"|translate}}</mat-option>
+            <mat-option value="sales_low_to_high">{{"SALES_LOW_TO_HIGH"|translate}}</mat-option>
+            <mat-option value="sales_hight_to_low">{{"SALES_HIGH_TO_LOW"|translate}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div *ngFor="let e of filterSvc.filter;">
+        <div style="font-size: 22px;font-weight: 500; margin-bottom: 12px;margin-top: 24px;">
+            {{ e.name | titlecase }}
+        </div>
+        <mat-chip-list [multiple]="true">
+            <ng-container *ngFor="let ee of e.values">
+                <mat-chip color="primary" 
+                    (click)="toggleValue(e,ee)" [selected]="selected(e,ee)">
+                    {{ ee }}
+                </mat-chip>
+            </ng-container>
+        </mat-chip-list>
+    </div>
+    <app-btn [label]="'BUTTON_CONFIRM'|translate" (click)="applyFilter()"></app-btn>
+</div>

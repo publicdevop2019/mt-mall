@@ -1,0 +1,72 @@
+<div [formGroup]="addressForm" class="form-container">
+    <mat-form-field class="form-field">
+        <input
+            matInput
+            placeholder="{{'ENTER_FULL_NAME'|translate}}"
+            formControlName="fullName"
+        />
+    </mat-form-field>
+    <mat-form-field class="form-field">
+        <input
+            matInput
+            placeholder="{{'FORM_LINE_1'|translate}}"
+            formControlName="line1"
+        />
+    </mat-form-field>
+
+    <mat-form-field class="form-field">
+        <input
+            matInput
+            placeholder="{{'FORM_LINE_2'|translate}}"
+            formControlName="line2"
+            />
+        </mat-form-field>
+        <mat-form-field class="form-field">
+            <input matInput placeholder="{{'FORM_CITY'|translate}}" formControlName="city"/>
+        </mat-form-field>
+        <mat-form-field class="form-field">
+            <input
+            matInput
+            placeholder="{{'FORM_ZIP_CODE'|translate}}"
+            formControlName="postalCode"
+            />
+        </mat-form-field>
+        <mat-form-field class="form-field">
+            <input
+            matInput
+            placeholder="{{'FORM_PHONE_NUM'|translate}}"
+            formControlName="phoneNumber"
+        />
+    </mat-form-field>
+    <mat-form-field class="form-field">
+        <mat-label>{{"FORM_COUNTRY"|translate}}</mat-label>
+        <mat-select formControlName="country">
+            <mat-option value="Canada">{{"CANADA"|translate}}</mat-option>
+            <mat-option value="China">{{"CHINA"|translate}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="!isMobile()" class="form-field">
+        <mat-label>{{"FORM_PROVINCE"|translate}}</mat-label>
+        <mat-select formControlName="province">
+            <mat-option value="ontario">{{"ONTARIO"|translate}}</mat-option>
+            <mat-option value="quebec">{{"QUEBEC"|translate}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="isMobile()" class="form-field">
+        <mat-label>{{"FORM_PROVINCE"|translate}}</mat-label>
+        <select matNativeControl formControlName="province">
+            <option value="ontario" >{{"ONTARIO"|translate}}</option>
+            <option value="quebec">{{"QUEBEC"|translate}}</option>
+        </select>
+    </mat-form-field>
+    <app-btn
+        *ngIf="addAddress"
+        label="{{'CREATE'|translate}}"
+        (click)="doCreate()"
+    ></app-btn>
+    <app-btn
+        *ngIf="!addAddress"
+        label="{{'UPDATE'|translate}}"
+        (click)="doUpdate()"
+    ></app-btn>
+</div>
