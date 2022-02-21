@@ -10,7 +10,7 @@ import { CustomHttpInterceptor } from './interceptors/http.interceptor';
   providedIn: 'root'
 })
 export class OrderService extends EntityCommonService<IOrder, IOrder> {
-  entityRepo: string = environment.serverUri +'/profile-svc/orders/admin';
+  entityRepo: string = environment.serverUri +'/product-svc/orders/admin';
   constructor(httpProxy: HttpProxyService, interceptor: CustomHttpInterceptor,deviceSvc:DeviceService) {
       super(httpProxy, interceptor,deviceSvc);
   }

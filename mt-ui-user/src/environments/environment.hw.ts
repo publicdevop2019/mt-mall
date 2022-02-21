@@ -10,6 +10,6 @@ export const environment = {
   imageUrl: 'http://localhost:8111/product-svc/files',
   getTokenUri: 'http://localhost:8111/auth-svc/oauth/token',
   oauthRedirectUri: 'http://localhost:4200',
-  profileUrl: 'http://localhost:8111/profile-svc',
+  profileUrl: 'http://localhost:8111/product-svc',
 };
 

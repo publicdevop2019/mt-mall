@@ -14,8 +14,6 @@ export const FORM_CONFIG: IForm = {
             "options": [
                 { label: 'SAGA_SVC', value: "/saga-svc" },
                 { label: 'MALL_SVC', value: "/product-svc" },
-                { label: 'PROFILE_SVC', value: "/profile-svc" },
-                { label: 'PAYMENT_SVC', value: "/payment-svc" },
             ],
         },
     ],

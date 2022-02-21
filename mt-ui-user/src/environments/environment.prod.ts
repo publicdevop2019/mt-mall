@@ -9,5 +9,5 @@ export const environment = {
   imageUrl:'https://api.duoshu.org/product-svc/files',
   getTokenUri: 'https://api.duoshu.org/auth-svc/oauth/token',
   oauthRedirectUri: 'https://www.duoshu.org/mall',
-  profileUrl:'https://api.duoshu.org/profile-svc', 
+  profileUrl:'https://api.duoshu.org/product-svc', 
 };

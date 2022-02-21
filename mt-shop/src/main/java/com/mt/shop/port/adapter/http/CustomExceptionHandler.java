@@ -1,10 +1,15 @@
 package com.mt.shop.port.adapter.http;
 
 import com.mt.common.domain.model.logging.ErrorMessage;
+import com.mt.common.domain.model.restful.exception.AggregateOutdatedException;
 import com.mt.shop.application.product.exception.AttributeNameNotFoundException;
 import com.mt.shop.application.product.exception.NoLowestPriceFoundException;
 import com.mt.shop.application.product.exception.SkuAlreadyExistException;
 import com.mt.shop.application.product.exception.SkuNotExistException;
+import com.mt.shop.domain.biz_order.exception.BizOrderCreationException;
+import com.mt.shop.domain.biz_order.exception.BizOrderPaymentMismatchException;
+import com.mt.shop.domain.biz_order.exception.BizOrderUpdateAddressAfterPaymentException;
+import com.mt.shop.domain.biz_order.exception.VersionMismatchException;
 import com.mt.shop.domain.model.image.FileSizeException;
 import com.mt.shop.domain.model.image.FileTypeException;
 import com.mt.shop.domain.model.image.FileUploadException;
@@ -31,7 +36,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             SkuAlreadyExistException.class,
             SkuNotExistException.class,
             FileTypeException.class,
-            FileSizeException.class
+            FileSizeException.class,
+            BizOrderPaymentMismatchException.class,
+            BizOrderUpdateAddressAfterPaymentException.class,
+            VersionMismatchException.class,
+            AggregateOutdatedException.class
     })
     protected ResponseEntity<?> handle400Exception(RuntimeException ex, WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage(ex);
@@ -44,6 +53,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             NoLowestPriceFoundException.class,
             AttributeNameNotFoundException.class,
             FileUploadException.class,
+            BizOrderCreationException.class,
     })
     protected ResponseEntity<Object> handle500Exception(RuntimeException ex, WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage(ex);

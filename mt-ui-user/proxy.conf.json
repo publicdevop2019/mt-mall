@@ -7,14 +7,5 @@
         "^/proxy/product-svc": ""
       },
       "logLevel": "info"
-    },
-    "/proxy/profile-svc": {
-      "target": "http://localhost:8082/",
-      "secure": false,
-      "changeOrigin": true,
-      "pathRewrite": {
-        "^/proxy/profile-svc": ""
-      },
-      "logLevel": "info"
     }
   }

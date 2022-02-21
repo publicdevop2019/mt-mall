@@ -10,7 +10,7 @@ export const environment = {
     imageUrl: 'http://localhost:8111/product-svc/files',
     getTokenUri: 'http://localhost:8111/auth-svc/oauth/token',
     oauthRedirectUri: 'https://mt7-obj-market.firebaseapp.com',
-    profileUrl: 'http://localhost:8111/profile-svc',
+    profileUrl: 'http://localhost:8111/product-svc',
   };
   
   

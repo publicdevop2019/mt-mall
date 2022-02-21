@@ -8,15 +8,6 @@
       },
       "logLevel": "info"
     },
-    "/proxy/profile-svc": {
-      "target": "http://localhost:8082/",
-      "secure": false,
-      "changeOrigin": true,
-      "pathRewrite": {
-        "^/proxy/profile-svc": ""
-      },
-      "logLevel": "info"
-    },
     "/proxy/saga-svc": {
       "target": "http://localhost:8089/",
       "secure": false,

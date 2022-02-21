@@ -1,5 +1,11 @@
 package com.mt.shop.domain;
 
+import com.mt.shop.domain.address.AddressRepository;
+import com.mt.shop.domain.address.AddressValidationService;
+import com.mt.shop.domain.biz_order.BizOderSummaryRepository;
+import com.mt.shop.domain.biz_order.BizOrderService;
+import com.mt.shop.domain.cart.BizCartRepository;
+import com.mt.shop.domain.cart.BizCartValidationService;
 import com.mt.shop.domain.model.catalog.CatalogRepository;
 import com.mt.shop.domain.model.catalog.CatalogService;
 import com.mt.shop.domain.model.catalog.CatalogValidationService;
@@ -63,6 +69,48 @@ public class DomainRegistry {
     private static PaymentRepository paymentRepository;
     @Getter
     private static ThirdPartyPaymentService weChatPayService;
+    @Getter
+    private static BizOderSummaryRepository bizOderSummaryRepository;
+    @Getter
+    private static BizOrderService bizOrderService;
+    @Getter
+    private static AddressRepository addressRepository;
+    @Getter
+    private static BizCartRepository bizCartRepository;
+    @Getter
+    private static AddressValidationService addressValidationService;
+    @Getter
+    private static BizCartValidationService bizCartValidationService;
+
+    @Autowired
+    private void setBizCartRepository(BizCartRepository bizCartRepository) {
+        DomainRegistry.bizCartRepository = bizCartRepository;
+    }
+
+    @Autowired
+    private void setBizCartValidationService(BizCartValidationService bizCartValidationService) {
+        DomainRegistry.bizCartValidationService = bizCartValidationService;
+    }
+
+    @Autowired
+    private void setAddressValidationService(AddressValidationService addressValidationService) {
+        DomainRegistry.addressValidationService = addressValidationService;
+    }
+
+    @Autowired
+    private void setAddressRepository(AddressRepository addressRepository) {
+        DomainRegistry.addressRepository = addressRepository;
+    }
+
+    @Autowired
+    private void setBizOrderService(BizOrderService bizOrderService) {
+        DomainRegistry.bizOrderService = bizOrderService;
+    }
+
+    @Autowired
+    private void setBizOderSummaryRepository(BizOderSummaryRepository bizOrderRepository) {
+        DomainRegistry.bizOderSummaryRepository = bizOrderRepository;
+    }
 
     @Autowired
     private void setPaymentRepository(PaymentRepository paymentRepository) {

@@ -1,6 +1,9 @@
 package com.mt.shop.application;
 
 import com.mt.common.domain.model.idempotent.IdempotentService;
+import com.mt.shop.application.address.AddressApplicationService;
+import com.mt.shop.application.biz_order.BizOrderApplicationService;
+import com.mt.shop.application.cart.CartApplicationService;
 import com.mt.shop.application.catalog.CatalogApplicationService;
 import com.mt.shop.application.filter.FilterApplicationService;
 import com.mt.shop.application.image.ImageApplicationService;
@@ -32,14 +35,39 @@ public class ApplicationServiceRegistry {
     private static ImageApplicationService imageApplicationService;
     @Getter
     private static PaymentApplicationService paymentApplicationService;
+    @Getter
+    private static BizOrderApplicationService bizOrderApplicationService;
+    @Getter
+    private static AddressApplicationService addressApplicationService;
+    @Getter
+    private static CartApplicationService cartApplicationService;
+
+    @Autowired
+    private void setCartApplicationService(CartApplicationService cartApplicationService) {
+        ApplicationServiceRegistry.cartApplicationService = cartApplicationService;
+    }
+
+    @Autowired
+    private void setBizOrderApplicationService(BizOrderApplicationService bizOrderApplicationService) {
+        ApplicationServiceRegistry.bizOrderApplicationService = bizOrderApplicationService;
+    }
+
+
+    @Autowired
+    private void setAddressApplicationService(AddressApplicationService addressApplicationService) {
+        ApplicationServiceRegistry.addressApplicationService = addressApplicationService;
+    }
+
     @Autowired
     private void setPaymentApplicationService(PaymentApplicationService paymentApplicationService) {
         ApplicationServiceRegistry.paymentApplicationService = paymentApplicationService;
     }
+
     @Autowired
     private void setImageApplicationService(ImageApplicationService imageApplicationService) {
         ApplicationServiceRegistry.imageApplicationService = imageApplicationService;
     }
+
     @Autowired
     public void setMetaApplicationService(MetaApplicationService metaApplicationService) {
         ApplicationServiceRegistry.metaApplicationService = metaApplicationService;

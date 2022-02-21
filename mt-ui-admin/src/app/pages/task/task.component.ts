@@ -56,10 +56,9 @@ export class TaskComponent implements OnInit {
     this.entitySvc.retry(id).subscribe()
   }
   findEventsByDomainId() {
-    combineLatest([this.entitySvc.getRelatedEvents(0, 100, 'domainId:' + this.taskBottomSheet.from.id, '/saga-svc'),
-    this.entitySvc.getRelatedEvents(0, 100, 'domainId:' + this.taskBottomSheet.from.id, '/payment-svc'),
-    this.entitySvc.getRelatedEvents(0, 100, 'domainId:' + this.taskBottomSheet.from.id, '/product-svc'),
-    this.entitySvc.getRelatedEvents(0, 100, 'domainId:' + this.taskBottomSheet.from.id, '/profile-svc')
+    combineLatest([
+      this.entitySvc.getRelatedEvents(0, 100, 'domainId:' + this.taskBottomSheet.from.id, '/saga-svc'),
+      this.entitySvc.getRelatedEvents(0, 100, 'domainId:' + this.taskBottomSheet.from.id, '/product-svc'),
     ])
       .subscribe(next => {
         const var0 = (next[0].data || []).map(e => {
@@ -67,18 +66,10 @@ export class TaskComponent implements OnInit {
           return e as IStoredEventExt;
         })
         const var1 = (next[1].data || []).map(e => {
-          e['serviceName'] = '/payment-svc';
-          return e as IStoredEventExt;
-        })
-        const var2 = (next[2].data || []).map(e => {
           e['serviceName'] = '/product-svc';
           return e as IStoredEventExt;
         })
-        const var3 = (next[3].data || []).map(e => {
-          e['serviceName'] = '/profile-svc';
-          return e as IStoredEventExt;
-        })
-        this.eventDataSource = new MatTableDataSource([...var0, ...var1, ...var2, ...var3]);
+        this.eventDataSource = new MatTableDataSource([...var0, ...var1]);
         this.cdr.detectChanges();
       })
   }
