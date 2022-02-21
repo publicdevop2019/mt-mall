@@ -4,7 +4,7 @@ export const environment = {
   APP_ID: '0C8HPGMON9J5',
   PROJECT_ID: '0P8HPG99R56P',
   APPP_SECRET_PUBLIC: '',
-  authorzieUrl: 'https://admin.duoshu.org/authorize?response_type=code&',
+  authorzieUrl: 'https://auth.duoshu.org/authorize?response_type=code&',
   productUrl:'https://api.duoshu.org/product-svc',
   imageUrl:'https://api.duoshu.org/product-svc/files',
   getTokenUri: 'https://api.duoshu.org/auth-svc/oauth/token',
