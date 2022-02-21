@@ -1,11 +1,20 @@
 {
-    "/proxy/*": {
-      "target": "https://api.duoshu.org/",
+    "/proxy/product-svc": {
+      "target": "http://localhost:8083/",
       "secure": false,
       "changeOrigin": true,
       "pathRewrite": {
-        "^/proxy/": ""
+        "^/proxy/product-svc": ""
       },
-      "logLevel": "debug"
+      "logLevel": "info"
+    },
+    "/proxy/profile-svc": {
+      "target": "http://localhost:8082/",
+      "secure": false,
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/proxy/profile-svc": ""
+      },
+      "logLevel": "info"
     }
   }

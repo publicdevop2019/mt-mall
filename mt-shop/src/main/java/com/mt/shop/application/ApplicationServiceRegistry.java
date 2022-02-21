@@ -3,6 +3,8 @@ package com.mt.shop.application;
 import com.mt.common.domain.model.idempotent.IdempotentService;
 import com.mt.shop.application.catalog.CatalogApplicationService;
 import com.mt.shop.application.filter.FilterApplicationService;
+import com.mt.shop.application.image.ImageApplicationService;
+import com.mt.shop.application.payment.PaymentApplicationService;
 import com.mt.shop.application.product.ProductApplicationService;
 import com.mt.shop.application.sku.SkuApplicationService;
 import com.mt.shop.application.tag.TagApplicationService;
@@ -26,7 +28,18 @@ public class ApplicationServiceRegistry {
     private static ProductApplicationService productApplicationService;
     @Getter
     private static MetaApplicationService metaApplicationService;
-
+    @Getter
+    private static ImageApplicationService imageApplicationService;
+    @Getter
+    private static PaymentApplicationService paymentApplicationService;
+    @Autowired
+    private void setPaymentApplicationService(PaymentApplicationService paymentApplicationService) {
+        ApplicationServiceRegistry.paymentApplicationService = paymentApplicationService;
+    }
+    @Autowired
+    private void setImageApplicationService(ImageApplicationService imageApplicationService) {
+        ApplicationServiceRegistry.imageApplicationService = imageApplicationService;
+    }
     @Autowired
     public void setMetaApplicationService(MetaApplicationService metaApplicationService) {
         ApplicationServiceRegistry.metaApplicationService = metaApplicationService;

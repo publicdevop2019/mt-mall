@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApplicationServiceRegistry {
     @Getter
-    private static PaymentApplicationService paymentApplicationService;
-    @Getter
     private static IdempotentService idempotentService;
+    @Getter
+    private static PaymentApplicationService paymentApplicationService;
     @Autowired
     private void setPaymentApplicationService(PaymentApplicationService paymentApplicationService) {
         ApplicationServiceRegistry.paymentApplicationService = paymentApplicationService;

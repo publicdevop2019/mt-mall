@@ -379,7 +379,7 @@ export class ProductComponent extends Aggregate<ProductComponent, IProductDetail
       if (next.includes('http')) {
         this.fis.formGroupCollection[formId].get(ctrlName).setValue(next)
       } else {
-        this.fis.formGroupCollection[formId].get(ctrlName).setValue(environment.serverUri + '/file-upload-svc/files/public/' + next)
+        this.fis.formGroupCollection[formId].get(ctrlName).setValue(environment.serverUri + '/product-svc/files/public/' + next)
       }
       this.cdr.detectChanges();
     })

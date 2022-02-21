@@ -25,23 +25,5 @@
         "^/proxy/saga-svc": ""
       },
       "logLevel": "info"
-    },
-    "/proxy/payment-svc": {
-      "target": "http://localhost:8087/",
-      "secure": false,
-      "changeOrigin": true,
-      "pathRewrite": {
-        "^/proxy/payment-svc": ""
-      },
-      "logLevel": "info"
-    },
-    "/proxy/file-upload-svc": {
-      "target": "http://localhost:8086/",
-      "secure": false,
-      "changeOrigin": true,
-      "pathRewrite": {
-        "^/proxy/file-upload-svc": ""
-      },
-      "logLevel": "info"
     }
   }

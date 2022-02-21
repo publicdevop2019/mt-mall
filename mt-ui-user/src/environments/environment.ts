@@ -7,7 +7,7 @@ export const environment = {
   APPP_SECRET_PUBLIC: '',
   authorzieUrl: 'http://localhost:4300/authorize?response_type=code&',
   productUrl:'http://localhost:4300/proxy/product-svc',
-  imageUrl:'http://localhost:4300/proxy/file-upload-svc/files',
+  imageUrl:'http://localhost:4300/proxy/product-svc/files',
   getTokenUri: 'http://localhost:4300/proxy/auth-svc/oauth/token',
   oauthRedirectUri: 'http://localhost:4200',
   profileUrl:'http://localhost:4300/proxy/profile-svc',

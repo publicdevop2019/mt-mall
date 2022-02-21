@@ -30,7 +30,7 @@ export class HttpProxyService {
     inProgress = false;
     private PRODUCT_SVC_NAME = '/product-svc';
     private PROFILE_SVC_NAME = '/profile-svc';
-    private FILE_UPLOAD_SVC_NAME = '/file-upload-svc';
+    private FILE_UPLOAD_SVC_NAME = '/product-svc';
     set currentUserAuthInfo(token: ITokenResponse) {
         if (token === undefined || token === null) {
             localStorage.setItem('jwt', undefined);

@@ -62,6 +62,8 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    sessionStorage.clear();
+    localStorage.removeItem('jwt');
   }
   login() {
     location.replace(

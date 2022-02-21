@@ -6,8 +6,11 @@ import com.mt.shop.domain.model.catalog.CatalogValidationService;
 import com.mt.shop.domain.model.filter.FilterRepository;
 import com.mt.shop.domain.model.filter.FilterService;
 import com.mt.shop.domain.model.filter.FilterValidationService;
+import com.mt.shop.domain.model.image.ImageRepository;
 import com.mt.shop.domain.model.meta.MetaRepository;
 import com.mt.shop.domain.model.meta.MetaService;
+import com.mt.shop.domain.model.payment.PaymentRepository;
+import com.mt.shop.domain.model.payment.ThirdPartyPaymentService;
 import com.mt.shop.domain.model.product.ProductRepository;
 import com.mt.shop.domain.model.product.ProductService;
 import com.mt.shop.domain.model.product.ProductTagRepository;
@@ -54,6 +57,27 @@ public class DomainRegistry {
     private static MetaRepository metaRepository;
     @Getter
     private static MetaService metaService;
+    @Getter
+    private static ImageRepository imageRepository;
+    @Getter
+    private static PaymentRepository paymentRepository;
+    @Getter
+    private static ThirdPartyPaymentService weChatPayService;
+
+    @Autowired
+    private void setPaymentRepository(PaymentRepository paymentRepository) {
+        DomainRegistry.paymentRepository = paymentRepository;
+    }
+
+    @Autowired
+    private void setWeChatPayService(ThirdPartyPaymentService weChatPayService) {
+        DomainRegistry.weChatPayService = weChatPayService;
+    }
+
+    @Autowired
+    private void setImageRepository(ImageRepository imageRepository) {
+        DomainRegistry.imageRepository = imageRepository;
+    }
 
     @Autowired
     private void setCatalogValidationService(FilterValidationService catalogValidationService) {

@@ -5,6 +5,9 @@ import com.mt.shop.application.product.exception.AttributeNameNotFoundException;
 import com.mt.shop.application.product.exception.NoLowestPriceFoundException;
 import com.mt.shop.application.product.exception.SkuAlreadyExistException;
 import com.mt.shop.application.product.exception.SkuNotExistException;
+import com.mt.shop.domain.model.image.FileSizeException;
+import com.mt.shop.domain.model.image.FileTypeException;
+import com.mt.shop.domain.model.image.FileUploadException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -27,6 +30,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {
             SkuAlreadyExistException.class,
             SkuNotExistException.class,
+            FileTypeException.class,
+            FileSizeException.class
     })
     protected ResponseEntity<?> handle400Exception(RuntimeException ex, WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage(ex);
@@ -38,6 +43,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {
             NoLowestPriceFoundException.class,
             AttributeNameNotFoundException.class,
+            FileUploadException.class,
     })
     protected ResponseEntity<Object> handle500Exception(RuntimeException ex, WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage(ex);
