@@ -15,10 +15,7 @@
 # 技术栈
 | 模块                       |编号                                     | 概述                                  | 技术栈                                  |  
 |:---------------------------|:---------------------------------------|:--------------------------------------|:--------------------------------------|
-| mt-shop      |3| 产品，属性，类目管理 |Spring boot, Redis, RabbitMQ
-| mt-profile        |2 | 地址，购物车，订单管理   |Spring boot, Redis, RabbitMQ
+| mt-shop      |3| 商城后端 |Spring boot, Redis, RabbitMQ
 | mt-ui-admin |7| 商城管理UI |Angular
 | mt-ui-user |16| 商城UI |Angular
 | mt-saga|15 | 基于Saga模式的分布式事务管理  |Spring Boot, RabbitMQ
-| mt-payment|4 | 一个测试用的支付微服务  |Spring Boot, RabbitMQ
-| mt-file|5 | 文件存储服务  |Spring Boot, RabbitMQ
