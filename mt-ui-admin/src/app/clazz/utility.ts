@@ -12,16 +12,7 @@ export function logout(router?: Router) {
     sessionStorage.clear();
     localStorage.removeItem('jwt');
     document.cookie = "jwt=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"
-    if (router) {
-        const params=router.routerState.snapshot.root.queryParams;
-        const queryBinded: string[] = [];
-        Object.keys(params).forEach(k => {
-            queryBinded.push(k + "=" + params[k]);
-        });
-        window.location.assign('/login?' + queryBinded.join("&"))
-    } else {
-        window.location.assign('/login')
-    }
+    window.location.assign('/admin')
 }
 export function getLabel(e: IBizAttribute): string {
     let lableNew: string[] = [];
