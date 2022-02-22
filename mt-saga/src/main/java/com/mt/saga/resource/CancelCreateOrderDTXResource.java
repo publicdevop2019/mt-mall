@@ -9,6 +9,7 @@ import com.mt.saga.appliction.create_order_dtx.representation.CreateOrderDTXCard
 import com.mt.saga.appliction.create_order_dtx.representation.CreateOrderDTXRepresentation;
 import com.mt.saga.domain.model.cancel_create_order_dtx.CancelCreateOrderDTX;
 import com.mt.saga.domain.model.create_order_dtx.CreateOrderDTX;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,14 +26,14 @@ public class CancelCreateOrderDTXResource {
             @RequestParam(value = HTTP_PARAM_PAGE, required = false) String pageParam,
             @RequestParam(value = HTTP_PARAM_SKIP_COUNT, required = false) String skipCount
     ) {
-        SumPagedRep<CancelCreateOrderDTX> dtx = ApplicationServiceRegistry.getCancelCreateOrderDTXApplicationService().query(queryParam, pageParam, skipCount);
+        SumPagedRep<DistributedTx> dtx = ApplicationServiceRegistry.getCancelCreateOrderDTXApplicationService().query(queryParam, pageParam, skipCount);
         return ResponseEntity.ok(new SumPagedRep<>(dtx, CancelCreateOrderDTXCardRepresentation::new));
     }
     @GetMapping("admin/{id}")
     public ResponseEntity<?> readForAdminById(
             @PathVariable(name = "id") long id
     ) {
-        Optional<CancelCreateOrderDTX> dtx = ApplicationServiceRegistry.getCancelCreateOrderDTXApplicationService().query(id);
+        Optional<DistributedTx> dtx = ApplicationServiceRegistry.getCancelCreateOrderDTXApplicationService().query(id);
         return dtx.map(e -> ResponseEntity.ok(new CancelCreateOrderDTXRepresentation(e))).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 

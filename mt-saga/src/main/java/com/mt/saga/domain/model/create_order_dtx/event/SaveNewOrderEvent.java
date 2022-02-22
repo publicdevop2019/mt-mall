@@ -34,9 +34,7 @@ public class SaveNewOrderEvent extends DomainEvent {
     private String changeId;
     private long taskId;
 
-    public SaveNewOrderEvent(GeneratePaymentQRLinkReplyCommand reply, CreateOrderDTX dtx) {
-        String createBizStateMachineCommand = dtx.getOrderCommandDetail();
-        CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(createBizStateMachineCommand, CommonOrderCommand.class);
+    public SaveNewOrderEvent(GeneratePaymentQRLinkReplyCommand reply, CommonOrderCommand command, Long taskId,String changeId) {
         setAddress(command.getAddress());
         setCreatedBy(command.getCreatedBy());
         setOrderId(command.getOrderId());
@@ -48,9 +46,9 @@ public class SaveNewOrderEvent extends DomainEvent {
         setUserId(command.getUserId());
         setInternal(false);
         setTopic(AppConstant.SAVE_NEW_ORDER_FOR_CREATE_EVENT);
-        setTaskId(dtx.getId());
-        setChangeId(dtx.getChangeId());
-        setDomainId(new DomainId(dtx.getId().toString()));
+        setTaskId(taskId);
+        setChangeId(changeId);
+        setDomainId(new DomainId(taskId.toString()));
         setName(name);
     }
 }

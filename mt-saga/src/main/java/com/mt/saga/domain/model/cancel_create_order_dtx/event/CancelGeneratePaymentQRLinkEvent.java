@@ -3,7 +3,6 @@ package com.mt.saga.domain.model.cancel_create_order_dtx.event;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.common.domain.model.domain_event.MQHelper;
-import com.mt.saga.domain.model.cancel_create_order_dtx.CancelCreateOrderDTX;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,11 +17,11 @@ public class CancelGeneratePaymentQRLinkEvent extends DomainEvent {
     private String changeId;
     private long taskId;
 
-    public CancelGeneratePaymentQRLinkEvent(CancelCreateOrderDTX dtx) {
-        this.orderId = dtx.getOrderId();
-        this.changeId = dtx.getChangeId();
-        this.taskId = dtx.getId();
-        setDomainId(new DomainId(dtx.getId().toString()));
+    public CancelGeneratePaymentQRLinkEvent(String orderId, String changeId, Long taskId) {
+        this.orderId = orderId;
+        this.changeId = changeId;
+        this.taskId = taskId;
+        setDomainId(new DomainId(taskId.toString()));
         setInternal(false);
         setTopic(MQHelper.cancelOf(AppConstant.GENERATE_PAYMENT_QR_LINK_FOR_CREATE_EVENT));
         setName(name);

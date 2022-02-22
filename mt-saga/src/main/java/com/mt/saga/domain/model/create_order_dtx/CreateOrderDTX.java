@@ -112,9 +112,9 @@ public class CreateOrderDTX extends Auditable implements Serializable {
             this.generatePaymentLinkLTXEmptyOpt = true;
         getGeneratePaymentLinkLTX().setResults(command.getPaymentLink());
         getGeneratePaymentLinkLTX().setStatus(LTXStatus.SUCCESS);
-        SaveNewOrderEvent event = new SaveNewOrderEvent(command,this);
+//        SaveNewOrderEvent event = new SaveNewOrderEvent(command,this);
         setSaveNewOrderLTXStatus(LTXStatus.STARTED);
-        DomainEventPublisher.instance().publish(event);
+//        DomainEventPublisher.instance().publish(event);
         checkAll();
     }
 

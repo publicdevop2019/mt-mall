@@ -23,14 +23,14 @@ public class DecreaseOrderStorageForCreateEvent extends DomainEvent {
     private String orderId;
     private long taskId;
 
-    public DecreaseOrderStorageForCreateEvent(CreateOrderDTX dtx, CommonOrderCommand command) {
+    public DecreaseOrderStorageForCreateEvent(String orderId, String changeId, Long taskId, CommonOrderCommand command) {
         skuCommands = DomainRegistry.getProductService().getReserveOrderPatchCommands(command.getProductList());
-        this.changeId = dtx.getChangeId();
-        this.orderId = dtx.getOrderId();
-        this.taskId = dtx.getId();
+        this.changeId = changeId;
+        this.orderId = orderId;
+        this.taskId = taskId;
         setInternal(false);
         setTopic(AppConstant.DECREASE_ORDER_STORAGE_FOR_CREATE_EVENT);
-        setDomainId(new DomainId(dtx.getId().toString()));
+        setDomainId(new DomainId(taskId.toString()));
         setName(name);
     }
 }

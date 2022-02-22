@@ -9,6 +9,8 @@ public class QueryBuilderRegistry {
     @Getter
     private static SpringDataJpaCreateOrderDTXRepository.JpaCriteriaApiCreateOrderDTXAdapter createOrderDTXQueryAdapter;
     @Getter
+    private static SpringDataJpaDistributedTxRepository.JpaCriteriaApiDistributedTxAdapter distributedTxAdapter;
+    @Getter
     private static SpringDataJpaCancelConcludeOrderDTXRepository.JpaCriteriaApiCancelConcludeOrderDTXAdapter cancelConcludeOrderDTXAdapter;
     @Getter
     private static SpringDataJpaCancelConfirmOrderPaymentDTXRepository.JpaCriteriaApiCancelConfirmOrderPaymentDTXAdapter cancelConfirmOrderPaymentDTXAdapter;
@@ -35,6 +37,10 @@ public class QueryBuilderRegistry {
     @Getter
     private static SpringDataJpaCancelInvalidOrderDTXRepository.JpaCriteriaApiCancelInvalidOrderDTXAdapter cancelInvalidOrderDTXAdapter;
 
+    @Autowired
+    public void setDistributedTxAdapter(SpringDataJpaDistributedTxRepository.JpaCriteriaApiDistributedTxAdapter distributedTxAdapter) {
+        QueryBuilderRegistry.distributedTxAdapter = distributedTxAdapter;
+    }
     @Autowired
     public void setCancelInvalidOrderDTXAdapter(SpringDataJpaCancelInvalidOrderDTXRepository.JpaCriteriaApiCancelInvalidOrderDTXAdapter cancelInvalidOrderDTXAdapter) {
         QueryBuilderRegistry.cancelInvalidOrderDTXAdapter = cancelInvalidOrderDTXAdapter;

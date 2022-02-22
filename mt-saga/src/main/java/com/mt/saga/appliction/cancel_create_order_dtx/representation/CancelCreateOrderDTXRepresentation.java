@@ -14,8 +14,12 @@ import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelClearCartEve
 import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelDecreaseOrderStorageForCreateEvent;
 import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelGeneratePaymentQRLinkEvent;
 import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelSaveNewOrderEvent;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import lombok.Getter;
 import lombok.Setter;
+
+import static com.mt.saga.appliction.cancel_create_order_dtx.CancelCreateOrderDTXApplicationService.*;
+import static com.mt.saga.appliction.create_order_dtx.CreateOrderDTXApplicationService.APP_SAVE_NEW_ORDER;
 
 @Setter
 @Getter
@@ -26,20 +30,20 @@ public class CancelCreateOrderDTXRepresentation extends CommonDTXRepresentation 
     private static final String CANCEL_SAVE_NEW_ORDER = "CANCEL_SAVE_NEW_ORDER_LTX";
     private static final String CANCEL_REMOVE_ITEMS_FROM_CART = "CANCEL_REMOVE_ITEMS_FROM_CART_LTX";
 
-    public CancelCreateOrderDTXRepresentation(CancelCreateOrderDTX var0) {
+    public CancelCreateOrderDTXRepresentation(DistributedTx var0) {
         setId(var0.getId());
         setStatus(var0.getStatus());
         setChangeId(var0.getChangeId());
-        setOrderId(var0.getOrderId());
+        setOrderId(var0.getLockId());
         setCreatedAt(var0.getCreatedAt().getTime());
-        statusMap.put(CANCEL_DECREASE_ORDER_STORAGE, var0.getCancelDecreaseOrderStorageLTXStatus());
-        statusMap.put(CANCEL_GENERATE_PAYMENT_LINK, var0.getCancelGeneratePaymentLinkLTXStatus());
-        statusMap.put(CANCEL_SAVE_NEW_ORDER, var0.getCancelSaveNewOrderLTXStatus());
-        statusMap.put(CANCEL_REMOVE_ITEMS_FROM_CART, var0.getCancelRemoveItemsFromCartLTXStatus());
-        emptyOptMap.put(CANCEL_DECREASE_ORDER_STORAGE, var0.isCancelDecreaseOrderStorageLTXEmptyOpt());
-        emptyOptMap.put(CANCEL_GENERATE_PAYMENT_LINK, var0.isCancelGeneratePaymentLinkLTXEmptyOpt());
-        emptyOptMap.put(CANCEL_SAVE_NEW_ORDER, var0.isCancelSaveNewOrderLTXEmptyOpt());
-        emptyOptMap.put(CANCEL_REMOVE_ITEMS_FROM_CART, var0.isCancelRemoveItemsFromCartLTXEmptyOpt());
+        statusMap.put(CANCEL_DECREASE_ORDER_STORAGE, var0.getLocalTxStatusByName(APP_CANCEL_DECREASE_ORDER_STORAGE));
+        statusMap.put(CANCEL_GENERATE_PAYMENT_LINK, var0.getLocalTxStatusByName(APP_CANCEL_GENERATE_PAYMENT_QR_LINK));
+        statusMap.put(CANCEL_SAVE_NEW_ORDER, var0.getLocalTxStatusByName(APP_CANCEL_SAVE_NEW_ORDER));
+        statusMap.put(CANCEL_REMOVE_ITEMS_FROM_CART, var0.getLocalTxStatusByName(APP_CANCEL_CLEAR_CART));
+        emptyOptMap.put(CANCEL_DECREASE_ORDER_STORAGE, var0.isLocalTxEmptyOptByName(APP_CANCEL_DECREASE_ORDER_STORAGE));
+        emptyOptMap.put(CANCEL_GENERATE_PAYMENT_LINK, var0.isLocalTxEmptyOptByName(APP_CANCEL_GENERATE_PAYMENT_QR_LINK));
+        emptyOptMap.put(CANCEL_SAVE_NEW_ORDER, var0.isLocalTxEmptyOptByName(APP_CANCEL_SAVE_NEW_ORDER));
+        emptyOptMap.put(CANCEL_REMOVE_ITEMS_FROM_CART, var0.isLocalTxEmptyOptByName(APP_CANCEL_CLEAR_CART));
         SumPagedRep<StoredEvent> query = CommonDomainRegistry.getEventRepository().query(
                 new StoredEventQuery("domainId:" + var0.getId(),
                         PageConfig.defaultConfig().getRawValue()

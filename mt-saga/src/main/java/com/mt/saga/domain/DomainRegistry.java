@@ -12,6 +12,7 @@ import com.mt.saga.domain.model.cancel_update_order_address_dtx.CancelUpdateOrde
 import com.mt.saga.domain.model.conclude_order_dtx.ConcludeOrderDTXRepository;
 import com.mt.saga.domain.model.confirm_order_payment_dtx.ConfirmOrderPaymentDTXRepository;
 import com.mt.saga.domain.model.create_order_dtx.CreateOrderDTXRepository;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxRepository;
 import com.mt.saga.domain.model.invalid_order.InvalidOrderDTXRepository;
 import com.mt.saga.domain.model.order_state_machine.OrderStateMachineBuilder;
 import com.mt.saga.domain.model.order_state_machine.PaymentService;
@@ -62,7 +63,13 @@ public class DomainRegistry {
     private static InvalidOrderDTXRepository invalidOrderDTXRepository;
     @Getter
     private static CancelInvalidOrderDTXRepository cancelInvalidOrderDTXRepository;
+    @Getter
+    private static DistributedTxRepository distributedTxRepository;
 
+    @Autowired
+    private void setDistributedTxRepository(DistributedTxRepository distributedTxRepository) {
+        DomainRegistry.distributedTxRepository = distributedTxRepository;
+    }
     @Autowired
     private void setCancelInvalidOrderDTXRepository(CancelInvalidOrderDTXRepository cancelInvalidOrderDTXRepository) {
         DomainRegistry.cancelInvalidOrderDTXRepository = cancelInvalidOrderDTXRepository;

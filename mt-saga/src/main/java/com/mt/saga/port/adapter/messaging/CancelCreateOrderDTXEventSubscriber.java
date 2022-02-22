@@ -8,6 +8,7 @@ import com.mt.saga.appliction.cancel_create_order_dtx.command.CancelDecreaseOrde
 import com.mt.saga.appliction.cancel_create_order_dtx.command.CancelGeneratePaymentQRLinkReplyCommand;
 import com.mt.saga.appliction.cancel_create_order_dtx.command.CancelSaveNewOrderReplyCommand;
 import com.mt.saga.domain.model.create_order_dtx.event.CreateOrderDTXFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +32,7 @@ public class CancelCreateOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_ORDER_DTX_FAILED_EVENT, (event) -> {
-            CreateOrderDTXFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateOrderDTXFailedEvent.class);
+            DTXFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DTXFailedEvent.class);
             ApplicationServiceRegistry.getCancelCreateOrderDTXApplicationService().handleCommand(deserialize);
         });
     }

@@ -24,14 +24,14 @@ public class ClearCartEvent extends DomainEvent {
     private long taskId;
 
 
-    public ClearCartEvent(CommonOrderCommand command, CreateOrderDTX dtx) {
+    public ClearCartEvent(CommonOrderCommand command, String changeId, Long taskId) {
         Set<String> cartIds = command.getProductList().stream().map(CartDetail::getCartId).collect(Collectors.toSet());
         this.userId = command.getUserId();
         this.ids = cartIds;
-        this.changeId = dtx.getChangeId();
-        this.taskId = dtx.getId();
+        this.changeId = changeId;
+        this.taskId = taskId;
         setName(name);
-        setDomainId(new DomainId(dtx.getId().toString()));
+        setDomainId(new DomainId(taskId.toString()));
         setInternal(false);
         setTopic(AppConstant.CLEAR_CART_FOR_CREATE_EVENT);
         setName(name);

@@ -12,8 +12,11 @@ import com.mt.saga.domain.model.create_order_dtx.event.ClearCartEvent;
 import com.mt.saga.domain.model.create_order_dtx.event.DecreaseOrderStorageForCreateEvent;
 import com.mt.saga.domain.model.create_order_dtx.event.GeneratePaymentQRLinkEvent;
 import com.mt.saga.domain.model.create_order_dtx.event.SaveNewOrderEvent;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import lombok.Getter;
 import lombok.Setter;
+
+import static com.mt.saga.appliction.create_order_dtx.CreateOrderDTXApplicationService.*;
 
 @Setter
 @Getter
@@ -24,20 +27,20 @@ public class CreateOrderDTXRepresentation extends CommonDTXRepresentation {
     private static final String GENERATE_PAYMENT_LINK = "GENERATE_PAYMENT_LINK_LTX";
     private static final String REMOVE_ITEMS_FROM_CART = "REMOVE_ITEMS_FROM_CART_LTX";
 
-    public CreateOrderDTXRepresentation(CreateOrderDTX var0) {
+    public CreateOrderDTXRepresentation(DistributedTx var0) {
         setId(var0.getId());
         setStatus(var0.getStatus());
         setChangeId(var0.getChangeId());
-        setOrderId(var0.getOrderId());
+        setOrderId(var0.getLockId());
         setCreatedAt(var0.getCreatedAt().getTime());
-        statusMap.put(SAVE_NEW_ORDER_LTX, var0.getSaveNewOrderLTXStatus());
-        statusMap.put(DECREASE_ORDER_STORAGE_LTX, var0.getDecreaseOrderStorageLTXStatus());
-        statusMap.put(GENERATE_PAYMENT_LINK, var0.getGeneratePaymentLinkLTX().getStatus());
-        statusMap.put(REMOVE_ITEMS_FROM_CART, var0.getClearCartLtx());
-        emptyOptMap.put(SAVE_NEW_ORDER_LTX, var0.isSaveNewOrderLTXEmptyOpt());
-        emptyOptMap.put(DECREASE_ORDER_STORAGE_LTX, var0.isDecreaseOrderStorageLTXEmptyOpt());
-        emptyOptMap.put(GENERATE_PAYMENT_LINK, var0.isGeneratePaymentLinkLTXEmptyOpt());
-        emptyOptMap.put(REMOVE_ITEMS_FROM_CART, var0.isClearCartEmptyOpt());
+        statusMap.put(SAVE_NEW_ORDER_LTX, var0.getLocalTxStatusByName(APP_SAVE_NEW_ORDER));
+        statusMap.put(DECREASE_ORDER_STORAGE_LTX, var0.getLocalTxStatusByName(APP_DECREASE_ORDER_STORAGE));
+        statusMap.put(GENERATE_PAYMENT_LINK, var0.getLocalTxStatusByName(APP_GENERATE_PAYMENT_QR_LINK));
+        statusMap.put(REMOVE_ITEMS_FROM_CART, var0.getLocalTxStatusByName(APP_CLEAR_CART));
+        emptyOptMap.put(SAVE_NEW_ORDER_LTX, var0.isLocalTxEmptyOptByName(APP_SAVE_NEW_ORDER));
+        emptyOptMap.put(DECREASE_ORDER_STORAGE_LTX, var0.isLocalTxEmptyOptByName(APP_DECREASE_ORDER_STORAGE));
+        emptyOptMap.put(GENERATE_PAYMENT_LINK, var0.isLocalTxEmptyOptByName(APP_GENERATE_PAYMENT_QR_LINK));
+        emptyOptMap.put(REMOVE_ITEMS_FROM_CART, var0.isLocalTxEmptyOptByName(APP_CLEAR_CART));
         SumPagedRep<StoredEvent> query = CommonDomainRegistry.getEventRepository().query(
                 new StoredEventQuery("domainId:" + var0.getId(),
                         PageConfig.defaultConfig().getRawValue()

@@ -5,6 +5,7 @@ import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.create_order_dtx.representation.CreateOrderDTXCardRepresentation;
 import com.mt.saga.appliction.create_order_dtx.representation.CreateOrderDTXRepresentation;
 import com.mt.saga.domain.model.create_order_dtx.CreateOrderDTX;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class CreateOrderDTXResource {
             @RequestParam(value = HTTP_PARAM_PAGE, required = false) String pageParam,
             @RequestParam(value = HTTP_PARAM_SKIP_COUNT, required = false) String skipCount
     ) {
-        SumPagedRep<CreateOrderDTX> dtx = ApplicationServiceRegistry.getCreateOrderDTXApplicationService().query(queryParam, pageParam, skipCount);
+        SumPagedRep<DistributedTx> dtx = ApplicationServiceRegistry.getCreateOrderDTXApplicationService().query(queryParam, pageParam, skipCount);
         return ResponseEntity.ok(new SumPagedRep<>(dtx, CreateOrderDTXCardRepresentation::new));
     }
 
@@ -29,7 +30,7 @@ public class CreateOrderDTXResource {
     public ResponseEntity<?> readForAdminById(
             @PathVariable(name = "id") long id
     ) {
-        Optional<CreateOrderDTX> dtx = ApplicationServiceRegistry.getCreateOrderDTXApplicationService().query(id);
+        Optional<DistributedTx> dtx = ApplicationServiceRegistry.getCreateOrderDTXApplicationService().query(id);
         return dtx.map(e -> ResponseEntity.ok(new CreateOrderDTXRepresentation(e))).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 

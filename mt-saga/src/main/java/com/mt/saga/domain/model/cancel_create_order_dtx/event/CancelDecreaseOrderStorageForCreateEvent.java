@@ -24,12 +24,12 @@ public class CancelDecreaseOrderStorageForCreateEvent extends DomainEvent {
     private String orderId;
     private long taskId;
 
-    public CancelDecreaseOrderStorageForCreateEvent(CommonOrderCommand command, CancelCreateOrderDTX dtx) {
+    public CancelDecreaseOrderStorageForCreateEvent(CommonOrderCommand command, String orderId, String changeId, Long taskId) {
         skuCommands = DomainRegistry.getProductService().getReserveOrderPatchCommands(command.getProductList());
-        this.changeId = dtx.getChangeId();
-        this.orderId = dtx.getOrderId();
-        this.taskId = dtx.getId();
-        setDomainId(new DomainId(dtx.getId().toString()));
+        this.changeId = changeId;
+        this.orderId = orderId;
+        this.taskId = taskId;
+        setDomainId(new DomainId(taskId.toString()));
         setInternal(false);
         setTopic(MQHelper.cancelOf(AppConstant.DECREASE_ORDER_STORAGE_FOR_CREATE_EVENT));
         setName(name);
