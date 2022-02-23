@@ -4,8 +4,6 @@ import com.mt.common.application.CommonApplicationServiceRegistry;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
-import com.mt.saga.appliction.invalid_order_dtx.command.OrderUpdateForInvalidFailedCommand;
-import com.mt.saga.appliction.invalid_order_dtx.command.RestoreCartForInvalidFailedCommand;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.mt.saga.appliction.distributed_tx.DistributedTxApplicationService.DTX_COMMAND;
@@ -48,7 +45,7 @@ public class InvalidOrderDTXDTXApplicationService {
                 localTxes.add(localTx2);
                 localTxes.add(localTx3);
                 localTxes.add(localTx4);
-                DistributedTx distributedTx = new DistributedTx(localTxes, "InvalidOrderDtx", command.getTxId(), command.getOrderId());
+                DistributedTx distributedTx = new DistributedTx(localTxes, "InvalidOrderDtx", command.getTxId(), command.getOrderId(), AppConstant.INVALID_ORDER_DTX_FAILED_EVENT);
                 distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 if (command.getOrderState().equals(BizOrderStatus.PAID_RECYCLED)) {
 
@@ -101,25 +98,4 @@ public class InvalidOrderDTXDTXApplicationService {
         }, INVALID_ORDER_DTX);
     }
 
-    @Transactional
-    @SubscribeForEvent
-    public void cancel(long dtxId) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(String.valueOf(dtxId), (change) -> {
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(dtxId);
-            byId.ifPresent(e -> e.cancel(AppConstant.INVALID_ORDER_DTX_FAILED_EVENT));
-            return null;
-        }, "CancelDtx");
-    }
-
-    @Transactional
-    @SubscribeForEvent
-    public void handle(OrderUpdateForInvalidFailedCommand deserialize) {
-        cancel(deserialize.getTaskId());
-    }
-
-    @Transactional
-    @SubscribeForEvent
-    public void handle(RestoreCartForInvalidFailedCommand deserialize) {
-        cancel(deserialize.getTaskId());
-    }
 }

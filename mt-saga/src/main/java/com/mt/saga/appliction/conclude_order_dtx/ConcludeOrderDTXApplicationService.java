@@ -4,7 +4,6 @@ import com.mt.common.application.CommonApplicationServiceRegistry;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
-import com.mt.saga.appliction.conclude_order_dtx.command.OrderUpdateForConcludeFailedCommand;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.conclude_order_dtx.event.DecreaseActualStorageForConcludeEvent;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.mt.saga.appliction.distributed_tx.DistributedTxApplicationService.DTX_COMMAND;
@@ -41,7 +39,7 @@ public class ConcludeOrderDTXApplicationService {
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
                 localTxes.add(localTx2);
-                DistributedTx distributedTx = new DistributedTx(localTxes, "ConcludeOrderDtx", event.getCommand().getTxId(), event.getCommand().getOrderId());
+                DistributedTx distributedTx = new DistributedTx(localTxes, "ConcludeOrderDtx", event.getCommand().getTxId(), event.getCommand().getOrderId(),AppConstant.CONCLUDE_ORDER_DTX_FAILED_EVENT);
                 distributedTx.startLocalTx(UpdateOrderForConcludeEvent.name);
                 distributedTx.startLocalTx(DecreaseActualStorageForConcludeEvent.name);
                 distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
@@ -55,19 +53,4 @@ public class ConcludeOrderDTXApplicationService {
         }, CONCLUDE_ORDER_DTX);
     }
 
-    @Transactional
-    @SubscribeForEvent
-    public void cancel(long dtxId) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(String.valueOf(dtxId), (change) -> {
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(dtxId);
-            byId.ifPresent(e -> e.cancel(AppConstant.CONCLUDE_ORDER_DTX_FAILED_EVENT));
-            return null;
-        }, "SystemCancelConcludeOrderDtx");
-    }
-
-    @Transactional
-    @SubscribeForEvent
-    public void handle(OrderUpdateForConcludeFailedCommand deserialize) {
-        cancel(deserialize.getTaskId());
-    }
 }

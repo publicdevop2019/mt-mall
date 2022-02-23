@@ -2,13 +2,12 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.create_order_dtx.command.ClearCartFailedCommand;
 import com.mt.saga.appliction.create_order_dtx.command.GeneratePaymentQRLinkReplyCommand;
-import com.mt.saga.appliction.create_order_dtx.command.OrderUpdateForCreateFailedCommand;
 import com.mt.saga.domain.model.create_order_dtx.event.ClearCartEvent;
 import com.mt.saga.domain.model.create_order_dtx.event.DecreaseOrderStorageForCreateEvent;
 import com.mt.saga.domain.model.create_order_dtx.event.SaveNewOrderEvent;
-import com.mt.saga.domain.model.distributed_tx.DTXSuccessEvent;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxSuccessEvent;
+import com.mt.saga.domain.model.distributed_tx.LocalTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateCreateOrderDTXEvent;
 import com.mt.saga.infrastructure.AppConstant;
@@ -77,7 +76,7 @@ public class CreateOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener6() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.DTX_SUCCESS_EVENT, (event) -> {
-            DTXSuccessEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DTXSuccessEvent.class);
+            DistributedTxSuccessEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxSuccessEvent.class);
             ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }
@@ -85,7 +84,7 @@ public class CreateOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener7() {
         CommonDomainRegistry.getEventStreamService().of(profileAppName, false, AppConstant.CLEAR_CART_FAILED_EVENT, (event) -> {
-            ClearCartFailedCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ClearCartFailedCommand.class);
+            LocalTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), LocalTxFailedEvent.class);
             ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }
@@ -93,7 +92,7 @@ public class CreateOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener8() {
         CommonDomainRegistry.getEventStreamService().of(profileAppName, false, AppConstant.ORDER_UPDATE_FOR_CREATE_FAILED, (event) -> {
-            OrderUpdateForCreateFailedCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), OrderUpdateForCreateFailedCommand.class);
+            LocalTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), LocalTxFailedEvent.class);
             ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }

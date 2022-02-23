@@ -2,9 +2,9 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.conclude_order_dtx.command.OrderUpdateForConcludeFailedCommand;
 import com.mt.saga.domain.model.conclude_order_dtx.event.DecreaseActualStorageForConcludeEvent;
 import com.mt.saga.domain.model.conclude_order_dtx.event.UpdateOrderForConcludeEvent;
+import com.mt.saga.domain.model.distributed_tx.LocalTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateConcludeOrderDTXEvent;
 import com.mt.saga.infrastructure.AppConstant;
@@ -47,11 +47,12 @@ public class ConcludeOrderDTXEventSubscriber {
             ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, DecreaseActualStorageForConcludeEvent.name);
         });
     }
+
     @EventListener(ApplicationReadyEvent.class)
     private void listener4() {
-        CommonDomainRegistry.getEventStreamService().of(profileAppName, false,AppConstant.ORDER_UPDATE_FOR_CONCLUDE_FAILED, (event) -> {
-            OrderUpdateForConcludeFailedCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), OrderUpdateForConcludeFailedCommand.class);
-            ApplicationServiceRegistry.getConcludeOrderDTXApplicationService().handle(deserialize);
+        CommonDomainRegistry.getEventStreamService().of(profileAppName, false, AppConstant.ORDER_UPDATE_FOR_CONCLUDE_FAILED, (event) -> {
+            LocalTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), LocalTxFailedEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }
 }

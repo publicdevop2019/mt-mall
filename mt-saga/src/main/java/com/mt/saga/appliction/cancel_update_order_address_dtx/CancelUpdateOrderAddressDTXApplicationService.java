@@ -7,8 +7,8 @@ import com.mt.common.domain.model.domain_event.SubscribeForEvent;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.cancel_update_order_address_dtx.event.CancelUpdateOrderForUpdateOrderAddressEvent;
-import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.LocalTx;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ public class CancelUpdateOrderAddressDTXApplicationService {
 
     @Transactional
     @SubscribeForEvent
-    public void handle(DTXFailedEvent event) {
+    public void handle(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             LocalTx localTx1 = new LocalTx(CancelUpdateOrderForUpdateOrderAddressEvent.name, CancelUpdateOrderForUpdateOrderAddressEvent.name);
             Set<LocalTx> localTxes = new HashSet<>();

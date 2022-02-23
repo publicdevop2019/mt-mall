@@ -2,7 +2,7 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.reserve_order_dtx.command.OrderUpdateForReserveFailedCommand;
+import com.mt.saga.domain.model.distributed_tx.LocalTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateReserveOrderDTXEvent;
 import com.mt.saga.domain.model.reserve_order_dtx.event.DecreaseOrderStorageForReserveEvent;
@@ -51,8 +51,8 @@ public class ReserveOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener4() {
         CommonDomainRegistry.getEventStreamService().of(profileAppName, false, AppConstant.ORDER_UPDATE_FOR_RESERVE_FAILED, (event) -> {
-            OrderUpdateForReserveFailedCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), OrderUpdateForReserveFailedCommand.class);
-            ApplicationServiceRegistry.getReserveOrderDTXApplicationService().handle(deserialize);
+            LocalTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), LocalTxFailedEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }
 }

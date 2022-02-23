@@ -3,7 +3,7 @@ package com.mt.saga.port.adapter.messaging;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.domain.model.cancel_confirm_order_payment_dtx.event.CancelUpdateOrderPaymentEvent;
-import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class CancelConfirmOrderPaymentDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CONFIRM_ORDER_PAYMENT_FAILED_EVENT, (event) -> {
-            DTXFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DTXFailedEvent.class);
+            DistributedTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxFailedEvent.class);
             ApplicationServiceRegistry.getCancelConfirmOrderPaymentDTXApplicationService().handle(deserialize);
         });
     }

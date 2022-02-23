@@ -7,7 +7,7 @@ import com.mt.saga.infrastructure.AppConstant;
 import lombok.Data;
 
 @Data
-public class DTXSuccessEvent extends DomainEvent {
+public class DistributedTxSuccessEvent extends DomainEvent {
     public static final String name = "DTX_SUCCESS_EVENT";
     private String orderId;
     private long taskId;
@@ -15,7 +15,7 @@ public class DTXSuccessEvent extends DomainEvent {
     private String changeId;
     private boolean isCancel;
 
-    public DTXSuccessEvent(DistributedTx dtx) {
+    public DistributedTxSuccessEvent(DistributedTx dtx) {
         setOrderId(dtx.getLockId());
         setInternal(true);
         setTopic(AppConstant.DTX_SUCCESS_EVENT);
@@ -29,6 +29,6 @@ public class DTXSuccessEvent extends DomainEvent {
         }
     }
 
-    private DTXSuccessEvent() {
+    private DistributedTxSuccessEvent() {
     }
 }

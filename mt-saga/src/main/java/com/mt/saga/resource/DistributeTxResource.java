@@ -2,7 +2,7 @@ package com.mt.saga.resource;
 
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.common.ResolveReason;
+import com.mt.saga.appliction.distributed_tx.command.ResolveReason;
 import com.mt.saga.appliction.distributed_tx.representation.DistributedTxCardRepresentation;
 import com.mt.saga.appliction.distributed_tx.representation.DistributedTxRepresentation;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;

@@ -10,8 +10,8 @@ import com.mt.saga.domain.model.cancel_invalid_order.event.CancelIncreaseStorage
 import com.mt.saga.domain.model.cancel_invalid_order.event.CancelRemoveOrderForInvalidEvent;
 import com.mt.saga.domain.model.cancel_invalid_order.event.CancelRemovePaymentQRLinkForInvalidEvent;
 import com.mt.saga.domain.model.cancel_invalid_order.event.CancelRestoreCartForInvalidEvent;
-import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.LocalTx;
 import com.mt.saga.domain.model.order_state_machine.order.BizOrderStatus;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class CancelInvalidOrderDTXDTXApplicationService {
 
     @Transactional
     @SubscribeForEvent
-    public void handle(DTXFailedEvent event) {
+    public void handle(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getDistributedTx().getParameters().get("COMMAND"), CommonOrderCommand.class);
             HashSet<LocalTx> localTxes = new HashSet<>();

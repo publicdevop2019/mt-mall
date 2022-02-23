@@ -5,11 +5,11 @@ import com.mt.common.domain.model.domain_event.DomainEvent;
 import lombok.Getter;
 
 @Getter
-public class DTXFailedEvent extends DomainEvent {
+public class DistributedTxFailedEvent extends DomainEvent {
     public static final String name = "DTX_FAILED_EVENT";
     private DistributedTx distributedTx;
-    private DTXFailedEvent(){}
-    public DTXFailedEvent(DistributedTx distributedTx,String topic) {
+    private DistributedTxFailedEvent(){}
+    public DistributedTxFailedEvent(DistributedTx distributedTx, String topic) {
         this.distributedTx = distributedTx;
         setInternal(true);
         setTopic(topic);

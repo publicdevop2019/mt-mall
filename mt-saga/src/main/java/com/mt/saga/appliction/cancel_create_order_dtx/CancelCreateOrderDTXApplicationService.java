@@ -10,8 +10,8 @@ import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelClearCartEve
 import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelDecreaseOrderStorageForCreateEvent;
 import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelGeneratePaymentQRLinkEvent;
 import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelSaveNewOrderEvent;
-import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.LocalTx;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class CancelCreateOrderDTXApplicationService {
 
     @Transactional
     @SubscribeForEvent
-    public void handle(DTXFailedEvent event) {
+    public void handle(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             LocalTx localTx1 = new LocalTx(CancelGeneratePaymentQRLinkEvent.name, CancelGeneratePaymentQRLinkEvent.name);
             LocalTx localTx2 = new LocalTx(CancelDecreaseOrderStorageForCreateEvent.name, CancelDecreaseOrderStorageForCreateEvent.name);

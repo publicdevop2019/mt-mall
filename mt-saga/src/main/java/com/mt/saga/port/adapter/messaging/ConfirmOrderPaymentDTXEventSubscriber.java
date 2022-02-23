@@ -2,8 +2,8 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.confirm_order_payment_dtx.command.OrderUpdateForPaymentSuccessFailedCommand;
 import com.mt.saga.domain.model.confirm_order_payment_dtx.event.UpdateOrderPaymentSuccessEvent;
+import com.mt.saga.domain.model.distributed_tx.LocalTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateConfirmOrderPaymentDTXEvent;
 import com.mt.saga.infrastructure.AppConstant;
@@ -40,8 +40,8 @@ public class ConfirmOrderPaymentDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener3() {
         CommonDomainRegistry.getEventStreamService().of(profileAppName, false, AppConstant.ORDER_UPDATE_FOR_PAYMENT_SUCCESS_FAILED, (event) -> {
-            OrderUpdateForPaymentSuccessFailedCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), OrderUpdateForPaymentSuccessFailedCommand.class);
-            ApplicationServiceRegistry.getConfirmOrderPaymentDTXApplicationService().handle(deserialize);
+            LocalTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), LocalTxFailedEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().cancel(deserialize.getTaskId());
         });
     }
 }

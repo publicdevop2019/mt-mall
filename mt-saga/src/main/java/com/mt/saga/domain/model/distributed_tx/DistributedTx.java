@@ -10,7 +10,7 @@ import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.PageConfig;
 import com.mt.common.domain.model.restful.query.QueryConfig;
 import com.mt.common.domain.model.validate.Validator;
-import com.mt.saga.appliction.common.ResolveReason;
+import com.mt.saga.appliction.distributed_tx.command.ResolveReason;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.common.DTXStatus;
 import com.mt.saga.domain.model.common.LTXStatus;
@@ -49,24 +49,26 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
     private Long forwardDtxId;
     private String resolveReason;
     private boolean isCancel;
+    private String cancelEventName;
 
-    public DistributedTx(Set<LocalTx> localTxs, String name, String changeId, String lockId) {
+    public DistributedTx(Set<LocalTx> localTxs, String name, String changeId, String lockId,String cancelEventName) {
         this.id = CommonDomainRegistry.getUniqueIdGeneratorService().id();
         this.localTxs = localTxs.stream().collect(Collectors.toMap(LocalTx::getName, e -> e));
         this.name = name;
         this.changeId = changeId;
         this.lockId = lockId;
+        this.cancelEventName = cancelEventName;
     }
 
     public static DistributedTx cancelOf(DistributedTx distributedTx, Set<LocalTx> localTxs) {
-        DistributedTx distributedTx1 = new DistributedTx(localTxs, distributedTx.getName() + "_cancel", distributedTx.getChangeId() + "_cancel", distributedTx.getLockId());
+        DistributedTx distributedTx1 = new DistributedTx(localTxs, distributedTx.getName() + "_cancel", distributedTx.getChangeId() + "_cancel", distributedTx.getLockId(),null);
         distributedTx1.replaceParams(distributedTx.getParameters());
         distributedTx1.forwardDtxId = distributedTx.getId();
         distributedTx1.isCancel = true;
         return distributedTx1;
     }
 
-    public static void retryStartedLtx(DTXSuccessEvent deserialize) {
+    public static void retryStartedLtx(DistributedTxSuccessEvent deserialize) {
         if (!deserialize.isCancel()) {
             return;
         }
@@ -127,16 +129,17 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
         if (b) {
             this.status = DTXStatus.SUCCESS;
             DomainRegistry.getIsolationService().removeActiveDtx(lockId);
-            DomainEventPublisher.instance().publish(new DTXSuccessEvent(this));
+            DomainEventPublisher.instance().publish(new DistributedTxSuccessEvent(this));
         }
     }
 
-    public void cancel(String topic) {
+    public void cancel() {
         if (isCancel) {
             throw new IllegalStateException("can not cancel cancel dtx");
         }
+        Validator.notBlank(cancelEventName);
         if (status.equals(DTXStatus.STARTED)) {
-            DomainEventPublisher.instance().publish(new DTXFailedEvent(this, topic));
+            DomainEventPublisher.instance().publish(new DistributedTxFailedEvent(this, cancelEventName));
         } else {
             throw new IllegalStateException("can cancel started dtx only");
         }

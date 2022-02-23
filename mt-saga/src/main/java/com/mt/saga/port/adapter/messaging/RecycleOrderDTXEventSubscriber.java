@@ -2,7 +2,7 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.recycle_order_dtx.command.OrderUpdateForRecycleFailedCommand;
+import com.mt.saga.domain.model.distributed_tx.LocalTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateRecycleOrderDTXEvent;
 import com.mt.saga.domain.model.recycle_order_dtx.event.IncreaseOrderStorageForRecycleEvent;
@@ -51,8 +51,8 @@ public class RecycleOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener4() {
         CommonDomainRegistry.getEventStreamService().of(profileAppName, false, AppConstant.ORDER_UPDATE_FOR_RECYCLE_FAILED, (event) -> {
-            OrderUpdateForRecycleFailedCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), OrderUpdateForRecycleFailedCommand.class);
-            ApplicationServiceRegistry.getRecycleOrderDTXApplicationService().handle(deserialize);
+            LocalTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), LocalTxFailedEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }
 }

@@ -2,7 +2,7 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.update_order_address_dtx.command.OrderUpdateForAddressUpdateFailedCommand;
+import com.mt.saga.domain.model.distributed_tx.LocalTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateUpdateOrderAddressDTXEvent;
 import com.mt.saga.domain.model.update_order_address_dtx.event.UpdateOrderForUpdateOrderAddressEvent;
@@ -40,8 +40,8 @@ public class UpdateOrderAddressDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener3() {
         CommonDomainRegistry.getEventStreamService().of(profileAppName, false, AppConstant.ORDER_UPDATE_FOR_ADDRESS_UPDATE_FAILED, (event) -> {
-            OrderUpdateForAddressUpdateFailedCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), OrderUpdateForAddressUpdateFailedCommand.class);
-            ApplicationServiceRegistry.getUpdateOrderAddressDTXApplicationService().handle(deserialize);
+            LocalTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), LocalTxFailedEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }
 }

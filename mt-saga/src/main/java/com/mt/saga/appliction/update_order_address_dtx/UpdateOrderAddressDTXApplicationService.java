@@ -5,7 +5,6 @@ import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
-import com.mt.saga.appliction.update_order_address_dtx.command.OrderUpdateForAddressUpdateFailedCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import com.mt.saga.domain.model.distributed_tx.LocalTx;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.mt.saga.appliction.distributed_tx.DistributedTxApplicationService.DTX_COMMAND;
@@ -39,7 +37,7 @@ public class UpdateOrderAddressDTXApplicationService {
                 LocalTx localTx1 = new LocalTx(UpdateOrderForUpdateOrderAddressEvent.name, UpdateOrderForUpdateOrderAddressEvent.name);
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
-                DistributedTx dtx = new DistributedTx(localTxes, "UpdateOrderAddressDtx", event.getCommand().getTxId(), event.getCommand().getOrderId());
+                DistributedTx dtx = new DistributedTx(localTxes, "UpdateOrderAddressDtx", event.getCommand().getTxId(), event.getCommand().getOrderId(), AppConstant.UPDATE_ORDER_ADDRESS_DTX_FAILED_EVENT);
                 dtx.startAllLocalTx();
                 dtx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 CommonOrderCommand command = event.getCommand();
@@ -51,20 +49,4 @@ public class UpdateOrderAddressDTXApplicationService {
         }, UPDATE_ORDER_ADDRESS_DTX);
     }
 
-    @Transactional
-    @SubscribeForEvent
-    public void cancel(long dtxId) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(String.valueOf(dtxId), (change) -> {
-                    Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(dtxId);
-                    byId.ifPresent(e -> e.cancel(AppConstant.UPDATE_ORDER_ADDRESS_DTX_FAILED_EVENT));
-                    return null;
-                },
-                CANCEL_UPDATE_ORDER_ADDRESS_DTX);
-    }
-
-    @Transactional
-    @SubscribeForEvent
-    public void handle(OrderUpdateForAddressUpdateFailedCommand deserialize) {
-        cancel(deserialize.getTaskId());
-    }
 }

@@ -1,4 +1,4 @@
-package com.mt.saga.appliction.common;
+package com.mt.saga.appliction.distributed_tx.command;
 
 import lombok.Data;
 

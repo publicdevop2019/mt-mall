@@ -3,7 +3,7 @@ package com.mt.saga.port.adapter.messaging;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
-import com.mt.saga.domain.model.distributed_tx.DTXSuccessEvent;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxSuccessEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +31,7 @@ public class DomainEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener9() {
         CommonDomainRegistry.getEventStreamService().subscribe(appName, true, getValidatorQueueName(AppConstant.DTX_SUCCESS_EVENT), (event) -> {
-            DTXSuccessEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DTXSuccessEvent.class);
+            DistributedTxSuccessEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxSuccessEvent.class);
             ApplicationServiceRegistry.getPostDtxValidationApplicationService().handle(deserialize);
         }, AppConstant.CREATE_ORDER_DTX_SUCCESS_EVENT);
     }

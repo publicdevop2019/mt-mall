@@ -6,10 +6,8 @@ import com.mt.common.domain.model.distributed_lock.DTXDistLock;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
 import com.mt.common.domain.model.restful.SumPagedRep;
-import com.mt.saga.appliction.common.ResolveReason;
-import com.mt.saga.appliction.create_order_dtx.command.ClearCartFailedCommand;
 import com.mt.saga.appliction.create_order_dtx.command.GeneratePaymentQRLinkReplyCommand;
-import com.mt.saga.appliction.create_order_dtx.command.OrderUpdateForCreateFailedCommand;
+import com.mt.saga.appliction.distributed_tx.command.ResolveReason;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.create_order_dtx.event.ClearCartEvent;
@@ -32,8 +30,8 @@ import java.util.Set;
 public class DistributedTxApplicationService {
 
     public static final String DTX_COMMAND = "COMMAND";
-    private static final String CREATE_ORDER_DTX = "CreateOrderDtx";
     public static final String RESOLVE_DTX = "RESOLVE_DTX";
+    private static final String CREATE_ORDER_DTX = "CreateOrderDtx";
 
     @SubscribeForEvent
     @Transactional
@@ -50,7 +48,7 @@ public class DistributedTxApplicationService {
                 localTxes.add(localTx2);
                 localTxes.add(localTx3);
                 localTxes.add(localTx4);
-                DistributedTx distributedTx = new DistributedTx(localTxes, "createOrderDtx", event.getCommand().getTxId(), event.getCommand().getOrderId());
+                DistributedTx distributedTx = new DistributedTx(localTxes, "createOrderDtx", event.getCommand().getTxId(), event.getCommand().getOrderId(), AppConstant.CREATE_ORDER_DTX_FAILED_EVENT);
                 distributedTx.startLocalTx(GeneratePaymentQRLinkEvent.name);
                 distributedTx.startLocalTx(DecreaseOrderStorageForCreateEvent.name);
                 distributedTx.startLocalTx(ClearCartEvent.name);
@@ -87,7 +85,7 @@ public class DistributedTxApplicationService {
     @Transactional
     @DTXDistLock(keyExpression = "#p0.taskId")
     @SubscribeForEvent
-    public void handle(ReplyEvent command,String name) {
+    public void handle(ReplyEvent command, String name) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(command.getId().toString(), (change) -> {
             Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
             byId.ifPresent(e -> {
@@ -103,7 +101,7 @@ public class DistributedTxApplicationService {
     public void cancel(long dtxId) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(String.valueOf(dtxId), (change) -> {
             Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(dtxId);
-            byId.ifPresent(e -> e.cancel(AppConstant.CREATE_ORDER_DTX_FAILED_EVENT));
+            byId.ifPresent(DistributedTx::cancel);
             return null;
         }, "CancelDtx");
     }
@@ -112,6 +110,7 @@ public class DistributedTxApplicationService {
         DistributedTxQuery var0 = new DistributedTxQuery(queryParam, pageParam, skipCount);
         return DomainRegistry.getDistributedTxRepository().query(var0);
     }
+
     public Optional<DistributedTx> query(long id) {
         return DomainRegistry.getDistributedTxRepository().getById(id);
     }
@@ -121,9 +120,10 @@ public class DistributedTxApplicationService {
      */
     @Transactional
     @SubscribeForEvent
-    public void handle(DTXSuccessEvent deserialize) {
+    public void handle(DistributedTxSuccessEvent deserialize) {
         DistributedTx.retryStartedLtx(deserialize);
     }
+
     @DTXDistLock(keyExpression = "#p0")
     @Transactional
     public void resolve(long id, ResolveReason resolveReason) {
@@ -135,15 +135,11 @@ public class DistributedTxApplicationService {
             return null;
         }, RESOLVE_DTX);
     }
-    @Transactional
-    @SubscribeForEvent
-    public void handle(ClearCartFailedCommand deserialize) {
-        cancel(deserialize.getTaskId());
-    }
 
     @Transactional
     @SubscribeForEvent
-    public void handle(OrderUpdateForCreateFailedCommand deserialize) {
+    public void handle(LocalTxFailedEvent deserialize) {
         cancel(deserialize.getTaskId());
     }
+
 }

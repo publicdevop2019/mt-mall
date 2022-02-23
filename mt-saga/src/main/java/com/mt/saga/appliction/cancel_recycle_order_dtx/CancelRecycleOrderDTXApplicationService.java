@@ -8,8 +8,8 @@ import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.cancel_recycle_dtx.event.CancelIncreaseOrderStorageForRecycleEvent;
 import com.mt.saga.domain.model.cancel_recycle_dtx.event.CancelUpdateOrderForRecycleEvent;
-import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.LocalTx;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class CancelRecycleOrderDTXApplicationService {
 
     @Transactional
     @SubscribeForEvent
-    public void handle(DTXFailedEvent event) {
+    public void handle(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
 
             LocalTx localTx1 = new LocalTx(CancelIncreaseOrderStorageForRecycleEvent.name, CancelIncreaseOrderStorageForRecycleEvent.name);

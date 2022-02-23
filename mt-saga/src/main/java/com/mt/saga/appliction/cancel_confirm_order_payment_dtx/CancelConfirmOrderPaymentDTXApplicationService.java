@@ -7,8 +7,8 @@ import com.mt.common.domain.model.domain_event.SubscribeForEvent;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.cancel_confirm_order_payment_dtx.event.CancelUpdateOrderPaymentEvent;
-import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.LocalTx;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class CancelConfirmOrderPaymentDTXApplicationService {
 
     @Transactional
     @SubscribeForEvent
-    public void handle(DTXFailedEvent deserialize) {
+    public void handle(DistributedTxFailedEvent deserialize) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(deserialize.getId().toString(),(change)->{
 
             LocalTx localTx1 = new LocalTx(CancelUpdateOrderPaymentEvent.name, CancelUpdateOrderPaymentEvent.name);

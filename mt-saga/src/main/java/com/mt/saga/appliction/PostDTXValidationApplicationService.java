@@ -2,16 +2,16 @@ package com.mt.saga.appliction;
 
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.domain.DomainRegistry;
-import com.mt.saga.domain.model.distributed_tx.DTXSuccessEvent;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import com.mt.saga.domain.model.distributed_tx.DistributedTxQuery;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxSuccessEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PostDTXValidationApplicationService {
 
-    public void handle(DTXSuccessEvent deserialize) {
+    public void handle(DistributedTxSuccessEvent deserialize) {
         String[] changeIds = getChangeIds(deserialize.getChangeId());
         SumPagedRep<DistributedTx> query = DomainRegistry.getDistributedTxRepository().query(new DistributedTxQuery(changeIds[0]));
         if (query.getData().size() == 0 || query.getData().size() > 2) {

@@ -4,7 +4,7 @@ import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.domain.model.cancel_recycle_dtx.event.CancelIncreaseOrderStorageForRecycleEvent;
 import com.mt.saga.domain.model.cancel_recycle_dtx.event.CancelUpdateOrderForRecycleEvent;
-import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class CancelRecycleOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.RECYCLE_ORDER_DTX_FAILED_EVENT, (event) -> {
-            DTXFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DTXFailedEvent.class);
+            DistributedTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxFailedEvent.class);
             ApplicationServiceRegistry.getCancelRecycleOrderDTXApplicationService().handle(deserialize);
         });
     }

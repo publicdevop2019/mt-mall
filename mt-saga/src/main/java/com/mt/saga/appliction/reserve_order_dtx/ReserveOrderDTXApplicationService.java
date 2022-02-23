@@ -5,7 +5,6 @@ import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
-import com.mt.saga.appliction.reserve_order_dtx.command.OrderUpdateForReserveFailedCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import com.mt.saga.domain.model.distributed_tx.LocalTx;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.mt.saga.appliction.distributed_tx.DistributedTxApplicationService.DTX_COMMAND;
@@ -41,7 +39,7 @@ public class ReserveOrderDTXApplicationService {
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
                 localTxes.add(localTx2);
-                DistributedTx dtx = new DistributedTx(localTxes, "ReserveOrderDtx", event.getCommand().getTxId(), event.getCommand().getOrderId());
+                DistributedTx dtx = new DistributedTx(localTxes, "ReserveOrderDtx", event.getCommand().getTxId(), event.getCommand().getOrderId(), AppConstant.RESERVE_ORDER_DTX_FAILED_EVENT);
                 dtx.startAllLocalTx();
                 dtx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 CommonOrderCommand command = event.getCommand();
@@ -54,19 +52,4 @@ public class ReserveOrderDTXApplicationService {
         }, RESERVE_ORDER_DTX);
     }
 
-    @Transactional
-    @SubscribeForEvent
-    public void cancel(long dtxId) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(String.valueOf(dtxId), (change) -> {
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(dtxId);
-            byId.ifPresent(e -> e.cancel(AppConstant.RESERVE_ORDER_DTX_FAILED_EVENT));
-            return null;
-        }, "SystemCancelReserveOrderDtx");
-    }
-
-    @Transactional
-    @SubscribeForEvent
-    public void handle(OrderUpdateForReserveFailedCommand deserialize) {
-        cancel(deserialize.getTaskId());
-    }
 }
