@@ -3,12 +3,8 @@ package com.mt.saga.domain;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.domain_event.StoredEvent;
 import com.mt.common.domain.model.event.MallNotificationEvent;
-import com.mt.saga.domain.model.cancel_reserve_order_dtx.CancelReserveOrderDTX;
-import com.mt.saga.domain.model.cancel_update_order_address_dtx.CancelUpdateOrderAddressDTX;
 import com.mt.saga.domain.model.common.DTXStatus;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
-import com.mt.saga.domain.model.reserve_order_dtx.ReserveOrderDTX;
-import com.mt.saga.domain.model.update_order_address_dtx.UpdateOrderAddressDTX;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -16,23 +12,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class PostDTXValidationService {
 
-    public void validate(ReserveOrderDTX reserveOrderDTX, CancelReserveOrderDTX cancelReserveOrderDTX) {
-        if (reserveOrderDTX.getStatus().equals(DTXStatus.SUCCESS) && cancelReserveOrderDTX.getStatus().equals(DTXStatus.SUCCESS)) {
-            if (
-                    (reserveOrderDTX.isDecreaseOrderStorageLTXEmptyOpt() && !cancelReserveOrderDTX.isCancelDecreaseOrderStorageLTXEmptyOpt())
-                            ||
-                            (reserveOrderDTX.isUpdateOrderLTXEmptyOpt() && !cancelReserveOrderDTX.isCancelUpdateOrderLTXEmptyOpt())
-                            ||
-                            (!reserveOrderDTX.isUpdateOrderLTXEmptyOpt() && cancelReserveOrderDTX.isCancelUpdateOrderLTXEmptyOpt())
-                            ||
-                            (!reserveOrderDTX.isDecreaseOrderStorageLTXEmptyOpt() && cancelReserveOrderDTX.isCancelDecreaseOrderStorageLTXEmptyOpt())
-            ) {
-                notifyAdmin(reserveOrderDTX.getId(), cancelReserveOrderDTX.getId(), reserveOrderDTX.getOrderId());
-            } else {
-                log.debug("post reserve/cancel create dtx validation success");
-            }
-        }
-    }
 
     public void validate(DistributedTx createOrderDTX, DistributedTx cancelCreateOrderDTX) {
         if (createOrderDTX.getStatus().equals(DTXStatus.SUCCESS) && cancelCreateOrderDTX.getStatus().equals(DTXStatus.SUCCESS)) {
@@ -70,20 +49,6 @@ public class PostDTXValidationService {
         StoredEvent storedEvent = new StoredEvent(mallNotificationEvent);
         storedEvent.setIdExplicitly(0);
         CommonDomainRegistry.getEventStreamService().next(storedEvent);
-    }
-
-    public void validate(UpdateOrderAddressDTX updateOrderAddressDTX, CancelUpdateOrderAddressDTX cancelUpdateOrderAddressDTX) {
-        if (updateOrderAddressDTX.getStatus().equals(DTXStatus.SUCCESS) && cancelUpdateOrderAddressDTX.getStatus().equals(DTXStatus.SUCCESS)) {
-            if (
-                    (updateOrderAddressDTX.isUpdateOrderLTXEmptyOpt() && !cancelUpdateOrderAddressDTX.isCancelUpdateOrderLTXEmptyOpt())
-                            ||
-                            (!updateOrderAddressDTX.isUpdateOrderLTXEmptyOpt() && cancelUpdateOrderAddressDTX.isCancelUpdateOrderLTXEmptyOpt())
-            ) {
-                notifyAdmin(updateOrderAddressDTX.getId(), cancelUpdateOrderAddressDTX.getId(), updateOrderAddressDTX.getOrderId());
-            } else {
-                log.debug("post update/cancel address dtx validation success");
-            }
-        }
     }
 
 }

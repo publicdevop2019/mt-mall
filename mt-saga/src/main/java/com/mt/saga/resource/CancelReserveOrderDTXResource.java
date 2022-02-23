@@ -5,7 +5,7 @@ import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.cancel_reserve_order_dtx.representation.CancelReserveOrderDTXCardRepresentation;
 import com.mt.saga.appliction.cancel_reserve_order_dtx.representation.CancelReserveOrderDTXRepresentation;
 import com.mt.saga.appliction.common.ResolveReason;
-import com.mt.saga.domain.model.cancel_reserve_order_dtx.CancelReserveOrderDTX;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,14 +22,14 @@ public class CancelReserveOrderDTXResource {
             @RequestParam(value = HTTP_PARAM_PAGE, required = false) String pageParam,
             @RequestParam(value = HTTP_PARAM_SKIP_COUNT, required = false) String skipCount
     ) {
-        SumPagedRep<CancelReserveOrderDTX> dtx = ApplicationServiceRegistry.getCancelReserveOrderDTXApplicationService().query(queryParam, pageParam, skipCount);
+        SumPagedRep<DistributedTx> dtx = ApplicationServiceRegistry.getCancelReserveOrderDTXApplicationService().query(queryParam, pageParam, skipCount);
         return ResponseEntity.ok(new SumPagedRep<>(dtx, CancelReserveOrderDTXCardRepresentation::new));
     }
     @GetMapping("admin/{id}")
     public ResponseEntity<?> readForAdminById(
             @PathVariable(name = "id") long id
     ) {
-        Optional<CancelReserveOrderDTX> dtx = ApplicationServiceRegistry.getCancelReserveOrderDTXApplicationService().query(id);
+        Optional<DistributedTx> dtx = ApplicationServiceRegistry.getCancelReserveOrderDTXApplicationService().query(id);
         return dtx.map(e -> ResponseEntity.ok(new CancelReserveOrderDTXRepresentation(e))).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 

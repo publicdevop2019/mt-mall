@@ -5,7 +5,7 @@ import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.reserve_order_dtx.command.DecreaseOrderStorageForReserveReplyEvent;
 import com.mt.saga.appliction.reserve_order_dtx.command.OrderUpdateForReserveFailedCommand;
 import com.mt.saga.appliction.reserve_order_dtx.command.UpdateOrderForReserveReplyEvent;
-import com.mt.saga.domain.model.cancel_reserve_order_dtx.event.CancelReserveOrderDTXSuccessEvent;
+import com.mt.saga.domain.model.distributed_tx.DTXSuccessEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateReserveOrderDTXEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,7 @@ public class ReserveOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener3() {
         CommonDomainRegistry.getEventStreamService().of(appName, true,AppConstant.CANCEL_RESERVE_ORDER_DTX_SUCCESS_EVENT, (event) -> {
-            CancelReserveOrderDTXSuccessEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CancelReserveOrderDTXSuccessEvent.class);
+            DTXSuccessEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DTXSuccessEvent.class);
             ApplicationServiceRegistry.getReserveOrderDTXApplicationService().handle(deserialize);
         });
     }

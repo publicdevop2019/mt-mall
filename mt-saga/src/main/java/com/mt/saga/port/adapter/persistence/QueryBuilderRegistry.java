@@ -9,10 +9,6 @@ public class QueryBuilderRegistry {
     @Getter
     private static SpringDataJpaDistributedTxRepository.JpaCriteriaApiDistributedTxAdapter distributedTxAdapter;
     @Getter
-    private static SpringDataJpaCancelReserveOrderDTXRepository.JpaCriteriaApiCancelReserveOrderDTXAdapter cancelReserveOrderDTXAdapter;
-    @Getter
-    private static SpringDataJpaReserveOrderDTXRepository.JpaCriteriaApiReserveOrderDTXAdapter reserveOrderDTXAdapter;
-    @Getter
     private static SpringDataJpaUpdateOrderAddressDTXRepository.JpaCriteriaApiUpdateOrderAddressDTXAdapter updateOrderAddressDTXAdapter;
     @Getter
     private static SpringDataJpaCancelUpdateOrderAddressDTXRepository.JpaCriteriaApiCancelUpdateOrderAddressDTXAdapter cancelUpdateOrderAddressDTXAdapter;
@@ -34,16 +30,5 @@ public class QueryBuilderRegistry {
 
 
 
-    @Autowired
-    public void setCancelReserveOrderDTXAdapter(SpringDataJpaCancelReserveOrderDTXRepository.JpaCriteriaApiCancelReserveOrderDTXAdapter cancelReserveOrderDTXAdapter) {
-        QueryBuilderRegistry.cancelReserveOrderDTXAdapter = cancelReserveOrderDTXAdapter;
-    }
-
-
-
-    @Autowired
-    public void setReserveOrderDTXAdapter(SpringDataJpaReserveOrderDTXRepository.JpaCriteriaApiReserveOrderDTXAdapter reserveOrderDTXAdapter) {
-        QueryBuilderRegistry.reserveOrderDTXAdapter = reserveOrderDTXAdapter;
-    }
 
 }

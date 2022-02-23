@@ -1,12 +1,10 @@
 package com.mt.saga.domain.model.reserve_order_dtx.event;
 
-import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.common.domain.model.restful.PatchCommand;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
-import com.mt.saga.domain.model.reserve_order_dtx.ReserveOrderDTX;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

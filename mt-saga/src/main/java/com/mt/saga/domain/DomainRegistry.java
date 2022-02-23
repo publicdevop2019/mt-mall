@@ -2,13 +2,11 @@ package com.mt.saga.domain;
 
 import com.mt.saga.appliction.cancel_create_order_dtx.CancelCreateOrderDTXApplicationService;
 import com.mt.saga.domain.model.IsolationService;
-import com.mt.saga.domain.model.cancel_reserve_order_dtx.CancelReserveOrderDTXRepository;
 import com.mt.saga.domain.model.cancel_update_order_address_dtx.CancelUpdateOrderAddressDTXRepository;
 import com.mt.saga.domain.model.distributed_tx.DistributedTxRepository;
 import com.mt.saga.domain.model.order_state_machine.OrderStateMachineBuilder;
 import com.mt.saga.domain.model.order_state_machine.PaymentService;
 import com.mt.saga.domain.model.order_state_machine.ProductService;
-import com.mt.saga.domain.model.reserve_order_dtx.ReserveOrderDTXRepository;
 import com.mt.saga.domain.model.update_order_address_dtx.UpdateOrderAddressDTXRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +19,11 @@ public class DomainRegistry {
     @Getter
     private static IsolationService isolationService;
     @Getter
-    private static ReserveOrderDTXRepository reserveOrderDTXRepository;
-    @Getter
     private static PaymentService paymentService;
     @Getter
     private static ProductService productService;
     @Getter
     private static CancelCreateOrderDTXApplicationService cancelCreateOrderDTXApplicationService;
-    @Getter
-    private static CancelReserveOrderDTXRepository cancelReserveOrderDTXRepository;
     @Getter
     private static PostDTXValidationService postDtxValidationService;
     @Getter
@@ -66,10 +60,6 @@ public class DomainRegistry {
     }
 
 
-    @Autowired
-    private void setCancelReserveOrderDTXRepository(CancelReserveOrderDTXRepository cancelReserveOrderDTXRepository) {
-        DomainRegistry.cancelReserveOrderDTXRepository = cancelReserveOrderDTXRepository;
-    }
 
     @Autowired
     private void setCancelCreateOrderDTXApplicationService(CancelCreateOrderDTXApplicationService cancelCreateOrderDTXApplicationService) {
@@ -88,10 +78,6 @@ public class DomainRegistry {
     }
 
 
-    @Autowired
-    private void setReserveOrderDTXRepository(ReserveOrderDTXRepository reserveOrderDTXRepository) {
-        DomainRegistry.reserveOrderDTXRepository = reserveOrderDTXRepository;
-    }
 
     @Autowired
     private void setOrderStateMachineBuilder(OrderStateMachineBuilder orderStateMachineBuilder) {

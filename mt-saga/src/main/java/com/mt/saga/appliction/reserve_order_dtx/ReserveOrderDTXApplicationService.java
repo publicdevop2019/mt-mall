@@ -11,15 +11,11 @@ import com.mt.saga.appliction.reserve_order_dtx.command.DecreaseOrderStorageForR
 import com.mt.saga.appliction.reserve_order_dtx.command.OrderUpdateForReserveFailedCommand;
 import com.mt.saga.appliction.reserve_order_dtx.command.UpdateOrderForReserveReplyEvent;
 import com.mt.saga.domain.DomainRegistry;
-import com.mt.saga.domain.model.cancel_reserve_order_dtx.event.CancelReserveOrderDTXSuccessEvent;
 import com.mt.saga.domain.model.distributed_tx.DTXSuccessEvent;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import com.mt.saga.domain.model.distributed_tx.DistributedTxQuery;
 import com.mt.saga.domain.model.distributed_tx.LocalTx;
 import com.mt.saga.domain.model.order_state_machine.event.CreateReserveOrderDTXEvent;
-import com.mt.saga.domain.model.recycle_order_dtx.event.UpdateOrderForRecycleEvent;
-import com.mt.saga.domain.model.reserve_order_dtx.ReserveOrderDTX;
-import com.mt.saga.domain.model.reserve_order_dtx.ReserveOrderDTXQuery;
 import com.mt.saga.domain.model.reserve_order_dtx.event.DecreaseOrderStorageForReserveEvent;
 import com.mt.saga.domain.model.reserve_order_dtx.event.UpdateOrderForReserveEvent;
 import com.mt.saga.infrastructure.AppConstant;
@@ -96,6 +92,7 @@ public class ReserveOrderDTXApplicationService {
         DistributedTxQuery var0 = new DistributedTxQuery(queryParam, pageParam, skipCount);
         return DomainRegistry.getDistributedTxRepository().query(var0);
     }
+
     public Optional<DistributedTx> query(long id) {
         return DomainRegistry.getDistributedTxRepository().getById(id);
     }
@@ -109,6 +106,7 @@ public class ReserveOrderDTXApplicationService {
             return null;
         }, "SystemCancelReserveOrderDtx");
     }
+
     @Transactional
     @SubscribeForEvent
     public void handle(DTXSuccessEvent deserialize) {
