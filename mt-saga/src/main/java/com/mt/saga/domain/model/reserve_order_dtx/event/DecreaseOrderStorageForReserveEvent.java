@@ -24,15 +24,14 @@ public class DecreaseOrderStorageForReserveEvent extends DomainEvent {
     private String orderId;
     private long taskId;
 
-    public DecreaseOrderStorageForReserveEvent(ReserveOrderDTX dtx) {
-        CommonOrderCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(dtx.getOrderCommandDetail(), CommonOrderCommand.class);
-        skuCommands = DomainRegistry.getProductService().getReserveOrderPatchCommands(deserialize.getProductList());
-        this.changeId = dtx.getChangeId();
-        this.orderId = dtx.getOrderId();
-        this.taskId = dtx.getId();
+    public DecreaseOrderStorageForReserveEvent(CommonOrderCommand command, String orderId, String changeId, Long taskId) {
+        skuCommands = DomainRegistry.getProductService().getReserveOrderPatchCommands(command.getProductList());
+        this.changeId = changeId;
+        this.orderId = orderId;
+        this.taskId = taskId;
         setInternal(false);
         setTopic(AppConstant.DECREASE_ORDER_STORAGE_FOR_RESERVE_EVENT);
-        setDomainId(new DomainId(dtx.getId().toString()));
+        setDomainId(new DomainId(taskId.toString()));
         setName(name);
     }
 }
