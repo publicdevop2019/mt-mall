@@ -4,7 +4,7 @@ import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
-import com.mt.saga.domain.model.reserve_order_dtx.event.UpdateOrderForReserveEvent;
+import com.mt.saga.domain.model.distributed_tx.event.reserve_order_dtx.UpdateOrderForReserveEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;

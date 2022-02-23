@@ -1,4 +1,4 @@
-package com.mt.saga.domain.model.distributed_tx.event;
+package com.mt.saga.appliction.distributed_tx.command;
 
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;

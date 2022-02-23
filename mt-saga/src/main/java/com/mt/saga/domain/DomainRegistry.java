@@ -1,6 +1,5 @@
 package com.mt.saga.domain;
 
-import com.mt.saga.appliction.cancel_create_order_dtx.CancelCreateOrderDTXApplicationService;
 import com.mt.saga.domain.model.IsolationService;
 import com.mt.saga.domain.model.distributed_tx.DistributedTxRepository;
 import com.mt.saga.domain.model.order_state_machine.OrderStateMachineBuilder;
@@ -20,8 +19,6 @@ public class DomainRegistry {
     private static PaymentService paymentService;
     @Getter
     private static ProductService productService;
-    @Getter
-    private static CancelCreateOrderDTXApplicationService cancelCreateOrderDTXApplicationService;
     @Getter
     private static PostDTXValidationService postDtxValidationService;
     @Getter
@@ -43,11 +40,6 @@ public class DomainRegistry {
         DomainRegistry.postDtxValidationService = postDtxValidationService;
     }
 
-
-    @Autowired
-    private void setCancelCreateOrderDTXApplicationService(CancelCreateOrderDTXApplicationService cancelCreateOrderDTXApplicationService) {
-        DomainRegistry.cancelCreateOrderDTXApplicationService = cancelCreateOrderDTXApplicationService;
-    }
 
     @Autowired
     private void setProductService(ProductService productService) {

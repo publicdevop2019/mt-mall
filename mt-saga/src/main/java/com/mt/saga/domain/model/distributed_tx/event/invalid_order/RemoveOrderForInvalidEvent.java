@@ -1,4 +1,4 @@
-package com.mt.saga.domain.model.reserve_order_dtx.event;
+package com.mt.saga.domain.model.distributed_tx.event.invalid_order;
 
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
@@ -11,21 +11,24 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class UpdateOrderForReserveEvent extends DomainEvent {
-    public static final String name = "UPDATE_ORDER_FOR_RESERVE_EVENT";
+public class RemoveOrderForInvalidEvent extends DomainEvent {
+    public static final String name = "REMOVE_ORDER_FOR_INVALID_EVENT";
     private String orderId;
-    private long taskId;
     private String changeId;
+    private String userId;
+    private long taskId;
     private Integer orderVersion;
 
-    public UpdateOrderForReserveEvent(CommonOrderCommand command, String orderId, String changeId, Long taskId) {
+    public RemoveOrderForInvalidEvent(CommonOrderCommand command, String orderId, String changeId, Long taskId) {
         this.orderId = orderId;
+        this.changeId = changeId;
         this.taskId = taskId;
-        this.changeId =changeId;
-        setInternal(false);
-        setTopic(AppConstant.UPDATE_ORDER_FOR_RESERVE_EVENT);
         setOrderVersion(command.getVersion());
+        setInternal(false);
+        setTopic(AppConstant.REMOVE_ORDER_FOR_INVALID_EVENT);
         setDomainId(new DomainId(taskId.toString()));
         setName(name);
+        setUserId(command.getUserId());
     }
+
 }

@@ -2,7 +2,7 @@ package com.mt.saga.domain.model.distributed_tx.event.create_order_dtx;
 
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
-import com.mt.saga.appliction.create_order_dtx.command.GeneratePaymentQRLinkReplyCommand;
+import com.mt.saga.appliction.distributed_tx.command.create_order_dtx.GeneratePaymentQRLinkReplyCommand;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.model.order_state_machine.order.BizOrderAddressCmdRep;
 import com.mt.saga.domain.model.order_state_machine.order.BizOrderStatus;

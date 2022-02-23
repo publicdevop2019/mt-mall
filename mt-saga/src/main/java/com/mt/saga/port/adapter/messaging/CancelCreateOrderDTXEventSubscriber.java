@@ -6,8 +6,8 @@ import com.mt.saga.domain.model.distributed_tx.event.cancel_create_order_dtx.Can
 import com.mt.saga.domain.model.distributed_tx.event.cancel_create_order_dtx.CancelDecreaseOrderStorageForCreateEvent;
 import com.mt.saga.domain.model.distributed_tx.event.cancel_create_order_dtx.CancelGeneratePaymentQRLinkEvent;
 import com.mt.saga.domain.model.distributed_tx.event.cancel_create_order_dtx.CancelSaveNewOrderEvent;
-import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
-import com.mt.saga.domain.model.distributed_tx.event.DistributedTxFailedEvent;
+import com.mt.saga.appliction.distributed_tx.command.ReplyEvent;
+import com.mt.saga.appliction.distributed_tx.command.DistributedTxFailedEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

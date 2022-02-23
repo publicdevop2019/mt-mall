@@ -2,8 +2,8 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
-import com.mt.saga.domain.model.distributed_tx.event.DistributedTxFailedEvent;
+import com.mt.saga.appliction.distributed_tx.command.ReplyEvent;
+import com.mt.saga.appliction.distributed_tx.command.DistributedTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.event.cancel_conclude_order_dtx.CancelDecreaseActualStorageForConcludeEvent;
 import com.mt.saga.domain.model.distributed_tx.event.cancel_conclude_order_dtx.CancelUpdateOrderForConcludeEvent;
 import com.mt.saga.infrastructure.AppConstant;

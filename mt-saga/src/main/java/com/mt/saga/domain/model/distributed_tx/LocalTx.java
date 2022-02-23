@@ -1,6 +1,7 @@
 package com.mt.saga.domain.model.distributed_tx;
 
 import com.mt.common.domain.CommonDomainRegistry;
+import com.mt.saga.appliction.distributed_tx.command.ReplyEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.mt.saga.domain.model.distributed_tx;
+package com.mt.saga.appliction.distributed_tx.command;
 
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import lombok.Getter;

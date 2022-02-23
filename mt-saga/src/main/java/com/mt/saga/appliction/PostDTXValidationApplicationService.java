@@ -4,7 +4,7 @@ import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import com.mt.saga.domain.model.distributed_tx.DistributedTxQuery;
-import com.mt.saga.domain.model.distributed_tx.event.DistributedTxSuccessEvent;
+import com.mt.saga.appliction.distributed_tx.command.DistributedTxSuccessEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import org.springframework.stereotype.Service;
 

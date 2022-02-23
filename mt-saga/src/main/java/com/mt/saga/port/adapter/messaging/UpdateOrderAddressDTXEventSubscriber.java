@@ -2,10 +2,10 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
-import com.mt.saga.domain.model.distributed_tx.event.LocalTxFailedEvent;
+import com.mt.saga.appliction.distributed_tx.command.ReplyEvent;
+import com.mt.saga.appliction.distributed_tx.command.LocalTxFailedEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateUpdateOrderAddressDTXEvent;
-import com.mt.saga.domain.model.update_order_address_dtx.event.UpdateOrderForUpdateOrderAddressEvent;
+import com.mt.saga.domain.model.distributed_tx.event.update_order_address_dtx.UpdateOrderForUpdateOrderAddressEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

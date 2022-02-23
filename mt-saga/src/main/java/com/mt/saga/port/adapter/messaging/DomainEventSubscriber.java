@@ -3,7 +3,7 @@ package com.mt.saga.port.adapter.messaging;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
-import com.mt.saga.domain.model.distributed_tx.event.DistributedTxSuccessEvent;
+import com.mt.saga.appliction.distributed_tx.command.DistributedTxSuccessEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

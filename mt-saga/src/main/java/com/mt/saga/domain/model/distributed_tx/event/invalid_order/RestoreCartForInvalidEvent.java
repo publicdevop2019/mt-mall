@@ -1,4 +1,4 @@
-package com.mt.saga.domain.model.invalid_order.event;
+package com.mt.saga.domain.model.distributed_tx.event.invalid_order;
 
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
