@@ -4,7 +4,6 @@ import com.mt.common.domain.model.restful.query.PageConfig;
 import com.mt.common.domain.model.restful.query.QueryConfig;
 import com.mt.common.domain.model.restful.query.QueryCriteria;
 import com.mt.common.domain.model.restful.query.QueryUtility;
-import com.mt.saga.domain.model.common.DTXStatus;
 import lombok.Getter;
 
 import java.util.*;

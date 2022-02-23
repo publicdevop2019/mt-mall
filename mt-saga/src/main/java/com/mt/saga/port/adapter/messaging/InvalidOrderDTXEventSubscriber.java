@@ -2,8 +2,8 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.domain.model.distributed_tx.LocalTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
+import com.mt.saga.domain.model.distributed_tx.event.LocalTxFailedEvent;
 import com.mt.saga.domain.model.invalid_order.event.IncreaseStorageForInvalidEvent;
 import com.mt.saga.domain.model.invalid_order.event.RemoveOrderForInvalidEvent;
 import com.mt.saga.domain.model.invalid_order.event.RemovePaymentQRLinkForInvalidEvent;
@@ -32,7 +32,7 @@ public class InvalidOrderDTXEventSubscriber {
     private void listener() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_INVALID_ORDER_DTX_EVENT, (event) -> {
             CreateInvalidOrderDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateInvalidOrderDTXEvent.class);
-            ApplicationServiceRegistry.getInvalidOrderDTXDTXApplicationService().handle(deserialize);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }
 

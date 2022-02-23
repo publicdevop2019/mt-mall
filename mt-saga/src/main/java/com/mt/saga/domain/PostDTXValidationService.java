@@ -3,7 +3,7 @@ package com.mt.saga.domain;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.domain_event.StoredEvent;
 import com.mt.common.domain.model.event.MallNotificationEvent;
-import com.mt.saga.domain.model.common.DTXStatus;
+import com.mt.saga.domain.model.distributed_tx.DTXStatus;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import com.mt.saga.infrastructure.Utility;
 import lombok.extern.slf4j.Slf4j;

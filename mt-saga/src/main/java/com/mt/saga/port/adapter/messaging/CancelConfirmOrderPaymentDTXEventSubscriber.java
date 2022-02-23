@@ -2,9 +2,9 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.domain.model.cancel_confirm_order_payment_dtx.event.CancelUpdateOrderPaymentEvent;
-import com.mt.saga.domain.model.distributed_tx.DistributedTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
+import com.mt.saga.domain.model.distributed_tx.event.DistributedTxFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.event.cancel_confirm_order_payment_dtx.CancelUpdateOrderPaymentEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,7 @@ public class CancelConfirmOrderPaymentDTXEventSubscriber {
     private void listener() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CONFIRM_ORDER_PAYMENT_FAILED_EVENT, (event) -> {
             DistributedTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxFailedEvent.class);
-            ApplicationServiceRegistry.getCancelConfirmOrderPaymentDTXApplicationService().handle(deserialize);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().confirmPaymentFailed(deserialize);
         });
     }
 

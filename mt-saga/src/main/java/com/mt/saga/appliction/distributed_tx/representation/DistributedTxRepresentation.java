@@ -6,9 +6,9 @@ import com.mt.common.domain.model.domain_event.StoredEventQuery;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.PageConfig;
 import com.mt.common.domain.model.restful.query.QueryConfig;
-import com.mt.saga.domain.model.common.DTXStatus;
-import com.mt.saga.domain.model.common.LTXStatus;
+import com.mt.saga.domain.model.distributed_tx.DTXStatus;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
+import com.mt.saga.domain.model.distributed_tx.LTXStatus;
 import lombok.Getter;
 import lombok.Setter;
 

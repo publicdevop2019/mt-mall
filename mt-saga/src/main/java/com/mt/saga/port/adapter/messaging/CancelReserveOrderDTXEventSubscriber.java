@@ -2,10 +2,10 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.domain.model.cancel_reserve_order_dtx.event.CancelDecreaseOrderStorageForReserveEvent;
-import com.mt.saga.domain.model.cancel_reserve_order_dtx.event.CancelUpdateOrderForReserveEvent;
-import com.mt.saga.domain.model.distributed_tx.DistributedTxFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.event.cancel_reserve_order_dtx.CancelDecreaseOrderStorageForReserveEvent;
+import com.mt.saga.domain.model.distributed_tx.event.cancel_reserve_order_dtx.CancelUpdateOrderForReserveEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
+import com.mt.saga.domain.model.distributed_tx.event.DistributedTxFailedEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,7 @@ public class CancelReserveOrderDTXEventSubscriber {
     private void listener() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.RESERVE_ORDER_DTX_FAILED_EVENT, (event) -> {
             DistributedTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxFailedEvent.class);
-            ApplicationServiceRegistry.getCancelReserveOrderDTXApplicationService().handle(deserialize);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().reserveOrderFailed(deserialize);
         });
     }
 

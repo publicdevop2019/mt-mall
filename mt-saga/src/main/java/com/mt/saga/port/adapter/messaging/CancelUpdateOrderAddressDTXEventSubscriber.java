@@ -2,9 +2,9 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.domain.model.cancel_update_order_address_dtx.event.CancelUpdateOrderForUpdateOrderAddressEvent;
-import com.mt.saga.domain.model.distributed_tx.DistributedTxFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.event.cancel_update_order_address_dtx.CancelUpdateOrderForUpdateOrderAddressEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
+import com.mt.saga.domain.model.distributed_tx.event.DistributedTxFailedEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,7 @@ public class CancelUpdateOrderAddressDTXEventSubscriber {
     private void listener() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.UPDATE_ORDER_ADDRESS_DTX_FAILED_EVENT, (event) -> {
             DistributedTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxFailedEvent.class);
-            ApplicationServiceRegistry.getCancelUpdateOrderAddressDTXApplicationService().handle(deserialize);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().updateAddressFailed(deserialize);
         });
     }
 

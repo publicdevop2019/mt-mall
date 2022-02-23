@@ -1,7 +1,6 @@
 package com.mt.saga.domain.model.distributed_tx;
 
 import com.mt.common.domain.CommonDomainRegistry;
-import com.mt.saga.domain.model.common.LTXStatus;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

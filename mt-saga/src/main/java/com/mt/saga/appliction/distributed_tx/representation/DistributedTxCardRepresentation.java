@@ -1,6 +1,6 @@
 package com.mt.saga.appliction.distributed_tx.representation;
 
-import com.mt.saga.domain.model.common.DTXStatus;
+import com.mt.saga.domain.model.distributed_tx.DTXStatus;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import lombok.Getter;
 import lombok.Setter;

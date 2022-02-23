@@ -2,10 +2,10 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.domain.model.conclude_order_dtx.event.DecreaseActualStorageForConcludeEvent;
-import com.mt.saga.domain.model.conclude_order_dtx.event.UpdateOrderForConcludeEvent;
-import com.mt.saga.domain.model.distributed_tx.LocalTxFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.event.conclude_order_dtx.DecreaseActualStorageForConcludeEvent;
+import com.mt.saga.domain.model.distributed_tx.event.conclude_order_dtx.UpdateOrderForConcludeEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
+import com.mt.saga.domain.model.distributed_tx.event.LocalTxFailedEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateConcludeOrderDTXEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class ConcludeOrderDTXEventSubscriber {
     private void listener() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_CONCLUDE_ORDER_DTX_EVENT, (event) -> {
             CreateConcludeOrderDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateConcludeOrderDTXEvent.class);
-            ApplicationServiceRegistry.getConcludeOrderDTXApplicationService().handle(deserialize);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }
 

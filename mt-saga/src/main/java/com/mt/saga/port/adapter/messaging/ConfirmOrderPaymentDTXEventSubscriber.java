@@ -2,9 +2,9 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.domain.model.confirm_order_payment_dtx.event.UpdateOrderPaymentSuccessEvent;
-import com.mt.saga.domain.model.distributed_tx.LocalTxFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.event.confirm_order_payment_dtx.UpdateOrderPaymentSuccessEvent;
 import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
+import com.mt.saga.domain.model.distributed_tx.event.LocalTxFailedEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateConfirmOrderPaymentDTXEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class ConfirmOrderPaymentDTXEventSubscriber {
     private void listener() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_CONFIRM_ORDER_PAYMENT_DTX_EVENT, (event) -> {
             CreateConfirmOrderPaymentDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateConfirmOrderPaymentDTXEvent.class);
-            ApplicationServiceRegistry.getConfirmOrderPaymentDTXApplicationService().create(deserialize);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }
 
