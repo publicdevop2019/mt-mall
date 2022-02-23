@@ -4,8 +4,11 @@ import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
+import com.mt.saga.domain.model.invalid_order.event.IncreaseStorageForInvalidEvent;
 import com.mt.saga.domain.model.order_state_machine.order.BizOrderAddressCmdRep;
+import com.mt.saga.domain.model.update_order_address_dtx.event.UpdateOrderForUpdateOrderAddressEvent;
 import com.mt.saga.infrastructure.AppConstant;
+import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +17,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class CancelUpdateOrderForUpdateOrderAddressEvent extends DomainEvent {
-    public static final String name = "CANCEL_UPDATE_ORDER_ADDRESS_EVENT";
+    public static final String name = Utility.getCancelLtxName(UpdateOrderForUpdateOrderAddressEvent.name);
     private String orderId;
     private String changeId;
     private long taskId;

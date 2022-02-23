@@ -3,7 +3,10 @@ package com.mt.saga.domain.model.cancel_create_order_dtx.event;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.common.domain.model.domain_event.MQHelper;
+import com.mt.saga.domain.model.create_order_dtx.event.DecreaseOrderStorageForCreateEvent;
+import com.mt.saga.domain.model.create_order_dtx.event.GeneratePaymentQRLinkEvent;
 import com.mt.saga.infrastructure.AppConstant;
+import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +15,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class CancelGeneratePaymentQRLinkEvent extends DomainEvent {
-    public static final String name = "CANCEL_GENERATE_PAYMENT_QR_LINK_EVENT";
+    public static final String name = Utility.getCancelLtxName(GeneratePaymentQRLinkEvent.name);
     private String orderId;
     private String changeId;
     private long taskId;

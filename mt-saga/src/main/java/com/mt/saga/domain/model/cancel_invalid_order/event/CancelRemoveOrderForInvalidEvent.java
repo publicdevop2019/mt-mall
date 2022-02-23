@@ -4,7 +4,10 @@ import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
+import com.mt.saga.domain.model.invalid_order.event.IncreaseStorageForInvalidEvent;
+import com.mt.saga.domain.model.invalid_order.event.RemoveOrderForInvalidEvent;
 import com.mt.saga.infrastructure.AppConstant;
+import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +16,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class CancelRemoveOrderForInvalidEvent extends DomainEvent {
-    public static final String name = "CANCEL_REMOVE_ORDER_FOR_INVALID_EVENT";
+    public static final String name = Utility.getCancelLtxName(RemoveOrderForInvalidEvent.name);
     private String orderId;
     private String changeId;
     private long taskId;

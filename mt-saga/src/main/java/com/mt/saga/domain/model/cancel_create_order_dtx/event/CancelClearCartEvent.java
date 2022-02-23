@@ -4,8 +4,10 @@ import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
+import com.mt.saga.domain.model.create_order_dtx.event.ClearCartEvent;
 import com.mt.saga.domain.model.order_state_machine.order.CartDetail;
 import com.mt.saga.infrastructure.AppConstant;
+import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor
 public class CancelClearCartEvent extends DomainEvent {
-    public static final String name = "CANCEL_CLEAR_CART_EVENT";
+    public static final String name = Utility.getCancelLtxName(ClearCartEvent.name);
     private String userId;
     private Set<String> ids;
     private Map<String, Integer> idVersionMap;
