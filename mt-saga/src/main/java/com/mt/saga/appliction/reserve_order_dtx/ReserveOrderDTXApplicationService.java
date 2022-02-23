@@ -2,18 +2,12 @@ package com.mt.saga.appliction.reserve_order_dtx;
 
 import com.mt.common.application.CommonApplicationServiceRegistry;
 import com.mt.common.domain.CommonDomainRegistry;
-import com.mt.common.domain.model.distributed_lock.DTXDistLock;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
-import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
-import com.mt.saga.appliction.reserve_order_dtx.command.DecreaseOrderStorageForReserveReplyEvent;
 import com.mt.saga.appliction.reserve_order_dtx.command.OrderUpdateForReserveFailedCommand;
-import com.mt.saga.appliction.reserve_order_dtx.command.UpdateOrderForReserveReplyEvent;
 import com.mt.saga.domain.DomainRegistry;
-import com.mt.saga.domain.model.distributed_tx.DTXSuccessEvent;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
-import com.mt.saga.domain.model.distributed_tx.DistributedTxQuery;
 import com.mt.saga.domain.model.distributed_tx.LocalTx;
 import com.mt.saga.domain.model.order_state_machine.event.CreateReserveOrderDTXEvent;
 import com.mt.saga.domain.model.reserve_order_dtx.event.DecreaseOrderStorageForReserveEvent;
@@ -27,7 +21,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.mt.saga.appliction.create_order_dtx.CreateOrderDTXApplicationService.DTX_COMMAND;
+import static com.mt.saga.appliction.distributed_tx.DistributedTxApplicationService.DTX_COMMAND;
 
 @Slf4j
 @Service
@@ -60,43 +54,6 @@ public class ReserveOrderDTXApplicationService {
         }, RESERVE_ORDER_DTX);
     }
 
-    @DTXDistLock(keyExpression = "#p0.taskId")
-    @Transactional
-    @SubscribeForEvent
-    public void handle(UpdateOrderForReserveReplyEvent command) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(command.getId().toString(), (change) -> {
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
-            byId.ifPresent(e -> {
-                e.handle(UpdateOrderForReserveEvent.name, command);
-                DomainRegistry.getDistributedTxRepository().store(e);
-            });
-            return null;
-        }, RESERVE_ORDER_DTX);
-    }
-
-    @DTXDistLock(keyExpression = "#p0.taskId")
-    @Transactional
-    @SubscribeForEvent
-    public void handle(DecreaseOrderStorageForReserveReplyEvent command) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(command.getId().toString(), (change) -> {
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
-            byId.ifPresent(e -> {
-                e.handle(DecreaseOrderStorageForReserveEvent.name, command);
-                DomainRegistry.getDistributedTxRepository().store(e);
-            });
-            return null;
-        }, RESERVE_ORDER_DTX);
-    }
-
-    public SumPagedRep<DistributedTx> query(String queryParam, String pageParam, String skipCount) {
-        DistributedTxQuery var0 = new DistributedTxQuery(queryParam, pageParam, skipCount);
-        return DomainRegistry.getDistributedTxRepository().query(var0);
-    }
-
-    public Optional<DistributedTx> query(long id) {
-        return DomainRegistry.getDistributedTxRepository().getById(id);
-    }
-
     @Transactional
     @SubscribeForEvent
     public void cancel(long dtxId) {
@@ -105,12 +62,6 @@ public class ReserveOrderDTXApplicationService {
             byId.ifPresent(e -> e.cancel(AppConstant.RESERVE_ORDER_DTX_FAILED_EVENT));
             return null;
         }, "SystemCancelReserveOrderDtx");
-    }
-
-    @Transactional
-    @SubscribeForEvent
-    public void handle(DTXSuccessEvent deserialize) {
-        DistributedTx.handle(deserialize);
     }
 
     @Transactional

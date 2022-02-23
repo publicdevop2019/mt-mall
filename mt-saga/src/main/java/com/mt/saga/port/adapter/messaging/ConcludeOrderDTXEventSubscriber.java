@@ -2,10 +2,10 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.conclude_order_dtx.command.DecreaseActualStorageForConcludeReplyEvent;
 import com.mt.saga.appliction.conclude_order_dtx.command.OrderUpdateForConcludeFailedCommand;
-import com.mt.saga.appliction.conclude_order_dtx.command.UpdateOrderForConcludeReplyEvent;
-import com.mt.saga.domain.model.distributed_tx.DTXSuccessEvent;
+import com.mt.saga.domain.model.conclude_order_dtx.event.DecreaseActualStorageForConcludeEvent;
+import com.mt.saga.domain.model.conclude_order_dtx.event.UpdateOrderForConcludeEvent;
+import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateConcludeOrderDTXEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -35,23 +35,16 @@ public class ConcludeOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener1() {
         CommonDomainRegistry.getEventStreamService().replyOf(profileAppName, false, AppConstant.UPDATE_ORDER_FOR_CONCLUDE_EVENT, (event) -> {
-            UpdateOrderForConcludeReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), UpdateOrderForConcludeReplyEvent.class);
-            ApplicationServiceRegistry.getConcludeOrderDTXApplicationService().handle(deserialize);
+            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, UpdateOrderForConcludeEvent.name);
         });
     }
 
     @EventListener(ApplicationReadyEvent.class)
     private void listener2() {
         CommonDomainRegistry.getEventStreamService().replyOf(mallAppName, false, AppConstant.DECREASE_ACTUAL_STORAGE_FOR_CONCLUDE_EVENT, (event) -> {
-            DecreaseActualStorageForConcludeReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DecreaseActualStorageForConcludeReplyEvent.class);
-            ApplicationServiceRegistry.getConcludeOrderDTXApplicationService().handle(deserialize);
-        });
-    }
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener3() {
-        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CANCEL_CONCLUDE_ORDER_DTX_SUCCESS_EVENT, (event) -> {
-            DTXSuccessEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DTXSuccessEvent.class);
-            ApplicationServiceRegistry.getConcludeOrderDTXApplicationService().handle(deserialize);
+            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, DecreaseActualStorageForConcludeEvent.name);
         });
     }
     @EventListener(ApplicationReadyEvent.class)

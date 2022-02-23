@@ -1,4 +1,4 @@
-package com.mt.saga.appliction.create_order_dtx;
+package com.mt.saga.appliction.distributed_tx;
 
 import com.mt.common.application.CommonApplicationServiceRegistry;
 import com.mt.common.domain.CommonDomainRegistry;
@@ -6,17 +6,17 @@ import com.mt.common.domain.model.distributed_lock.DTXDistLock;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
 import com.mt.common.domain.model.restful.SumPagedRep;
-import com.mt.saga.appliction.create_order_dtx.command.*;
+import com.mt.saga.appliction.common.ResolveReason;
+import com.mt.saga.appliction.create_order_dtx.command.ClearCartFailedCommand;
+import com.mt.saga.appliction.create_order_dtx.command.GeneratePaymentQRLinkReplyCommand;
+import com.mt.saga.appliction.create_order_dtx.command.OrderUpdateForCreateFailedCommand;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.create_order_dtx.event.ClearCartEvent;
 import com.mt.saga.domain.model.create_order_dtx.event.DecreaseOrderStorageForCreateEvent;
 import com.mt.saga.domain.model.create_order_dtx.event.GeneratePaymentQRLinkEvent;
 import com.mt.saga.domain.model.create_order_dtx.event.SaveNewOrderEvent;
-import com.mt.saga.domain.model.distributed_tx.DTXSuccessEvent;
-import com.mt.saga.domain.model.distributed_tx.DistributedTx;
-import com.mt.saga.domain.model.distributed_tx.DistributedTxQuery;
-import com.mt.saga.domain.model.distributed_tx.LocalTx;
+import com.mt.saga.domain.model.distributed_tx.*;
 import com.mt.saga.domain.model.order_state_machine.event.CreateCreateOrderDTXEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +29,11 @@ import java.util.Set;
 
 @Slf4j
 @Service
-public class CreateOrderDTXApplicationService {
+public class DistributedTxApplicationService {
 
     public static final String DTX_COMMAND = "COMMAND";
     private static final String CREATE_ORDER_DTX = "CreateOrderDtx";
+    public static final String RESOLVE_DTX = "RESOLVE_DTX";
 
     @SubscribeForEvent
     @Transactional
@@ -63,33 +64,6 @@ public class CreateOrderDTXApplicationService {
         }, CREATE_ORDER_DTX);
     }
 
-    @Transactional
-    @DTXDistLock(keyExpression = "#p0.taskId")
-    @SubscribeForEvent
-    public void handle(ClearCartReplyCommand command) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(command.getId().toString(), (change) -> {
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
-            byId.ifPresent(e -> {
-                e.handle(ClearCartEvent.name, command);
-                DomainRegistry.getDistributedTxRepository().store(e);
-            });
-            return null;
-        }, CREATE_ORDER_DTX);
-    }
-
-    @Transactional
-    @DTXDistLock(keyExpression = "#p0.taskId")
-    @SubscribeForEvent
-    public void handle(DecreaseOrderStorageForCreateReplyCommand command) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(command.getId().toString(), (change) -> {
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
-            byId.ifPresent(e -> {
-                e.handle(DecreaseOrderStorageForCreateEvent.name, command);
-                DomainRegistry.getDistributedTxRepository().store(e);
-            });
-            return null;
-        }, CREATE_ORDER_DTX);
-    }
 
     @Transactional
     @DTXDistLock(keyExpression = "#p0.taskId")
@@ -98,7 +72,7 @@ public class CreateOrderDTXApplicationService {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(command.getId().toString(), (change) -> {
             Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
             byId.ifPresent(e -> {
-                e.handle(GeneratePaymentQRLinkEvent.name, command);
+                e.handleReply(GeneratePaymentQRLinkEvent.name, command);
                 SaveNewOrderEvent event = new SaveNewOrderEvent(command,
                         CommonDomainRegistry.getCustomObjectSerializer().deserialize(e.getParameters().get(DTX_COMMAND), CommonOrderCommand.class), e.getId(),
                         e.getChangeId());
@@ -113,17 +87,16 @@ public class CreateOrderDTXApplicationService {
     @Transactional
     @DTXDistLock(keyExpression = "#p0.taskId")
     @SubscribeForEvent
-    public void handle(SaveNewOrderReplyCommand command) {
+    public void handle(ReplyEvent command,String name) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(command.getId().toString(), (change) -> {
             Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
             byId.ifPresent(e -> {
-                e.handle(SaveNewOrderEvent.name, command);
+                e.handleReply(name, command);
                 DomainRegistry.getDistributedTxRepository().store(e);
             });
             return null;
         }, CREATE_ORDER_DTX);
     }
-
 
     @Transactional
     @SubscribeForEvent
@@ -149,9 +122,19 @@ public class CreateOrderDTXApplicationService {
     @Transactional
     @SubscribeForEvent
     public void handle(DTXSuccessEvent deserialize) {
-        DistributedTx.handle(deserialize);
+        DistributedTx.retryStartedLtx(deserialize);
     }
-
+    @DTXDistLock(keyExpression = "#p0")
+    @Transactional
+    public void resolve(long id, ResolveReason resolveReason) {
+        CommonApplicationServiceRegistry.getIdempotentService().idempotent(String.valueOf(id), (change) -> {
+            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(id);
+            byId.ifPresent(e -> {
+                e.markAsResolved(resolveReason);
+            });
+            return null;
+        }, RESOLVE_DTX);
+    }
     @Transactional
     @SubscribeForEvent
     public void handle(ClearCartFailedCommand deserialize) {

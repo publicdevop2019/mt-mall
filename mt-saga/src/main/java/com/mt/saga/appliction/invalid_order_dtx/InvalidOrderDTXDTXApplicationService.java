@@ -2,15 +2,13 @@ package com.mt.saga.appliction.invalid_order_dtx;
 
 import com.mt.common.application.CommonApplicationServiceRegistry;
 import com.mt.common.domain.CommonDomainRegistry;
-import com.mt.common.domain.model.distributed_lock.DTXDistLock;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
-import com.mt.common.domain.model.restful.SumPagedRep;
-import com.mt.saga.appliction.invalid_order_dtx.command.*;
+import com.mt.saga.appliction.invalid_order_dtx.command.OrderUpdateForInvalidFailedCommand;
+import com.mt.saga.appliction.invalid_order_dtx.command.RestoreCartForInvalidFailedCommand;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
-import com.mt.saga.domain.model.distributed_tx.DistributedTxQuery;
 import com.mt.saga.domain.model.distributed_tx.LocalTx;
 import com.mt.saga.domain.model.invalid_order.event.IncreaseStorageForInvalidEvent;
 import com.mt.saga.domain.model.invalid_order.event.RemoveOrderForInvalidEvent;
@@ -27,20 +25,12 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.mt.saga.appliction.create_order_dtx.CreateOrderDTXApplicationService.DTX_COMMAND;
+import static com.mt.saga.appliction.distributed_tx.DistributedTxApplicationService.DTX_COMMAND;
 
 @Slf4j
 @Service
 public class InvalidOrderDTXDTXApplicationService {
     private static final String INVALID_ORDER_DTX = "INVALID_ORDER_DTX";
-
-    public SumPagedRep<DistributedTx> query(String queryParam, String pageParam, String skipCount) {
-        DistributedTxQuery var0 = new DistributedTxQuery(queryParam, pageParam, skipCount);
-        return DomainRegistry.getDistributedTxRepository().query(var0);
-    }
-    public Optional<DistributedTx> query(long id) {
-        return DomainRegistry.getDistributedTxRepository().getById(id);
-    }
 
 
     @Transactional
@@ -107,62 +97,6 @@ public class InvalidOrderDTXDTXApplicationService {
 
                 DomainRegistry.getDistributedTxRepository().store(distributedTx);
             }, command.getOrderId());
-            return null;
-        }, INVALID_ORDER_DTX);
-    }
-
-    @Transactional
-    @DTXDistLock(keyExpression = "#p0.taskId")
-    @SubscribeForEvent
-    public void handle(RemoveOrderForInvalidReplyEvent event) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(event.getTaskId());
-            byId.ifPresent(e -> {
-                e.handle(RemoveOrderForInvalidEvent.name, event);
-                DomainRegistry.getDistributedTxRepository().store(e);
-            });
-            return null;
-        }, INVALID_ORDER_DTX);
-    }
-
-    @Transactional
-    @DTXDistLock(keyExpression = "#p0.taskId")
-    @SubscribeForEvent
-    public void handle(RestoreCartForInvalidReplyEvent event) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(event.getTaskId());
-            byId.ifPresent(e -> {
-                e.handle(RestoreCartForInvalidEvent.name, event);
-                DomainRegistry.getDistributedTxRepository().store(e);
-            });
-            return null;
-        }, INVALID_ORDER_DTX);
-    }
-
-    @Transactional
-    @DTXDistLock(keyExpression = "#p0.taskId")
-    @SubscribeForEvent
-    public void handle(IncreaseStorageForInvalidReplyEvent event) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(event.getTaskId());
-            byId.ifPresent(e -> {
-                e.handle(IncreaseStorageForInvalidEvent.name, event);
-                DomainRegistry.getDistributedTxRepository().store(e);
-            });
-            return null;
-        }, INVALID_ORDER_DTX);
-    }
-
-    @Transactional
-    @DTXDistLock(keyExpression = "#p0.taskId")
-    @SubscribeForEvent
-    public void handle(RemovePaymentQRLinkForInvalidReplyEvent event) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(event.getTaskId());
-            byId.ifPresent(e -> {
-                e.handle(RemovePaymentQRLinkForInvalidEvent.name, event);
-                DomainRegistry.getDistributedTxRepository().store(e);
-            });
             return null;
         }, INVALID_ORDER_DTX);
     }

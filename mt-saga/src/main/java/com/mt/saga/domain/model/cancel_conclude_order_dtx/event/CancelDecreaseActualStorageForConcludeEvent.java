@@ -7,7 +7,6 @@ import com.mt.common.domain.model.restful.PatchCommand;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.conclude_order_dtx.event.DecreaseActualStorageForConcludeEvent;
-import com.mt.saga.domain.model.create_order_dtx.event.SaveNewOrderEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;

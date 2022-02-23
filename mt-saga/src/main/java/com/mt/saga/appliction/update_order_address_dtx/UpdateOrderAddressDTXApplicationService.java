@@ -2,17 +2,12 @@ package com.mt.saga.appliction.update_order_address_dtx;
 
 import com.mt.common.application.CommonApplicationServiceRegistry;
 import com.mt.common.domain.CommonDomainRegistry;
-import com.mt.common.domain.model.distributed_lock.DTXDistLock;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
-import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.appliction.update_order_address_dtx.command.OrderUpdateForAddressUpdateFailedCommand;
-import com.mt.saga.appliction.update_order_address_dtx.command.UpdateOrderAddressSuccessReplyEvent;
 import com.mt.saga.domain.DomainRegistry;
-import com.mt.saga.domain.model.distributed_tx.DTXSuccessEvent;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
-import com.mt.saga.domain.model.distributed_tx.DistributedTxQuery;
 import com.mt.saga.domain.model.distributed_tx.LocalTx;
 import com.mt.saga.domain.model.order_state_machine.event.CreateUpdateOrderAddressDTXEvent;
 import com.mt.saga.domain.model.update_order_address_dtx.event.UpdateOrderForUpdateOrderAddressEvent;
@@ -25,14 +20,14 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.mt.saga.appliction.create_order_dtx.CreateOrderDTXApplicationService.DTX_COMMAND;
+import static com.mt.saga.appliction.distributed_tx.DistributedTxApplicationService.DTX_COMMAND;
 
 @Service
 @Slf4j
 public class UpdateOrderAddressDTXApplicationService {
 
     private static final String UPDATE_ORDER_ADDRESS_DTX = "UpdateOrderAddressDTX";
-    private static final String CANCEL_UPDATE_ORDER_ADDRESS_DTX = "SystemCancelUpdateOrderAddressDtx";
+    private static final String CANCEL_UPDATE_ORDER_ADDRESS_DTX = "CancelDtx";
 
     @Transactional
     @SubscribeForEvent
@@ -56,20 +51,6 @@ public class UpdateOrderAddressDTXApplicationService {
         }, UPDATE_ORDER_ADDRESS_DTX);
     }
 
-    @DTXDistLock(keyExpression = "#p0.taskId")
-    @SubscribeForEvent
-    @Transactional
-    public void handle(UpdateOrderAddressSuccessReplyEvent command) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(command.getId().toString(), (change) -> {
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
-            byId.ifPresent(e -> {
-                e.handle(UpdateOrderForUpdateOrderAddressEvent.name, command);
-                DomainRegistry.getDistributedTxRepository().store(e);
-            });
-            return null;
-        }, UPDATE_ORDER_ADDRESS_DTX);
-    }
-
     @Transactional
     @SubscribeForEvent
     public void cancel(long dtxId) {
@@ -79,22 +60,6 @@ public class UpdateOrderAddressDTXApplicationService {
                     return null;
                 },
                 CANCEL_UPDATE_ORDER_ADDRESS_DTX);
-    }
-
-
-    public SumPagedRep<DistributedTx> query(String queryParam, String pageParam, String skipCount) {
-        DistributedTxQuery var0 = new DistributedTxQuery(queryParam, pageParam, skipCount);
-        return DomainRegistry.getDistributedTxRepository().query(var0);
-    }
-
-    public Optional<DistributedTx> query(long id) {
-        return DomainRegistry.getDistributedTxRepository().getById(id);
-    }
-
-    @Transactional
-    @SubscribeForEvent
-    public void handle(DTXSuccessEvent deserialize) {
-        DistributedTx.handle(deserialize);
     }
 
     @Transactional

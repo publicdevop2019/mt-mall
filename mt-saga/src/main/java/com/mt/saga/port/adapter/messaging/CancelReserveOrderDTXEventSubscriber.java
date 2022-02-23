@@ -2,9 +2,10 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.cancel_reserve_order_dtx.command.CancelDecreaseOrderStorageForReserveReplyEvent;
-import com.mt.saga.appliction.cancel_reserve_order_dtx.command.CancelUpdateOrderForReserveReplyEvent;
+import com.mt.saga.domain.model.cancel_reserve_order_dtx.event.CancelDecreaseOrderStorageForReserveEvent;
+import com.mt.saga.domain.model.cancel_reserve_order_dtx.event.CancelUpdateOrderForReserveEvent;
 import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,16 +34,16 @@ public class CancelReserveOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener1() {
         CommonDomainRegistry.getEventStreamService().replyCancelOf(mallAppName, false, AppConstant.DECREASE_ORDER_STORAGE_FOR_RESERVE_EVENT, (event) -> {
-            CancelDecreaseOrderStorageForReserveReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CancelDecreaseOrderStorageForReserveReplyEvent.class);
-            ApplicationServiceRegistry.getCancelReserveOrderDTXApplicationService().handle(deserialize);
+            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, CancelDecreaseOrderStorageForReserveEvent.name);
         });
     }
 
     @EventListener(ApplicationReadyEvent.class)
     private void listener2() {
         CommonDomainRegistry.getEventStreamService().replyCancelOf(profileAppName, false, AppConstant.UPDATE_ORDER_FOR_RESERVE_EVENT, (event) -> {
-            CancelUpdateOrderForReserveReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CancelUpdateOrderForReserveReplyEvent.class);
-            ApplicationServiceRegistry.getCancelReserveOrderDTXApplicationService().handle(deserialize);
+            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, CancelUpdateOrderForReserveEvent.name);
         });
     }
 }

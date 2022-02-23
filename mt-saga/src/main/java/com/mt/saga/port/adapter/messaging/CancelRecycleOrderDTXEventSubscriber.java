@@ -2,9 +2,10 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.cancel_recycle_order_dtx.command.CancelIncreaseOrderStorageForRecycleReplyEvent;
-import com.mt.saga.appliction.cancel_recycle_order_dtx.command.CancelUpdateOrderForRecycleReplyEvent;
+import com.mt.saga.domain.model.cancel_recycle_dtx.event.CancelIncreaseOrderStorageForRecycleEvent;
+import com.mt.saga.domain.model.cancel_recycle_dtx.event.CancelUpdateOrderForRecycleEvent;
 import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,16 +34,16 @@ public class CancelRecycleOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener1() {
         CommonDomainRegistry.getEventStreamService().replyCancelOf(profileAppName, false, AppConstant.UPDATE_ORDER_FOR_RECYCLE_EVENT, (event) -> {
-            CancelUpdateOrderForRecycleReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CancelUpdateOrderForRecycleReplyEvent.class);
-            ApplicationServiceRegistry.getCancelRecycleOrderDTXApplicationService().handle(deserialize);
+            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, CancelUpdateOrderForRecycleEvent.name);
         });
     }
 
     @EventListener(ApplicationReadyEvent.class)
     private void listener2() {
         CommonDomainRegistry.getEventStreamService().replyCancelOf(mallAppName, false, AppConstant.INCREASE_ORDER_STORAGE_FOR_RECYCLE_EVENT, (event) -> {
-            CancelIncreaseOrderStorageForRecycleReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CancelIncreaseOrderStorageForRecycleReplyEvent.class);
-            ApplicationServiceRegistry.getCancelRecycleOrderDTXApplicationService().handle(deserialize);
+            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, CancelIncreaseOrderStorageForRecycleEvent.name);
         });
     }
 }

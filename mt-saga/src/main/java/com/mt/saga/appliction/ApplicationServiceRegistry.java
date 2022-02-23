@@ -9,7 +9,7 @@ import com.mt.saga.appliction.cancel_reserve_order_dtx.CancelReserveOrderDTXAppl
 import com.mt.saga.appliction.cancel_update_order_address_dtx.CancelUpdateOrderAddressDTXApplicationService;
 import com.mt.saga.appliction.conclude_order_dtx.ConcludeOrderDTXApplicationService;
 import com.mt.saga.appliction.confirm_order_payment_dtx.ConfirmOrderPaymentDTXApplicationService;
-import com.mt.saga.appliction.create_order_dtx.CreateOrderDTXApplicationService;
+import com.mt.saga.appliction.distributed_tx.DistributedTxApplicationService;
 import com.mt.saga.appliction.invalid_order_dtx.InvalidOrderDTXDTXApplicationService;
 import com.mt.saga.appliction.order_state_machine.OrderStateMachineApplicationService;
 import com.mt.saga.appliction.recycle_order_dtx.RecycleOrderDTXApplicationService;
@@ -24,7 +24,7 @@ public class ApplicationServiceRegistry {
     @Getter
     private static OrderStateMachineApplicationService stateMachineApplicationService;
     @Getter
-    private static CreateOrderDTXApplicationService createOrderDTXApplicationService;
+    private static DistributedTxApplicationService distributedTxApplicationService;
     @Getter
     private static CancelCreateOrderDTXApplicationService cancelCreateOrderDTXApplicationService;
     @Getter
@@ -131,8 +131,8 @@ public class ApplicationServiceRegistry {
     }
 
     @Autowired
-    private void setCreateOrderDTXApplicationService(CreateOrderDTXApplicationService createOrderDTXApplicationService) {
-        ApplicationServiceRegistry.createOrderDTXApplicationService = createOrderDTXApplicationService;
+    private void setDistributedTxApplicationService(DistributedTxApplicationService distributedTxApplicationService) {
+        ApplicationServiceRegistry.distributedTxApplicationService = distributedTxApplicationService;
     }
 
 }

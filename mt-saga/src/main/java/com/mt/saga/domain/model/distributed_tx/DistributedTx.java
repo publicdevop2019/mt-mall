@@ -66,7 +66,7 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
         return distributedTx1;
     }
 
-    public static void handle(DTXSuccessEvent deserialize) {
+    public static void retryStartedLtx(DTXSuccessEvent deserialize) {
         if (!deserialize.isCancel()) {
             return;
         }
@@ -95,7 +95,7 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
         this.parameters = parameters;
     }
 
-    public void handle(String name, ReplyEvent replyEvent) {
+    public void handleReply(String name, ReplyEvent replyEvent) {
         LocalTx localTx = this.localTxs.get(name);
         localTx.handle(replyEvent);
         checkAll();
@@ -110,16 +110,6 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
     public void startAllLocalTx() {
         this.localTxs.values().forEach(LocalTx::start);
         startDtx();
-    }
-
-    public boolean isLocalTxStarted(String name) {
-        LocalTx localTx = this.localTxs.get(name);
-        return localTx.getStatus().equals(LTXStatus.STARTED);
-    }
-
-    public LTXStatus getLocalTxStatusByName(String name) {
-        LocalTx localTx = this.localTxs.get(name);
-        return localTx.getStatus();
     }
 
     public boolean isLocalTxEmptyOptByName(String name) {

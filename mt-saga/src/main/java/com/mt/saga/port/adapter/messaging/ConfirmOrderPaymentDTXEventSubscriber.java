@@ -3,8 +3,8 @@ package com.mt.saga.port.adapter.messaging;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.confirm_order_payment_dtx.command.OrderUpdateForPaymentSuccessFailedCommand;
-import com.mt.saga.appliction.confirm_order_payment_dtx.command.UpdateOrderPaymentSuccessReplyEvent;
-import com.mt.saga.domain.model.distributed_tx.DTXSuccessEvent;
+import com.mt.saga.domain.model.confirm_order_payment_dtx.event.UpdateOrderPaymentSuccessEvent;
+import com.mt.saga.domain.model.distributed_tx.ReplyEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateConfirmOrderPaymentDTXEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -32,16 +32,8 @@ public class ConfirmOrderPaymentDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener1() {
         CommonDomainRegistry.getEventStreamService().replyOf(profileAppName, false, AppConstant.UPDATE_ORDER_FOR_PAYMENT_SUCCESS_EVENT, (event) -> {
-            UpdateOrderPaymentSuccessReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), UpdateOrderPaymentSuccessReplyEvent.class);
-            ApplicationServiceRegistry.getConfirmOrderPaymentDTXApplicationService().handle(deserialize);
-        });
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener2() {
-        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CANCEL_CONFIRM_ORDER_PAYMENT_DTX_SUCCESS_EVENT, (event) -> {
-            DTXSuccessEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DTXSuccessEvent.class);
-            ApplicationServiceRegistry.getConfirmOrderPaymentDTXApplicationService().handle(deserialize);
+            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, UpdateOrderPaymentSuccessEvent.name);
         });
     }
 
