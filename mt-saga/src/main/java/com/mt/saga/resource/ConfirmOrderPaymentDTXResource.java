@@ -4,7 +4,7 @@ import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.confirm_order_payment_dtx.representation.ConfirmOrderPaymentDTXCardRepresentation;
 import com.mt.saga.appliction.confirm_order_payment_dtx.representation.ConfirmOrderPaymentDTXRepresentation;
-import com.mt.saga.domain.model.confirm_order_payment_dtx.ConfirmOrderPaymentDTX;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +21,10 @@ public class ConfirmOrderPaymentDTXResource {
             @RequestParam(value = HTTP_PARAM_PAGE, required = false) String pageParam,
             @RequestParam(value = HTTP_PARAM_SKIP_COUNT, required = false) String skipCount
     ) {
-        SumPagedRep<ConfirmOrderPaymentDTX> dtx = ApplicationServiceRegistry.getConfirmOrderPaymentDTXApplicationService().query(queryParam, pageParam, skipCount);
+        SumPagedRep<DistributedTx> dtx = ApplicationServiceRegistry.getConfirmOrderPaymentDTXApplicationService().query(queryParam, pageParam, skipCount);
         return ResponseEntity.ok(new SumPagedRep<>(dtx, ConfirmOrderPaymentDTXCardRepresentation::new));
     }
+
     @PostMapping("admin/{dtxId}/cancel")
     public ResponseEntity<?> cancelCreateOrderDtx(
             @PathVariable("dtxId") long dtxId
@@ -31,11 +32,12 @@ public class ConfirmOrderPaymentDTXResource {
         ApplicationServiceRegistry.getConfirmOrderPaymentDTXApplicationService().cancel(dtxId);
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("admin/{id}")
     public ResponseEntity<?> readForAdminById(
             @PathVariable(name = "id") long id
     ) {
-        Optional<ConfirmOrderPaymentDTX> dtx = ApplicationServiceRegistry.getConfirmOrderPaymentDTXApplicationService().query(id);
+        Optional<DistributedTx> dtx = ApplicationServiceRegistry.getConfirmOrderPaymentDTXApplicationService().query(id);
         return dtx.map(e -> ResponseEntity.ok(new ConfirmOrderPaymentDTXRepresentation(e))).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 }

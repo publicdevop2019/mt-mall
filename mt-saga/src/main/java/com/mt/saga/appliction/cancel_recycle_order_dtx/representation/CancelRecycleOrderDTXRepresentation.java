@@ -7,9 +7,9 @@ import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.PageConfig;
 import com.mt.common.domain.model.restful.query.QueryConfig;
 import com.mt.saga.appliction.common.CommonDTXRepresentation;
-import com.mt.saga.domain.model.cancel_recycle_dtx.CancelRecycleOrderDTX;
 import com.mt.saga.domain.model.cancel_recycle_dtx.event.CancelIncreaseOrderStorageForRecycleEvent;
 import com.mt.saga.domain.model.cancel_recycle_dtx.event.CancelUpdateOrderForRecycleEvent;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,26 +20,25 @@ public class CancelRecycleOrderDTXRepresentation extends CommonDTXRepresentation
     private static final String CANCEL_INCREASE_ORDER_STORAGE_LTX = "CANCEL_INCREASE_ORDER_STORAGE_LTX";
     private static final String CANCEL_UPDATE_ORDER_LTX = "CANCEL_UPDATE_ORDER_LTX";
 
-    public CancelRecycleOrderDTXRepresentation(CancelRecycleOrderDTX var0) {
+    public CancelRecycleOrderDTXRepresentation(DistributedTx var0) {
         setId(var0.getId());
         setStatus(var0.getStatus());
         setChangeId(var0.getChangeId());
-        setOrderId(var0.getOrderId());
+        setOrderId(var0.getLockId());
         setCreatedAt(var0.getCreatedAt().getTime());
-        statusMap.put(CANCEL_INCREASE_ORDER_STORAGE_LTX, var0.getCancelIncreaseOrderStorageLTXStatus());
-        statusMap.put(CANCEL_UPDATE_ORDER_LTX, var0.getCancelUpdateOrderLTXStatus());
-        emptyOptMap.put(CANCEL_INCREASE_ORDER_STORAGE_LTX, var0.isCancelIncreaseOrderStorageLTXEmptyOpt());
-        emptyOptMap.put(CANCEL_UPDATE_ORDER_LTX, var0.isCancelUpdateOrderLTXEmptyOpt());
+        statusMap.put(CANCEL_INCREASE_ORDER_STORAGE_LTX, var0.getLocalTxStatusByName(CancelIncreaseOrderStorageForRecycleEvent.name));
+        statusMap.put(CANCEL_UPDATE_ORDER_LTX, var0.getLocalTxStatusByName(CancelUpdateOrderForRecycleEvent.name));
+        emptyOptMap.put(CANCEL_INCREASE_ORDER_STORAGE_LTX, var0.isLocalTxEmptyOptByName(CancelIncreaseOrderStorageForRecycleEvent.name));
+        emptyOptMap.put(CANCEL_UPDATE_ORDER_LTX, var0.isLocalTxEmptyOptByName(CancelUpdateOrderForRecycleEvent.name));
         SumPagedRep<StoredEvent> query = CommonDomainRegistry.getEventRepository().query(
                 new StoredEventQuery("domainId:" + var0.getId(),
                         PageConfig.defaultConfig().getRawValue()
                         , QueryConfig.skipCount().value()));
-        query.getData().forEach(e->{
-            if(CancelIncreaseOrderStorageForRecycleEvent.name.equalsIgnoreCase(e.getName())){
-                idMap.put(CANCEL_INCREASE_ORDER_STORAGE_LTX,e.getId());
-            }
-            else if(CancelUpdateOrderForRecycleEvent.name.equalsIgnoreCase(e.getName())){
-                idMap.put(CANCEL_UPDATE_ORDER_LTX,e.getId());
+        query.getData().forEach(e -> {
+            if (CancelIncreaseOrderStorageForRecycleEvent.name.equalsIgnoreCase(e.getName())) {
+                idMap.put(CANCEL_INCREASE_ORDER_STORAGE_LTX, e.getId());
+            } else if (CancelUpdateOrderForRecycleEvent.name.equalsIgnoreCase(e.getName())) {
+                idMap.put(CANCEL_UPDATE_ORDER_LTX, e.getId());
             }
         });
 

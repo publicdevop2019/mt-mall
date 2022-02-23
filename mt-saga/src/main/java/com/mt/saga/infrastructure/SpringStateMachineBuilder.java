@@ -1,11 +1,9 @@
 package com.mt.saga.infrastructure;
 
-import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.appliction.order_state_machine.OrderStateMachineApplicationService;
 import com.mt.saga.domain.DomainRegistry;
-import com.mt.saga.domain.model.confirm_order_payment_dtx.event.ConfirmOrderPaymentDTXSuccessEvent;
 import com.mt.saga.domain.model.order_state_machine.OrderStateMachineBuilder;
 import com.mt.saga.domain.model.order_state_machine.event.*;
 import com.mt.saga.domain.model.order_state_machine.exception.OrderPaymentValidationException;
@@ -264,15 +262,4 @@ public class SpringStateMachineBuilder implements OrderStateMachineBuilder {
         log.debug("end of handing {} with id {}",command.getClass().getName(),command.getId());
     }
 
-    @Override
-    public void handle(ConfirmOrderPaymentDTXSuccessEvent command) {
-        log.debug("handing {} with id {}",command.getClass().getName(),command.getId());
-        StateMachine<BizOrderStatus, BizOrderEvent> stateMachine = buildMachine(command.getOrderState());
-        CommonOrderCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(command.getCreateBizStateMachineCommand(), CommonOrderCommand.class);
-        stateMachine.getExtendedState().getVariables().put(ORDER_COMMAND_DETAIL, deserialize);
-        stateMachine.sendEvent(BizOrderEvent.CONFIRM_PAYMENT_SUCCESS);
-        if (stateMachine.hasStateMachineError()) {
-            throw stateMachine.getExtendedState().get(ERROR_CLASS, RuntimeException.class);
-        }
-    }
 }

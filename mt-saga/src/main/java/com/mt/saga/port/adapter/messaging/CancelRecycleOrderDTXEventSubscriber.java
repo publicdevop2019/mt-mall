@@ -4,7 +4,7 @@ import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.cancel_recycle_order_dtx.command.CancelIncreaseOrderStorageForRecycleReplyEvent;
 import com.mt.saga.appliction.cancel_recycle_order_dtx.command.CancelUpdateOrderForRecycleReplyEvent;
-import com.mt.saga.domain.model.recycle_order_dtx.event.RecycleOrderDTXFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +25,7 @@ public class CancelRecycleOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.RECYCLE_ORDER_DTX_FAILED_EVENT, (event) -> {
-            RecycleOrderDTXFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), RecycleOrderDTXFailedEvent.class);
+            DTXFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DTXFailedEvent.class);
             ApplicationServiceRegistry.getCancelRecycleOrderDTXApplicationService().handle(deserialize);
         });
     }

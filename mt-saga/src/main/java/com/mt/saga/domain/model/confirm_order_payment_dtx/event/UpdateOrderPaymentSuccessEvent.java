@@ -2,7 +2,7 @@ package com.mt.saga.domain.model.confirm_order_payment_dtx.event;
 
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
-import com.mt.saga.domain.model.confirm_order_payment_dtx.ConfirmOrderPaymentDTX;
+import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.model.order_state_machine.order.BizOrderAddressCmdRep;
 import com.mt.saga.domain.model.order_state_machine.order.BizOrderStatus;
 import com.mt.saga.domain.model.order_state_machine.order.CartDetail;
@@ -32,14 +32,14 @@ public class UpdateOrderPaymentSuccessEvent extends DomainEvent {
     private long taskId;
     private Integer orderVersion;
 
-    public UpdateOrderPaymentSuccessEvent(ConfirmOrderPaymentDTX dtx) {
-        this.orderId = dtx.getOrderId();
-        this.changeId = dtx.getChangeId();
-        this.taskId = dtx.getId();
-        setOrderVersion(dtx.getOrderVersion());
+    public UpdateOrderPaymentSuccessEvent(CommonOrderCommand command, String orderId, String changeId, Long taskId) {
+        this.orderId = orderId;
+        this.changeId = changeId;
+        this.taskId = taskId;
+        setOrderVersion(command.getVersion());
         setInternal(false);
         setTopic(AppConstant.UPDATE_ORDER_FOR_PAYMENT_SUCCESS_EVENT);
-        setDomainId(new DomainId(dtx.getId().toString()));
+        setDomainId(new DomainId(taskId.toString()));
         setName(name);
     }
 }

@@ -1,22 +1,29 @@
 package com.mt.saga.appliction.cancel_confirm_order_payment_dtx;
 
 import com.mt.common.application.CommonApplicationServiceRegistry;
+import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.distributed_lock.DTXDistLock;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.appliction.cancel_confirm_order_payment_dtx.command.CancelUpdateOrderPaymentSuccessReplyEvent;
 import com.mt.saga.appliction.common.ResolveReason;
+import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
-import com.mt.saga.domain.model.cancel_confirm_order_payment_dtx.CancelConfirmOrderPaymentDTX;
-import com.mt.saga.domain.model.cancel_confirm_order_payment_dtx.CancelConfirmOrderPaymentDTXQuery;
 import com.mt.saga.domain.model.cancel_confirm_order_payment_dtx.event.CancelUpdateOrderPaymentEvent;
-import com.mt.saga.domain.model.confirm_order_payment_dtx.event.ConfirmOrderPaymentDTXFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxQuery;
+import com.mt.saga.domain.model.distributed_tx.LocalTx;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+
+import static com.mt.saga.appliction.create_order_dtx.CreateOrderDTXApplicationService.DTX_COMMAND;
 
 @Service
 @Slf4j
@@ -28,13 +35,17 @@ public class CancelConfirmOrderPaymentDTXApplicationService {
 
     @Transactional
     @SubscribeForEvent
-    public void handle(ConfirmOrderPaymentDTXFailedEvent deserialize) {
+    public void handle(DTXFailedEvent deserialize) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(deserialize.getId().toString(),(change)->{
-            CancelConfirmOrderPaymentDTX dtx = new CancelConfirmOrderPaymentDTX(deserialize);
-            DomainRegistry.getCancelConfirmOrderPaymentDTXRepository().createOrUpdate(dtx);
-            DomainEventPublisher.instance().publish(new CancelUpdateOrderPaymentEvent(dtx));
-            dtx.markAsStarted();
-            DomainRegistry.getCancelConfirmOrderPaymentDTXRepository().createOrUpdate(dtx);
+
+            LocalTx localTx1 = new LocalTx(CancelUpdateOrderPaymentEvent.name, CancelUpdateOrderPaymentEvent.name);
+            Set<LocalTx> localTxes = new HashSet<>();
+            localTxes.add(localTx1);
+            DistributedTx dtx = DistributedTx.cancelOf(deserialize.getDistributedTx(), localTxes);
+            dtx.startAllLocalTx();
+            CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(dtx.getParameters().get(DTX_COMMAND), CommonOrderCommand.class);
+            DomainEventPublisher.instance().publish(new CancelUpdateOrderPaymentEvent(command,dtx.getLockId(),dtx.getChangeId(), dtx.getId()));
+            DomainRegistry.getDistributedTxRepository().store(dtx);
             return null;
         },CANCEL_CONFIRM_ORDER_PAYMENT_DTX);
     }
@@ -43,28 +54,30 @@ public class CancelConfirmOrderPaymentDTXApplicationService {
     @SubscribeForEvent
     public void handle(CancelUpdateOrderPaymentSuccessReplyEvent deserialize) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(deserialize.getId().toString(),(change)->{
-            Optional<CancelConfirmOrderPaymentDTX> byId = DomainRegistry.getCancelConfirmOrderPaymentDTXRepository().getById(deserialize.getTaskId());
+            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(deserialize.getTaskId());
             byId.ifPresent(e -> {
-                e.updateStatus(deserialize);
+                e.handle(CancelUpdateOrderPaymentEvent.name, deserialize);
+                DomainRegistry.getDistributedTxRepository().store(e);
             });
             return null;
         }, CANCEL_CONFIRM_ORDER_PAYMENT_DTX);
     }
 
-    public SumPagedRep<CancelConfirmOrderPaymentDTX> query(String queryParam, String pageParam, String skipCount) {
-        CancelConfirmOrderPaymentDTXQuery var0 = new CancelConfirmOrderPaymentDTXQuery(queryParam, pageParam, skipCount);
-        return DomainRegistry.getCancelConfirmOrderPaymentDTXRepository().query(var0);
+    public SumPagedRep<DistributedTx> query(String queryParam, String pageParam, String skipCount) {
+        DistributedTxQuery var0 = new DistributedTxQuery(queryParam, pageParam, skipCount);
+        return DomainRegistry.getDistributedTxRepository().query(var0);
     }
 
-    public Optional<CancelConfirmOrderPaymentDTX> query(long id) {
-        return DomainRegistry.getCancelConfirmOrderPaymentDTXRepository().getById(id);
+    public Optional<DistributedTx> query(long id) {
+        return DomainRegistry.getDistributedTxRepository().getById(id);
     }
+
     @DTXDistLock(keyExpression = "#p0")
     @Transactional
     public void resolve(long id, ResolveReason resolveReason) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(String.valueOf(id),(change)->{
-            Optional<CancelConfirmOrderPaymentDTX> byId = DomainRegistry.getCancelConfirmOrderPaymentDTXRepository().getById(id);
-            byId.ifPresent(e->{
+            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(id);
+            byId.ifPresent(e -> {
                 e.markAsResolved(resolveReason);
             });
             return null;
