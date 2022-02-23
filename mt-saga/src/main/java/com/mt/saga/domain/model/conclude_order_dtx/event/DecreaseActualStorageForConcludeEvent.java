@@ -1,12 +1,10 @@
 package com.mt.saga.domain.model.conclude_order_dtx.event;
 
-import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.common.domain.model.restful.PatchCommand;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
-import com.mt.saga.domain.model.conclude_order_dtx.ConcludeOrderDTX;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,14 +23,14 @@ public class DecreaseActualStorageForConcludeEvent extends DomainEvent {
     private long taskId;
 
 
-    public DecreaseActualStorageForConcludeEvent(ConcludeOrderDTX dtx) {
-        CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(dtx.getCreateBizStateMachineCommand(), CommonOrderCommand.class);
+    public DecreaseActualStorageForConcludeEvent(CommonOrderCommand command, String orderId, String changeId, Long taskId) {
+
         this.skuCommands = DomainRegistry.getProductService().getConfirmOrderPatchCommands(command.getProductList());
-        this.changeId = dtx.getChangeId();
-        this.orderId = dtx.getOrderId();
-        this.taskId = dtx.getId();
+        this.changeId = changeId;
+        this.orderId = orderId;
+        this.taskId = taskId;
         setInternal(false);
-        setDomainId(new DomainId(dtx.getId().toString()));
+        setDomainId(new DomainId(taskId.toString()));
         setTopic(AppConstant.DECREASE_ACTUAL_STORAGE_FOR_CONCLUDE_EVENT);
         setName(name);
     }

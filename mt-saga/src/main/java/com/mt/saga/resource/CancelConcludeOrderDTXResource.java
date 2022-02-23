@@ -5,7 +5,7 @@ import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.cancel_conclude_order_dtx.representation.CancelConcludeOrderDTXCardRepresentation;
 import com.mt.saga.appliction.cancel_conclude_order_dtx.representation.CancelConcludeOrderDTXRepresentation;
 import com.mt.saga.appliction.common.ResolveReason;
-import com.mt.saga.domain.model.cancel_conclude_order_dtx.CancelConcludeOrderDTX;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,14 +22,14 @@ public class CancelConcludeOrderDTXResource {
             @RequestParam(value = HTTP_PARAM_PAGE, required = false) String pageParam,
             @RequestParam(value = HTTP_PARAM_SKIP_COUNT, required = false) String skipCount
     ) {
-        SumPagedRep<CancelConcludeOrderDTX> dtx = ApplicationServiceRegistry.getCancelConcludeOrderDTXApplicationService().query(queryParam, pageParam, skipCount);
+        SumPagedRep<DistributedTx> dtx = ApplicationServiceRegistry.getCancelConcludeOrderDTXApplicationService().query(queryParam, pageParam, skipCount);
         return ResponseEntity.ok(new SumPagedRep<>(dtx, CancelConcludeOrderDTXCardRepresentation::new));
     }
     @GetMapping("admin/{id}")
     public ResponseEntity<?> readForAdminById(
             @PathVariable(name = "id") long id
     ) {
-        Optional<CancelConcludeOrderDTX> dtx = ApplicationServiceRegistry.getCancelConcludeOrderDTXApplicationService().query(id);
+        Optional<DistributedTx> dtx = ApplicationServiceRegistry.getCancelConcludeOrderDTXApplicationService().query(id);
         return dtx.map(e -> ResponseEntity.ok(new CancelConcludeOrderDTXRepresentation(e))).orElseGet(() -> ResponseEntity.badRequest().build());
     }
     @PostMapping("admin/{id}/resolve")

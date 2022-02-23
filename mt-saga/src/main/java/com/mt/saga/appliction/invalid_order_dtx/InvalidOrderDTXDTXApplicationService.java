@@ -1,6 +1,7 @@
 package com.mt.saga.appliction.invalid_order_dtx;
 
 import com.mt.common.application.CommonApplicationServiceRegistry;
+import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.distributed_lock.DTXDistLock;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
@@ -25,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.mt.saga.appliction.create_order_dtx.CreateOrderDTXApplicationService.DTX_COMMAND;
 
 @Slf4j
 @Service
@@ -56,7 +59,7 @@ public class InvalidOrderDTXDTXApplicationService {
                 localTxes.add(localTx2);
                 localTxes.add(localTx3);
                 localTxes.add(localTx4);
-
+                distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 if (command.getOrderState().equals(BizOrderStatus.PAID_RECYCLED)) {
 
                     distributedTx.startLocalTx(RemovePaymentQRLinkForInvalidEvent.name);

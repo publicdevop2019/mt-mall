@@ -4,7 +4,7 @@ import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.conclude_order_dtx.representation.ConcludeOrderDTXCardRepresentation;
 import com.mt.saga.appliction.conclude_order_dtx.representation.ConcludeOrderDTXRepresentation;
-import com.mt.saga.domain.model.conclude_order_dtx.ConcludeOrderDTX;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +21,10 @@ public class ConcludeOrderDTXResource {
             @RequestParam(value = HTTP_PARAM_PAGE, required = false) String pageParam,
             @RequestParam(value = HTTP_PARAM_SKIP_COUNT, required = false) String skipCount
     ) {
-        SumPagedRep<ConcludeOrderDTX> dtx = ApplicationServiceRegistry.getConcludeOrderDTXApplicationService().query(queryParam, pageParam, skipCount);
+        SumPagedRep<DistributedTx> dtx = ApplicationServiceRegistry.getConcludeOrderDTXApplicationService().query(queryParam, pageParam, skipCount);
         return ResponseEntity.ok(new SumPagedRep<>(dtx, ConcludeOrderDTXCardRepresentation::new));
     }
+
     @PostMapping("admin/{dtxId}/cancel")
     public ResponseEntity<?> cancelCreateOrderDtx(
             @PathVariable("dtxId") long dtxId
@@ -31,11 +32,12 @@ public class ConcludeOrderDTXResource {
         ApplicationServiceRegistry.getConcludeOrderDTXApplicationService().cancel(dtxId);
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("admin/{id}")
     public ResponseEntity<?> readForAdminById(
             @PathVariable(name = "id") long id
     ) {
-        Optional<ConcludeOrderDTX> dtx = ApplicationServiceRegistry.getConcludeOrderDTXApplicationService().query(id);
+        Optional<DistributedTx> dtx = ApplicationServiceRegistry.getConcludeOrderDTXApplicationService().query(id);
         return dtx.map(e -> ResponseEntity.ok(new ConcludeOrderDTXRepresentation(e))).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 }

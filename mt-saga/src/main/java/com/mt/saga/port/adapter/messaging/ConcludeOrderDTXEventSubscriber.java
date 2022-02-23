@@ -5,7 +5,7 @@ import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.conclude_order_dtx.command.DecreaseActualStorageForConcludeReplyEvent;
 import com.mt.saga.appliction.conclude_order_dtx.command.OrderUpdateForConcludeFailedCommand;
 import com.mt.saga.appliction.conclude_order_dtx.command.UpdateOrderForConcludeReplyEvent;
-import com.mt.saga.domain.model.cancel_conclude_order_dtx.event.CancelConcludeOrderDTXSuccessEvent;
+import com.mt.saga.domain.model.distributed_tx.DTXSuccessEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateConcludeOrderDTXEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,7 @@ public class ConcludeOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener3() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CANCEL_CONCLUDE_ORDER_DTX_SUCCESS_EVENT, (event) -> {
-            CancelConcludeOrderDTXSuccessEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CancelConcludeOrderDTXSuccessEvent.class);
+            DTXSuccessEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DTXSuccessEvent.class);
             ApplicationServiceRegistry.getConcludeOrderDTXApplicationService().handle(deserialize);
         });
     }

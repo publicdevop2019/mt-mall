@@ -2,12 +2,10 @@ package com.mt.saga.domain;
 
 import com.mt.saga.appliction.cancel_create_order_dtx.CancelCreateOrderDTXApplicationService;
 import com.mt.saga.domain.model.IsolationService;
-import com.mt.saga.domain.model.cancel_conclude_order_dtx.CancelConcludeOrderDTXRepository;
 import com.mt.saga.domain.model.cancel_confirm_order_payment_dtx.CancelConfirmOrderPaymentDTXRepository;
 import com.mt.saga.domain.model.cancel_recycle_dtx.CancelRecycleOrderDTXRepository;
 import com.mt.saga.domain.model.cancel_reserve_order_dtx.CancelReserveOrderDTXRepository;
 import com.mt.saga.domain.model.cancel_update_order_address_dtx.CancelUpdateOrderAddressDTXRepository;
-import com.mt.saga.domain.model.conclude_order_dtx.ConcludeOrderDTXRepository;
 import com.mt.saga.domain.model.confirm_order_payment_dtx.ConfirmOrderPaymentDTXRepository;
 import com.mt.saga.domain.model.distributed_tx.DistributedTxRepository;
 import com.mt.saga.domain.model.order_state_machine.OrderStateMachineBuilder;
@@ -33,8 +31,6 @@ public class DomainRegistry {
     @Getter
     private static ConfirmOrderPaymentDTXRepository confirmOrderPaymentDTXRepository;
     @Getter
-    private static ConcludeOrderDTXRepository concludeOrderDTXRepository;
-    @Getter
     private static PaymentService paymentService;
     @Getter
     private static ProductService productService;
@@ -44,8 +40,6 @@ public class DomainRegistry {
     private static CancelConfirmOrderPaymentDTXRepository cancelConfirmOrderPaymentDTXRepository;
     @Getter
     private static CancelReserveOrderDTXRepository cancelReserveOrderDTXRepository;
-    @Getter
-    private static CancelConcludeOrderDTXRepository cancelConcludeOrderDTXRepository;
     @Getter
     private static CancelRecycleOrderDTXRepository cancelRecycleOrderDTXRepository;
     @Getter
@@ -88,10 +82,6 @@ public class DomainRegistry {
         DomainRegistry.cancelRecycleOrderDTXRepository = cancelRecycleOrderDTXRepository;
     }
 
-    @Autowired
-    private void setCancelConcludeOrderDTXRepository(CancelConcludeOrderDTXRepository cancelConcludeOrderDTXRepository) {
-        DomainRegistry.cancelConcludeOrderDTXRepository = cancelConcludeOrderDTXRepository;
-    }
 
     @Autowired
     private void setCancelReserveOrderDTXRepository(CancelReserveOrderDTXRepository cancelReserveOrderDTXRepository) {
@@ -117,11 +107,6 @@ public class DomainRegistry {
     @Autowired
     private void setPaymentService(PaymentService paymentService) {
         DomainRegistry.paymentService = paymentService;
-    }
-
-    @Autowired
-    private void setConcludeOrderDTXRepository(ConcludeOrderDTXRepository concludeOrderDTXRepository) {
-        DomainRegistry.concludeOrderDTXRepository = concludeOrderDTXRepository;
     }
 
 

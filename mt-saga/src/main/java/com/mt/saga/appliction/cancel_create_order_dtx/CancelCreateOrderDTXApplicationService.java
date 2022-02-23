@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.mt.saga.appliction.create_order_dtx.CreateOrderDTXApplicationService.DTX_COMMAND;
+
 @Slf4j
 @Service
 public class CancelCreateOrderDTXApplicationService {
@@ -127,10 +129,11 @@ public class CancelCreateOrderDTXApplicationService {
             localTxes.add(localTx3);
             localTxes.add(localTx4);
             DistributedTx dtx = DistributedTx.cancelOf(event.getDistributedTx(), localTxes);
-            CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(dtx.getParameters().get("COMMAND"), CommonOrderCommand.class);
+            dtx.startAllLocalTx();
+            CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(dtx.getParameters().get(DTX_COMMAND), CommonOrderCommand.class);
             log.info("start of cancel task of {} with changeId {}", dtx.getId(), dtx.getChangeId());
-            DomainEventPublisher.instance().publish(new CancelGeneratePaymentQRLinkEvent(event.getDistributedTx().getParameters().get("ORDER_ID"), dtx.getChangeId(), dtx.getId()));
-            DomainEventPublisher.instance().publish(new CancelDecreaseOrderStorageForCreateEvent(command, event.getDistributedTx().getParameters().get("ORDER_ID"), dtx.getChangeId(), dtx.getId()));
+            DomainEventPublisher.instance().publish(new CancelGeneratePaymentQRLinkEvent(event.getDistributedTx().getLockId(), dtx.getChangeId(), dtx.getId()));
+            DomainEventPublisher.instance().publish(new CancelDecreaseOrderStorageForCreateEvent(command, event.getDistributedTx().getLockId(), dtx.getChangeId(), dtx.getId()));
             DomainEventPublisher.instance().publish(new CancelClearCartEvent(command, dtx.getChangeId(), dtx.getId()));
             DomainEventPublisher.instance().publish(new CancelSaveNewOrderEvent(command, dtx.getChangeId(), dtx.getId()));
             dtx.startAllLocalTx();

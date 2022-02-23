@@ -31,9 +31,7 @@ import java.util.Set;
 @Service
 public class CreateOrderDTXApplicationService {
 
-    public static final String ORDER_ID = "ORDER_ID";
-    public static final String CHANGE_ID = "CHANGE_ID";
-    public static final String COMMAND = "COMMAND";
+    public static final String DTX_COMMAND = "COMMAND";
     private static final String CREATE_ORDER_DTX = "CreateOrderDtx";
 
     @SubscribeForEvent
@@ -55,9 +53,7 @@ public class CreateOrderDTXApplicationService {
                 distributedTx.startLocalTx(GeneratePaymentQRLinkEvent.name);
                 distributedTx.startLocalTx(DecreaseOrderStorageForCreateEvent.name);
                 distributedTx.startLocalTx(ClearCartEvent.name);
-                distributedTx.updateParams(ORDER_ID, event.getCommand().getOrderId());
-                distributedTx.updateParams(CHANGE_ID, event.getCommand().getTxId());
-                distributedTx.updateParams(COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
+                distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 DomainEventPublisher.instance().publish(new GeneratePaymentQRLinkEvent(event.getCommand().getOrderId(), event.getCommand().getTxId(), distributedTx.getId()));
                 DomainEventPublisher.instance().publish(new DecreaseOrderStorageForCreateEvent(event.getCommand().getOrderId(), event.getCommand().getTxId(), distributedTx.getId(), command));
                 DomainEventPublisher.instance().publish(new ClearCartEvent(command, event.getCommand().getTxId(), distributedTx.getId()));
@@ -103,7 +99,9 @@ public class CreateOrderDTXApplicationService {
             Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
             byId.ifPresent(e -> {
                 e.handle(GeneratePaymentQRLinkEvent.name, command);
-                SaveNewOrderEvent event = new SaveNewOrderEvent(command, CommonDomainRegistry.getCustomObjectSerializer().deserialize(e.getParameters().get(COMMAND), CommonOrderCommand.class), e.getId(), e.getParameters().get(CHANGE_ID));
+                SaveNewOrderEvent event = new SaveNewOrderEvent(command,
+                        CommonDomainRegistry.getCustomObjectSerializer().deserialize(e.getParameters().get(DTX_COMMAND), CommonOrderCommand.class), e.getId(),
+                        e.getChangeId());
                 e.startLocalTx(SaveNewOrderEvent.name);
                 DomainEventPublisher.instance().publish(event);
                 DomainRegistry.getDistributedTxRepository().store(e);

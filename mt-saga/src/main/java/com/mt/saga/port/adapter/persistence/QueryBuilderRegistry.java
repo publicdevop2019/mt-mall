@@ -9,15 +9,11 @@ public class QueryBuilderRegistry {
     @Getter
     private static SpringDataJpaDistributedTxRepository.JpaCriteriaApiDistributedTxAdapter distributedTxAdapter;
     @Getter
-    private static SpringDataJpaCancelConcludeOrderDTXRepository.JpaCriteriaApiCancelConcludeOrderDTXAdapter cancelConcludeOrderDTXAdapter;
-    @Getter
     private static SpringDataJpaCancelConfirmOrderPaymentDTXRepository.JpaCriteriaApiCancelConfirmOrderPaymentDTXAdapter cancelConfirmOrderPaymentDTXAdapter;
     @Getter
     private static SpringDataJpaCancelRecycleOrderDTXRepository.JpaCriteriaApiCancelRecycleOrderDTXAdapter cancelRecycleOrderDTXAdapter;
     @Getter
     private static SpringDataJpaCancelReserveOrderDTXRepository.JpaCriteriaApiCancelReserveOrderDTXAdapter cancelReserveOrderDTXAdapter;
-    @Getter
-    private static SpringDataJpaConcludeOrderDTXRepository.JpaCriteriaApiConcludeOrderDTXAdapter concludeOrderDTXAdapter;
     @Getter
     private static SpringDataJpaConfirmOrderPaymentDTXRepository.JpaCriteriaApiConfirmOrderPaymentDTXAdapter confirmOrderPaymentDTXAdapter;
     @Getter
@@ -44,10 +40,6 @@ public class QueryBuilderRegistry {
         QueryBuilderRegistry.updateOrderAddressDTXAdapter = updateOrderAddressDTXAdapter;
     }
 
-    @Autowired
-    public void setCancelConcludeOrderDTXAdapter(SpringDataJpaCancelConcludeOrderDTXRepository.JpaCriteriaApiCancelConcludeOrderDTXAdapter cancelConcludeOrderDTXAdapter) {
-        QueryBuilderRegistry.cancelConcludeOrderDTXAdapter = cancelConcludeOrderDTXAdapter;
-    }
 
     @Autowired
     public void setCancelConfirmOrderPaymentDTXAdapter(SpringDataJpaCancelConfirmOrderPaymentDTXRepository.JpaCriteriaApiCancelConfirmOrderPaymentDTXAdapter cancelConfirmOrderPaymentDTXAdapter) {
@@ -64,10 +56,6 @@ public class QueryBuilderRegistry {
         QueryBuilderRegistry.cancelReserveOrderDTXAdapter = cancelReserveOrderDTXAdapter;
     }
 
-    @Autowired
-    public void setConcludeOrderDTXAdapter(SpringDataJpaConcludeOrderDTXRepository.JpaCriteriaApiConcludeOrderDTXAdapter concludeOrderDTXAdapter) {
-        QueryBuilderRegistry.concludeOrderDTXAdapter = concludeOrderDTXAdapter;
-    }
 
     @Autowired
     public void setConfirmOrderPaymentDTXAdapter(SpringDataJpaConfirmOrderPaymentDTXRepository.JpaCriteriaApiConfirmOrderPaymentDTXAdapter confirmOrderPaymentDTXAdapter) {

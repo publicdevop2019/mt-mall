@@ -3,13 +3,11 @@ package com.mt.saga.domain;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.domain_event.StoredEvent;
 import com.mt.common.domain.model.event.MallNotificationEvent;
-import com.mt.saga.domain.model.cancel_conclude_order_dtx.CancelConcludeOrderDTX;
 import com.mt.saga.domain.model.cancel_confirm_order_payment_dtx.CancelConfirmOrderPaymentDTX;
 import com.mt.saga.domain.model.cancel_recycle_dtx.CancelRecycleOrderDTX;
 import com.mt.saga.domain.model.cancel_reserve_order_dtx.CancelReserveOrderDTX;
 import com.mt.saga.domain.model.cancel_update_order_address_dtx.CancelUpdateOrderAddressDTX;
 import com.mt.saga.domain.model.common.DTXStatus;
-import com.mt.saga.domain.model.conclude_order_dtx.ConcludeOrderDTX;
 import com.mt.saga.domain.model.confirm_order_payment_dtx.ConfirmOrderPaymentDTX;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import com.mt.saga.domain.model.recycle_order_dtx.RecycleOrderDTX;
@@ -81,25 +79,6 @@ public class PostDTXValidationService {
 //            }else{
 //                log.debug("post create/cancel create dtx validation success");
 //            }
-        }
-    }
-
-    public void validate(ConcludeOrderDTX concludeOrderDTX, CancelConcludeOrderDTX cancelConcludeOrderDTX) {
-        if (concludeOrderDTX.getStatus().equals(DTXStatus.SUCCESS) && cancelConcludeOrderDTX.getStatus().equals(DTXStatus.SUCCESS)) {
-            if (
-                    (concludeOrderDTX.isUpdateOrderLTXEmptyOpt() && !cancelConcludeOrderDTX.isCancelUpdateOrderLTXEmptyOpt())
-                            ||
-                            (!concludeOrderDTX.isUpdateOrderLTXEmptyOpt() && cancelConcludeOrderDTX.isCancelUpdateOrderLTXEmptyOpt())
-                            ||
-                            (!concludeOrderDTX.isDecreaseActualStorageLTXEmptyOpt() && cancelConcludeOrderDTX.isCancelDecreaseActualStorageLTXEmptyOpt())
-                            ||
-                            (concludeOrderDTX.isDecreaseActualStorageLTXEmptyOpt() && !cancelConcludeOrderDTX.isCancelDecreaseActualStorageLTXEmptyOpt())
-            ) {
-                notifyAdmin(concludeOrderDTX.getId(), cancelConcludeOrderDTX.getId(), concludeOrderDTX.getOrderId());
-            } else {
-                log.debug("post conclude/cancel create dtx validation success");
-            }
-
         }
     }
 

@@ -4,7 +4,7 @@ import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.cancel_conclude_order_dtx.command.CancelDecreaseActualStorageForConcludeReplyEvent;
 import com.mt.saga.appliction.cancel_conclude_order_dtx.command.CancelUpdateOrderForConcludeReplyEvent;
-import com.mt.saga.domain.model.conclude_order_dtx.event.ConcludeOrderDTXFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +25,7 @@ public class CancelConcludeOrderDTXEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CONCLUDE_ORDER_DTX_FAILED_EVENT,(event) -> {
-            ConcludeOrderDTXFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ConcludeOrderDTXFailedEvent.class);
+            DTXFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DTXFailedEvent.class);
             ApplicationServiceRegistry.getCancelConcludeOrderDTXApplicationService().handle(deserialize);
         });
     }
