@@ -1,7 +1,7 @@
 package com.mt.saga.appliction.cancel_update_order_address_dtx.representation;
 
 import com.mt.saga.appliction.common.CommonDTXCardRepresentation;
-import com.mt.saga.domain.model.cancel_update_order_address_dtx.CancelUpdateOrderAddressDTX;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,11 +9,12 @@ import lombok.Setter;
 @Setter
 public class CancelUpdateOrderAddressDTXCardRepresentation extends CommonDTXCardRepresentation {
     public String resolveReason;
-    public CancelUpdateOrderAddressDTXCardRepresentation(CancelUpdateOrderAddressDTX var0) {
+
+    public CancelUpdateOrderAddressDTXCardRepresentation(DistributedTx var0) {
         setId(var0.getId());
         setStatus(var0.getStatus());
         setChangeId(var0.getChangeId());
-        setOrderId(var0.getOrderId());
+        setOrderId(var0.getLockId());
         setCreatedAt(var0.getCreatedAt().getTime());
         setResolveReason(var0.getResolveReason());
 

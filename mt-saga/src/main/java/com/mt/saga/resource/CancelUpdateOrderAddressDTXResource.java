@@ -5,7 +5,7 @@ import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.cancel_update_order_address_dtx.representation.CancelUpdateOrderAddressDTXCardRepresentation;
 import com.mt.saga.appliction.cancel_update_order_address_dtx.representation.CancelUpdateOrderAddressDTXRepresentation;
 import com.mt.saga.appliction.common.ResolveReason;
-import com.mt.saga.domain.model.cancel_update_order_address_dtx.CancelUpdateOrderAddressDTX;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,14 +22,15 @@ public class CancelUpdateOrderAddressDTXResource {
             @RequestParam(value = HTTP_PARAM_PAGE, required = false) String pageParam,
             @RequestParam(value = HTTP_PARAM_SKIP_COUNT, required = false) String skipCount
     ) {
-        SumPagedRep<CancelUpdateOrderAddressDTX> dtx = ApplicationServiceRegistry.getCancelUpdateOrderAddressDTXApplicationService().query(queryParam, pageParam, skipCount);
+        SumPagedRep<DistributedTx> dtx = ApplicationServiceRegistry.getCancelUpdateOrderAddressDTXApplicationService().query(queryParam, pageParam, skipCount);
         return ResponseEntity.ok(new SumPagedRep<>(dtx, CancelUpdateOrderAddressDTXCardRepresentation::new));
     }
+
     @GetMapping("admin/{id}")
     public ResponseEntity<?> readForAdminById(
             @PathVariable(name = "id") long id
     ) {
-        Optional<CancelUpdateOrderAddressDTX> dtx = ApplicationServiceRegistry.getCancelUpdateOrderAddressDTXApplicationService().query(id);
+        Optional<DistributedTx> dtx = ApplicationServiceRegistry.getCancelUpdateOrderAddressDTXApplicationService().query(id);
         return dtx.map(e -> ResponseEntity.ok(new CancelUpdateOrderAddressDTXRepresentation(e))).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
@@ -38,7 +39,7 @@ public class CancelUpdateOrderAddressDTXResource {
             @PathVariable(name = "id") long id,
             @RequestBody ResolveReason resolveReason
     ) {
-        ApplicationServiceRegistry.getCancelUpdateOrderAddressDTXApplicationService().resolve(id,resolveReason);
+        ApplicationServiceRegistry.getCancelUpdateOrderAddressDTXApplicationService().resolve(id, resolveReason);
         return ResponseEntity.ok().build();
     }
 }

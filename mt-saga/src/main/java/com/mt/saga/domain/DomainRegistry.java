@@ -2,12 +2,10 @@ package com.mt.saga.domain;
 
 import com.mt.saga.appliction.cancel_create_order_dtx.CancelCreateOrderDTXApplicationService;
 import com.mt.saga.domain.model.IsolationService;
-import com.mt.saga.domain.model.cancel_update_order_address_dtx.CancelUpdateOrderAddressDTXRepository;
 import com.mt.saga.domain.model.distributed_tx.DistributedTxRepository;
 import com.mt.saga.domain.model.order_state_machine.OrderStateMachineBuilder;
 import com.mt.saga.domain.model.order_state_machine.PaymentService;
 import com.mt.saga.domain.model.order_state_machine.ProductService;
-import com.mt.saga.domain.model.update_order_address_dtx.UpdateOrderAddressDTXRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +26,6 @@ public class DomainRegistry {
     private static PostDTXValidationService postDtxValidationService;
     @Getter
     private static DistributedTxRepository distributedTxRepository;
-    @Getter
-    private static CancelUpdateOrderAddressDTXRepository cancelUpdateOrderAddressDTXRepository;
-    @Getter
-    private static UpdateOrderAddressDTXRepository updateOrderAddressDTXRepository;
 
     @Autowired
     private void setDistributedTxRepository(DistributedTxRepository distributedTxRepository) {
@@ -45,20 +39,9 @@ public class DomainRegistry {
     }
 
     @Autowired
-    private void setCancelUpdateOrderAddressDTXRepository(CancelUpdateOrderAddressDTXRepository cancelUpdateOrderAddressDTXRepository) {
-        DomainRegistry.cancelUpdateOrderAddressDTXRepository = cancelUpdateOrderAddressDTXRepository;
-    }
-
-    @Autowired
-    private void setUpdateOrderAddressDTXRepository(UpdateOrderAddressDTXRepository updateOrderAddressDTXRepository) {
-        DomainRegistry.updateOrderAddressDTXRepository = updateOrderAddressDTXRepository;
-    }
-
-    @Autowired
     private void setPostDtxValidationService(PostDTXValidationService postDtxValidationService) {
         DomainRegistry.postDtxValidationService = postDtxValidationService;
     }
-
 
 
     @Autowired
@@ -76,7 +59,6 @@ public class DomainRegistry {
     private void setPaymentService(PaymentService paymentService) {
         DomainRegistry.paymentService = paymentService;
     }
-
 
 
     @Autowired

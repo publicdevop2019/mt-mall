@@ -4,7 +4,7 @@ import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.update_order_address_dtx.representation.UpdateOrderAddressDTXCardRepresentation;
 import com.mt.saga.appliction.update_order_address_dtx.representation.UpdateOrderAddressDTXRepresentation;
-import com.mt.saga.domain.model.update_order_address_dtx.UpdateOrderAddressDTX;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,7 @@ public class UpdateOrderAddressDTXResource {
             @RequestParam(value = HTTP_PARAM_PAGE, required = false) String pageParam,
             @RequestParam(value = HTTP_PARAM_SKIP_COUNT, required = false) String skipCount
     ) {
-        SumPagedRep<UpdateOrderAddressDTX> dtx = ApplicationServiceRegistry.getUpdateOrderAddressDTXApplicationService().query(queryParam, pageParam, skipCount);
+        SumPagedRep<DistributedTx> dtx = ApplicationServiceRegistry.getUpdateOrderAddressDTXApplicationService().query(queryParam, pageParam, skipCount);
         return ResponseEntity.ok(new SumPagedRep<>(dtx, UpdateOrderAddressDTXCardRepresentation::new));
     }
 
@@ -37,7 +37,7 @@ public class UpdateOrderAddressDTXResource {
     public ResponseEntity<?> readForAdminById(
             @PathVariable(name = "id") long id
     ) {
-        Optional<UpdateOrderAddressDTX> dtx = ApplicationServiceRegistry.getUpdateOrderAddressDTXApplicationService().query(id);
+        Optional<DistributedTx> dtx = ApplicationServiceRegistry.getUpdateOrderAddressDTXApplicationService().query(id);
         return dtx.map(e -> ResponseEntity.ok(new UpdateOrderAddressDTXRepresentation(e))).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 }
