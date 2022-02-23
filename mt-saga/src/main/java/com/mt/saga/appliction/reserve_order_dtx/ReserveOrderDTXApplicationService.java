@@ -9,13 +9,11 @@ import com.mt.saga.appliction.reserve_order_dtx.command.DecreaseOrderStorageForR
 import com.mt.saga.appliction.reserve_order_dtx.command.OrderUpdateForReserveFailedCommand;
 import com.mt.saga.appliction.reserve_order_dtx.command.UpdateOrderForReserveReplyEvent;
 import com.mt.saga.domain.DomainRegistry;
-import com.mt.saga.domain.model.IsolationService;
 import com.mt.saga.domain.model.cancel_reserve_order_dtx.event.CancelReserveOrderDTXSuccessEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateReserveOrderDTXEvent;
 import com.mt.saga.domain.model.reserve_order_dtx.ReserveOrderDTX;
 import com.mt.saga.domain.model.reserve_order_dtx.ReserveOrderDTXQuery;
 import com.mt.saga.domain.model.reserve_order_dtx.event.DecreaseOrderStorageForReserveEvent;
-import com.mt.saga.domain.model.reserve_order_dtx.event.ReserveOrderDTXFailedEvent;
 import com.mt.saga.domain.model.reserve_order_dtx.event.UpdateOrderForReserveEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -1,13 +1,20 @@
 package com.mt.saga.domain.model.distributed_tx;
 
+import com.mt.common.application.CommonApplicationServiceRegistry;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.audit.Auditable;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
+import com.mt.common.domain.model.domain_event.StoredEvent;
+import com.mt.common.domain.model.domain_event.StoredEventQuery;
+import com.mt.common.domain.model.restful.SumPagedRep;
+import com.mt.common.domain.model.restful.query.PageConfig;
+import com.mt.common.domain.model.restful.query.QueryConfig;
 import com.mt.common.domain.model.validate.Validator;
 import com.mt.saga.appliction.common.ResolveReason;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.common.DTXStatus;
 import com.mt.saga.domain.model.common.LTXStatus;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,6 +22,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,7 +30,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DistributedTx extends Auditable implements AttributeConverter<Map<String, String>, String> {
     protected String name;
     @Id
@@ -56,6 +64,27 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
         distributedTx1.forwardDtxId = distributedTx.getId();
         distributedTx1.isCancel = true;
         return distributedTx1;
+    }
+
+    public static void handle(DTXSuccessEvent deserialize) {
+        if (!deserialize.isCancel()) {
+            return;
+        }
+        Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(deserialize.getOriginalTaskId());
+        byId.ifPresent(dtx -> {
+            if (dtx.getStatus().equals(DTXStatus.STARTED)) {
+                SumPagedRep<StoredEvent> relatedEvents = CommonDomainRegistry.getEventRepository().query(
+                        new StoredEventQuery("domainId:" + dtx.getId(),
+                                PageConfig.defaultConfig().getRawValue()
+                                , QueryConfig.skipCount().value()));
+                Set<String> startedLtxEventName = dtx.getStartedLtxEventName();
+                relatedEvents.getData().forEach(event -> {
+                    if (startedLtxEventName.contains(event.getName())) {
+                        CommonApplicationServiceRegistry.getStoredEventApplicationService().retry(event.getId());
+                    }
+                });
+            }
+        });
     }
 
     public void updateParams(String key, String value) {
@@ -144,5 +173,14 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
     @Override
     public Map<String, String> convertToEntityAttribute(String s) {
         return CommonDomainRegistry.getCustomObjectSerializer().deserializeToMap(s, String.class, String.class);
+    }
+
+    public Set<String> getStartedLtxEventName() {
+        return localTxs.values().stream().filter(e->e.getStatus().equals(LTXStatus.STARTED)).map(LocalTx::getEventName).collect(Collectors.toSet());
+    }
+
+    public void skipLocalTx(String name) {
+        LocalTx localTx = this.localTxs.get(name);
+        localTx.skip();
     }
 }

@@ -1,6 +1,5 @@
 package com.mt.saga.domain.model.order_state_machine.order;
 
-import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.io.Serializable;

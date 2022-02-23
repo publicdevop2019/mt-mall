@@ -4,7 +4,6 @@ import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.create_order_dtx.representation.CreateOrderDTXCardRepresentation;
 import com.mt.saga.appliction.create_order_dtx.representation.CreateOrderDTXRepresentation;
-import com.mt.saga.domain.model.create_order_dtx.CreateOrderDTX;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

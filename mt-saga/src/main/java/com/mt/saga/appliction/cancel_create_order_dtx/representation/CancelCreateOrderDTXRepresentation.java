@@ -1,15 +1,12 @@
 package com.mt.saga.appliction.cancel_create_order_dtx.representation;
 
 import com.mt.common.domain.CommonDomainRegistry;
-import com.mt.common.domain.model.clazz.ClassUtility;
 import com.mt.common.domain.model.domain_event.StoredEvent;
 import com.mt.common.domain.model.domain_event.StoredEventQuery;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.PageConfig;
 import com.mt.common.domain.model.restful.query.QueryConfig;
-import com.mt.saga.appliction.common.CommonDTXCardRepresentation;
 import com.mt.saga.appliction.common.CommonDTXRepresentation;
-import com.mt.saga.domain.model.cancel_create_order_dtx.CancelCreateOrderDTX;
 import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelClearCartEvent;
 import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelDecreaseOrderStorageForCreateEvent;
 import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelGeneratePaymentQRLinkEvent;
@@ -17,9 +14,6 @@ import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelSaveNewOrder
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import lombok.Getter;
 import lombok.Setter;
-
-import static com.mt.saga.appliction.cancel_create_order_dtx.CancelCreateOrderDTXApplicationService.*;
-import static com.mt.saga.appliction.create_order_dtx.CreateOrderDTXApplicationService.APP_SAVE_NEW_ORDER;
 
 @Setter
 @Getter
@@ -36,30 +30,27 @@ public class CancelCreateOrderDTXRepresentation extends CommonDTXRepresentation 
         setChangeId(var0.getChangeId());
         setOrderId(var0.getLockId());
         setCreatedAt(var0.getCreatedAt().getTime());
-        statusMap.put(CANCEL_DECREASE_ORDER_STORAGE, var0.getLocalTxStatusByName(APP_CANCEL_DECREASE_ORDER_STORAGE));
-        statusMap.put(CANCEL_GENERATE_PAYMENT_LINK, var0.getLocalTxStatusByName(APP_CANCEL_GENERATE_PAYMENT_QR_LINK));
-        statusMap.put(CANCEL_SAVE_NEW_ORDER, var0.getLocalTxStatusByName(APP_CANCEL_SAVE_NEW_ORDER));
-        statusMap.put(CANCEL_REMOVE_ITEMS_FROM_CART, var0.getLocalTxStatusByName(APP_CANCEL_CLEAR_CART));
-        emptyOptMap.put(CANCEL_DECREASE_ORDER_STORAGE, var0.isLocalTxEmptyOptByName(APP_CANCEL_DECREASE_ORDER_STORAGE));
-        emptyOptMap.put(CANCEL_GENERATE_PAYMENT_LINK, var0.isLocalTxEmptyOptByName(APP_CANCEL_GENERATE_PAYMENT_QR_LINK));
-        emptyOptMap.put(CANCEL_SAVE_NEW_ORDER, var0.isLocalTxEmptyOptByName(APP_CANCEL_SAVE_NEW_ORDER));
-        emptyOptMap.put(CANCEL_REMOVE_ITEMS_FROM_CART, var0.isLocalTxEmptyOptByName(APP_CANCEL_CLEAR_CART));
+        statusMap.put(CANCEL_DECREASE_ORDER_STORAGE, var0.getLocalTxStatusByName(CancelDecreaseOrderStorageForCreateEvent.name));
+        statusMap.put(CANCEL_GENERATE_PAYMENT_LINK, var0.getLocalTxStatusByName(CancelGeneratePaymentQRLinkEvent.name));
+        statusMap.put(CANCEL_SAVE_NEW_ORDER, var0.getLocalTxStatusByName(CancelSaveNewOrderEvent.name));
+        statusMap.put(CANCEL_REMOVE_ITEMS_FROM_CART, var0.getLocalTxStatusByName(CancelClearCartEvent.name));
+        emptyOptMap.put(CANCEL_DECREASE_ORDER_STORAGE, var0.isLocalTxEmptyOptByName(CancelDecreaseOrderStorageForCreateEvent.name));
+        emptyOptMap.put(CANCEL_GENERATE_PAYMENT_LINK, var0.isLocalTxEmptyOptByName(CancelGeneratePaymentQRLinkEvent.name));
+        emptyOptMap.put(CANCEL_SAVE_NEW_ORDER, var0.isLocalTxEmptyOptByName(CancelSaveNewOrderEvent.name));
+        emptyOptMap.put(CANCEL_REMOVE_ITEMS_FROM_CART, var0.isLocalTxEmptyOptByName(CancelClearCartEvent.name));
         SumPagedRep<StoredEvent> query = CommonDomainRegistry.getEventRepository().query(
                 new StoredEventQuery("domainId:" + var0.getId(),
                         PageConfig.defaultConfig().getRawValue()
                         , QueryConfig.skipCount().value()));
-        query.getData().forEach(e->{
-            if(CancelClearCartEvent.name.equalsIgnoreCase(e.getName())){
-                idMap.put(CANCEL_REMOVE_ITEMS_FROM_CART,e.getId());
-            }
-            else if(CancelDecreaseOrderStorageForCreateEvent.name.equalsIgnoreCase(e.getName())){
-                idMap.put(CANCEL_DECREASE_ORDER_STORAGE,e.getId());
-            }
-            else if(CancelGeneratePaymentQRLinkEvent.name.equalsIgnoreCase(e.getName())){
-                idMap.put(CANCEL_GENERATE_PAYMENT_LINK,e.getId());
-            }
-            else if(CancelSaveNewOrderEvent.name.equalsIgnoreCase(e.getName())){
-                idMap.put(CANCEL_SAVE_NEW_ORDER,e.getId());
+        query.getData().forEach(e -> {
+            if (CancelClearCartEvent.name.equalsIgnoreCase(e.getName())) {
+                idMap.put(CANCEL_REMOVE_ITEMS_FROM_CART, e.getId());
+            } else if (CancelDecreaseOrderStorageForCreateEvent.name.equalsIgnoreCase(e.getName())) {
+                idMap.put(CANCEL_DECREASE_ORDER_STORAGE, e.getId());
+            } else if (CancelGeneratePaymentQRLinkEvent.name.equalsIgnoreCase(e.getName())) {
+                idMap.put(CANCEL_GENERATE_PAYMENT_LINK, e.getId());
+            } else if (CancelSaveNewOrderEvent.name.equalsIgnoreCase(e.getName())) {
+                idMap.put(CANCEL_SAVE_NEW_ORDER, e.getId());
             }
         });
 

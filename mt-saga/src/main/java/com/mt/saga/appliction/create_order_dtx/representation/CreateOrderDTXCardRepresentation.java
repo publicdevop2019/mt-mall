@@ -1,7 +1,6 @@
 package com.mt.saga.appliction.create_order_dtx.representation;
 
 import com.mt.saga.appliction.common.CommonDTXCardRepresentation;
-import com.mt.saga.domain.model.create_order_dtx.CreateOrderDTX;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,5 @@
 package com.mt.saga.port.adapter.http;
 
-import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.service_discovery.EurekaHelper;
 import com.mt.saga.domain.model.order_state_machine.ProductService;
 import com.mt.saga.domain.model.order_state_machine.order.CartDetail;
@@ -15,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.mt.common.CommonConstant.HTTP_HEADER_CHANGE_ID;
 import static com.mt.common.CommonConstant.HTTP_PARAM_QUERY;
 
 

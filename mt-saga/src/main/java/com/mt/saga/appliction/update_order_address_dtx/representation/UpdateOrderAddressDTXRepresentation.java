@@ -8,8 +8,6 @@ import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.PageConfig;
 import com.mt.common.domain.model.restful.query.QueryConfig;
 import com.mt.saga.appliction.common.CommonDTXRepresentation;
-import com.mt.saga.domain.model.confirm_order_payment_dtx.ConfirmOrderPaymentDTX;
-import com.mt.saga.domain.model.confirm_order_payment_dtx.event.UpdateOrderPaymentSuccessEvent;
 import com.mt.saga.domain.model.update_order_address_dtx.UpdateOrderAddressDTX;
 import com.mt.saga.domain.model.update_order_address_dtx.event.UpdateOrderForUpdateOrderAddressEvent;
 import lombok.Getter;

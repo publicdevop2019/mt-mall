@@ -2,23 +2,15 @@ package com.mt.saga.port.adapter.persistence;
 
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.QueryUtility;
-import com.mt.saga.domain.model.cancel_conclude_order_dtx.CancelConcludeOrderDTX;
-import com.mt.saga.domain.model.cancel_conclude_order_dtx.CancelConcludeOrderDTXQuery;
-import com.mt.saga.domain.model.cancel_conclude_order_dtx.CancelConcludeOrderDTX_;
 import com.mt.saga.domain.model.conclude_order_dtx.ConcludeOrderDTX;
 import com.mt.saga.domain.model.conclude_order_dtx.ConcludeOrderDTXQuery;
 import com.mt.saga.domain.model.conclude_order_dtx.ConcludeOrderDTXRepository;
 import com.mt.saga.domain.model.conclude_order_dtx.ConcludeOrderDTX_;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.LockModeType;
 import javax.persistence.criteria.Order;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Repository

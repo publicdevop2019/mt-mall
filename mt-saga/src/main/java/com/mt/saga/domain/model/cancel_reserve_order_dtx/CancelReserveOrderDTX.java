@@ -8,9 +8,9 @@ import com.mt.saga.appliction.cancel_reserve_order_dtx.command.CancelDecreaseOrd
 import com.mt.saga.appliction.cancel_reserve_order_dtx.command.CancelUpdateOrderForReserveReplyEvent;
 import com.mt.saga.appliction.common.ResolveReason;
 import com.mt.saga.domain.model.cancel_reserve_order_dtx.event.CancelReserveOrderDTXSuccessEvent;
-import com.mt.saga.domain.model.reserve_order_dtx.event.ReserveOrderDTXFailedEvent;
 import com.mt.saga.domain.model.common.DTXStatus;
 import com.mt.saga.domain.model.common.LTXStatus;
+import com.mt.saga.domain.model.reserve_order_dtx.event.ReserveOrderDTXFailedEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.Data;
 import lombok.NoArgsConstructor;

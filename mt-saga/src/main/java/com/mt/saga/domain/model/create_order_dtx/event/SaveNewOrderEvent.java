@@ -1,15 +1,14 @@
 package com.mt.saga.domain.model.create_order_dtx.event;
 
-import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.saga.appliction.create_order_dtx.command.GeneratePaymentQRLinkReplyCommand;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
-import com.mt.saga.domain.model.create_order_dtx.CreateOrderDTX;
 import com.mt.saga.domain.model.order_state_machine.order.BizOrderAddressCmdRep;
 import com.mt.saga.domain.model.order_state_machine.order.BizOrderStatus;
 import com.mt.saga.domain.model.order_state_machine.order.CartDetail;
 import com.mt.saga.infrastructure.AppConstant;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +18,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SaveNewOrderEvent extends DomainEvent {
     public static final String name = "SAVE_NEW_ORDER_EVENT";
     private String orderId;
@@ -34,7 +33,7 @@ public class SaveNewOrderEvent extends DomainEvent {
     private String changeId;
     private long taskId;
 
-    public SaveNewOrderEvent(GeneratePaymentQRLinkReplyCommand reply, CommonOrderCommand command, Long taskId,String changeId) {
+    public SaveNewOrderEvent(GeneratePaymentQRLinkReplyCommand reply, CommonOrderCommand command, Long taskId, String changeId) {
         setAddress(command.getAddress());
         setCreatedBy(command.getCreatedBy());
         setOrderId(command.getOrderId());

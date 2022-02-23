@@ -3,7 +3,6 @@ package com.mt.saga.domain.model.cancel_reserve_order_dtx.event;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.common.domain.model.domain_event.MQHelper;
-import com.mt.saga.domain.model.cancel_conclude_order_dtx.CancelConcludeOrderDTX;
 import com.mt.saga.domain.model.cancel_reserve_order_dtx.CancelReserveOrderDTX;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.Getter;

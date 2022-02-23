@@ -2,9 +2,7 @@ package com.mt.saga.domain.model.distributed_tx;
 
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
-import com.mt.saga.infrastructure.AppConstant;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class DTXFailedEvent extends DomainEvent {

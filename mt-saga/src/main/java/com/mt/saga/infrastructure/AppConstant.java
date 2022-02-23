@@ -1,7 +1,5 @@
 package com.mt.saga.infrastructure;
 
-import com.mt.common.domain.model.domain_event.MQHelper;
-
 public class AppConstant {
     public static final String APP_HANDLER_SUFFIX = "_saga_handler";
     public static final String APP_CHANGE_ID_CANCEL_SUFFIX = "_cancel";
@@ -40,6 +38,7 @@ public class AppConstant {
     //start of update order address
     public static final String UPDATE_ORDER_FOR_UPDATE_ORDER_ADDRESS_EVENT = "update_order_for_update_order_address_event";
     //end of update order address
+    public static final String DTX_SUCCESS_EVENT = "dtx_success_event";
 
     //start of create dtx
     public static final String CREATE_CREATE_ORDER_DTX_EVENT = "create_create_order_dtx_event";

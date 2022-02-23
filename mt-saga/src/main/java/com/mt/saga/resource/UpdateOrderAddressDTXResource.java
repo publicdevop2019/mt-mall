@@ -2,11 +2,8 @@ package com.mt.saga.resource;
 
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.confirm_order_payment_dtx.representation.ConfirmOrderPaymentDTXCardRepresentation;
-import com.mt.saga.appliction.confirm_order_payment_dtx.representation.ConfirmOrderPaymentDTXRepresentation;
 import com.mt.saga.appliction.update_order_address_dtx.representation.UpdateOrderAddressDTXCardRepresentation;
 import com.mt.saga.appliction.update_order_address_dtx.representation.UpdateOrderAddressDTXRepresentation;
-import com.mt.saga.domain.model.confirm_order_payment_dtx.ConfirmOrderPaymentDTX;
 import com.mt.saga.domain.model.update_order_address_dtx.UpdateOrderAddressDTX;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -3,13 +3,11 @@ package com.mt.saga.domain.model.cancel_recycle_dtx.event;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.saga.domain.model.cancel_recycle_dtx.CancelRecycleOrderDTX;
-import com.mt.saga.domain.model.cancel_reserve_order_dtx.CancelReserveOrderDTX;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import static com.mt.saga.infrastructure.AppConstant.CANCEL_RECYCLE_ORDER_DTX_SUCCESS_EVENT;
-import static com.mt.saga.infrastructure.AppConstant.CANCEL_RESERVE_ORDER_DTX_SUCCESS_EVENT;
 
 @Setter
 @Getter

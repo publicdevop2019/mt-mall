@@ -11,16 +11,22 @@ public class DTXSuccessEvent extends DomainEvent {
     public static final String name = "DTX_SUCCESS_EVENT";
     private String orderId;
     private long taskId;
+    private long originalTaskId;
     private String changeId;
+    private boolean isCancel;
 
     public DTXSuccessEvent(DistributedTx dtx) {
         setOrderId(dtx.getLockId());
         setInternal(true);
-        setTopic(AppConstant.CREATE_ORDER_DTX_SUCCESS_EVENT);
+        setTopic(AppConstant.DTX_SUCCESS_EVENT);
         setDomainId(new DomainId(dtx.getId().toString()));
         setName(name);
         setTaskId(dtx.getId());
         setChangeId(dtx.getChangeId());
+        isCancel = dtx.isCancel();
+        if (dtx.isCancel()) {
+            originalTaskId = dtx.getForwardDtxId();
+        }
     }
 
     private DTXSuccessEvent() {

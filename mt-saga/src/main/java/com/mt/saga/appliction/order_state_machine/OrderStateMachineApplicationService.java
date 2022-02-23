@@ -1,7 +1,6 @@
 package com.mt.saga.appliction.order_state_machine;
 
 import com.mt.common.application.CommonApplicationServiceRegistry;
-import com.mt.common.domain.model.distributed_lock.SagaDistLock;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.confirm_order_payment_dtx.event.ConfirmOrderPaymentDTXSuccessEvent;

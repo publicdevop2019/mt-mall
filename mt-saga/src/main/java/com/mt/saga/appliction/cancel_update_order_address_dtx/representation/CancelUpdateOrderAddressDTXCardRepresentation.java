@@ -1,7 +1,6 @@
 package com.mt.saga.appliction.cancel_update_order_address_dtx.representation;
 
 import com.mt.saga.appliction.common.CommonDTXCardRepresentation;
-import com.mt.saga.domain.model.cancel_confirm_order_payment_dtx.CancelConfirmOrderPaymentDTX;
 import com.mt.saga.domain.model.cancel_update_order_address_dtx.CancelUpdateOrderAddressDTX;
 import lombok.Getter;
 import lombok.Setter;

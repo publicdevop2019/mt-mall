@@ -1,7 +1,6 @@
 package com.mt.saga.appliction.update_order_address_dtx.representation;
 
 import com.mt.saga.appliction.common.CommonDTXCardRepresentation;
-import com.mt.saga.domain.model.confirm_order_payment_dtx.ConfirmOrderPaymentDTX;
 import com.mt.saga.domain.model.update_order_address_dtx.UpdateOrderAddressDTX;
 import lombok.Getter;
 import lombok.Setter;

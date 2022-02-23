@@ -3,7 +3,6 @@ package com.mt.saga.domain.model.create_order_dtx.event;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
-import com.mt.saga.domain.model.create_order_dtx.CreateOrderDTX;
 import com.mt.saga.domain.model.order_state_machine.order.CartDetail;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.Getter;

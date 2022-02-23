@@ -10,7 +10,6 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Convert;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -33,11 +32,16 @@ public class LocalTx {
             throw new IllegalArgumentException("can not mark non start tx as success");
         }
         status = LTXStatus.SUCCESS;
-        emptyOperation = replyEvent.isEmptyOperation();
+        emptyOperation = replyEvent.isEmptyOpt();
     }
 
     protected void start() {
         status = LTXStatus.STARTED;
+    }
+
+    public void skip() {
+        status = LTXStatus.SUCCESS;
+        emptyOperation = true;
     }
 
 

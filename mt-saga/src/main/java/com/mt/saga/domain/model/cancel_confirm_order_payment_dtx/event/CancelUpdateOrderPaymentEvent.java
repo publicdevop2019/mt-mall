@@ -4,16 +4,10 @@ import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.saga.domain.model.cancel_confirm_order_payment_dtx.CancelConfirmOrderPaymentDTX;
-import com.mt.saga.domain.model.order_state_machine.order.BizOrderAddressCmdRep;
-import com.mt.saga.domain.model.order_state_machine.order.BizOrderStatus;
-import com.mt.saga.domain.model.order_state_machine.order.CartDetail;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @Setter
 @Getter

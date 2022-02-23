@@ -2,10 +2,7 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.create_order_dtx.command.OrderUpdateForCreateFailedCommand;
 import com.mt.saga.appliction.invalid_order_dtx.command.*;
-import com.mt.saga.appliction.reserve_order_dtx.command.DecreaseOrderStorageForReserveReplyEvent;
-import com.mt.saga.domain.model.cancel_invalid_order.event.CancelInvalidOrderDTXSuccessEvent;
 import com.mt.saga.domain.model.order_state_machine.event.CreateInvalidOrderDTXEvent;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -66,13 +63,6 @@ public class InvalidOrderDTXEventSubscriber {
         });
     }
 
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener3() {
-        CommonDomainRegistry.getEventStreamService().of(appName, true,AppConstant.CANCEL_INVALID_ORDER_DTX_SUCCESS_EVENT, (event) -> {
-            CancelInvalidOrderDTXSuccessEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CancelInvalidOrderDTXSuccessEvent.class);
-            ApplicationServiceRegistry.getInvalidOrderDTXDTXApplicationService().handle(deserialize);
-        });
-    }
     @EventListener(ApplicationReadyEvent.class)
     private void listener7() {
         CommonDomainRegistry.getEventStreamService().of(profileAppName, false, AppConstant.ORDER_UPDATE_FOR_INVALID_FAILED, (event) -> {

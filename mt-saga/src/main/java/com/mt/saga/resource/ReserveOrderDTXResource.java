@@ -2,11 +2,8 @@ package com.mt.saga.resource;
 
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.create_order_dtx.representation.CreateOrderDTXCardRepresentation;
-import com.mt.saga.appliction.create_order_dtx.representation.CreateOrderDTXRepresentation;
 import com.mt.saga.appliction.reserve_order_dtx.representation.ReserveOrderDTXCardRepresentation;
 import com.mt.saga.appliction.reserve_order_dtx.representation.ReserveOrderDTXRepresentation;
-import com.mt.saga.domain.model.create_order_dtx.CreateOrderDTX;
 import com.mt.saga.domain.model.reserve_order_dtx.ReserveOrderDTX;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +24,7 @@ public class ReserveOrderDTXResource {
         SumPagedRep<ReserveOrderDTX> dtx = ApplicationServiceRegistry.getReserveOrderDTXApplicationService().query(queryParam, pageParam, skipCount);
         return ResponseEntity.ok(new SumPagedRep<>(dtx, ReserveOrderDTXCardRepresentation::new));
     }
+
     @PostMapping("admin/{dtxId}/cancel")
     public ResponseEntity<?> cancelCreateOrderDtx(
             @PathVariable("dtxId") long dtxId
@@ -34,6 +32,7 @@ public class ReserveOrderDTXResource {
         ApplicationServiceRegistry.getReserveOrderDTXApplicationService().cancel(dtxId);
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("admin/{id}")
     public ResponseEntity<?> readForAdminById(
             @PathVariable(name = "id") long id

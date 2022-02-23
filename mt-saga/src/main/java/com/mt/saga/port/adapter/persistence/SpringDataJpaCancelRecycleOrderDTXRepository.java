@@ -2,15 +2,10 @@ package com.mt.saga.port.adapter.persistence;
 
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.QueryUtility;
-import com.mt.saga.domain.model.cancel_conclude_order_dtx.CancelConcludeOrderDTX;
-import com.mt.saga.domain.model.cancel_conclude_order_dtx.CancelConcludeOrderDTXQuery;
-import com.mt.saga.domain.model.cancel_conclude_order_dtx.CancelConcludeOrderDTX_;
 import com.mt.saga.domain.model.cancel_recycle_dtx.CancelRecycleOrderDTX;
 import com.mt.saga.domain.model.cancel_recycle_dtx.CancelRecycleOrderDTXQuery;
 import com.mt.saga.domain.model.cancel_recycle_dtx.CancelRecycleOrderDTXRepository;
 import com.mt.saga.domain.model.cancel_recycle_dtx.CancelRecycleOrderDTX_;
-import com.mt.saga.domain.model.cancel_reserve_order_dtx.CancelReserveOrderDTX;
-import com.mt.saga.domain.model.cancel_reserve_order_dtx.CancelReserveOrderDTXRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;

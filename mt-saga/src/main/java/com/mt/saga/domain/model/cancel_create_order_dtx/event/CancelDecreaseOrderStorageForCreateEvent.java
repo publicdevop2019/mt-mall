@@ -6,7 +6,6 @@ import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.common.domain.model.restful.PatchCommand;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
-import com.mt.saga.domain.model.cancel_create_order_dtx.CancelCreateOrderDTX;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

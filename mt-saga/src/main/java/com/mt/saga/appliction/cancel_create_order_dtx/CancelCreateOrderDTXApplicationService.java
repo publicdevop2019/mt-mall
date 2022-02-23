@@ -17,8 +17,10 @@ import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelClearCartEve
 import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelDecreaseOrderStorageForCreateEvent;
 import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelGeneratePaymentQRLinkEvent;
 import com.mt.saga.domain.model.cancel_create_order_dtx.event.CancelSaveNewOrderEvent;
-import com.mt.saga.domain.model.distributed_tx.*;
-import com.mt.saga.infrastructure.AppConstant;
+import com.mt.saga.domain.model.distributed_tx.DTXFailedEvent;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxQuery;
+import com.mt.saga.domain.model.distributed_tx.LocalTx;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -31,23 +33,17 @@ import java.util.Set;
 @Service
 public class CancelCreateOrderDTXApplicationService {
 
-    public static final String APP_CANCEL_GENERATE_PAYMENT_QR_LINK = "CANCEL_GENERATE_PAYMENT_QR_LINK";
-    public static final String APP_CANCEL_DECREASE_ORDER_STORAGE = "CANCEL_DECREASE_ORDER_STORAGE";
-    public static final String APP_CANCEL_CLEAR_CART = "CANCEL_CLEAR_CART";
-    public static final String APP_CANCEL_SAVE_NEW_ORDER = "CANCEL_SAVE_NEW_ORDER";
-
     private static final String CANCEL_CREATE_ORDER_DTX = "CancelCreateOrderDTX";
     private static final String CANCEL_CREATE_ORDER_DTX_RESOLVED = "CancelCreateOrderDTXResolved";
 
     @DTXDistLock(keyExpression = "#p0.taskId")
     @Transactional
     @SubscribeForEvent
-    public void handleCommand(CancelGeneratePaymentQRLinkReplyCommand command) {
+    public void handle(CancelGeneratePaymentQRLinkReplyCommand command) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(command.getId().toString(), (change) -> {
-            ReplyEvent replyEvent = new ReplyEvent(command);
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(replyEvent.getTaskId());
+            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
             byId.ifPresent(e -> {
-                e.handle(APP_CANCEL_GENERATE_PAYMENT_QR_LINK, replyEvent);
+                e.handle(CancelGeneratePaymentQRLinkEvent.name, command);
                 DomainRegistry.getDistributedTxRepository().store(e);
             });
             return null;
@@ -57,12 +53,11 @@ public class CancelCreateOrderDTXApplicationService {
     @DTXDistLock(keyExpression = "#p0.taskId")
     @Transactional
     @SubscribeForEvent
-    public void handleCommand(CancelDecreaseOrderStorageForCreateReplyCommand deserialize) {
+    public void handle(CancelDecreaseOrderStorageForCreateReplyCommand deserialize) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(deserialize.getId().toString(), (change) -> {
-            ReplyEvent replyEvent = new ReplyEvent(deserialize);
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(replyEvent.getTaskId());
+            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(deserialize.getTaskId());
             byId.ifPresent(e -> {
-                e.handle(APP_CANCEL_DECREASE_ORDER_STORAGE, replyEvent);
+                e.handle(CancelDecreaseOrderStorageForCreateEvent.name, deserialize);
                 DomainRegistry.getDistributedTxRepository().store(e);
             });
             return null;
@@ -72,12 +67,11 @@ public class CancelCreateOrderDTXApplicationService {
     @DTXDistLock(keyExpression = "#p0.taskId")
     @Transactional
     @SubscribeForEvent
-    public void handleCommand(CancelClearCartReplyCommand deserialize) {
+    public void handle(CancelClearCartReplyCommand deserialize) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(deserialize.getId().toString(), (change) -> {
-            ReplyEvent replyEvent = new ReplyEvent(deserialize);
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(replyEvent.getTaskId());
+            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(deserialize.getTaskId());
             byId.ifPresent(e -> {
-                e.handle(APP_CANCEL_CLEAR_CART, replyEvent);
+                e.handle(CancelClearCartEvent.name, deserialize);
                 DomainRegistry.getDistributedTxRepository().store(e);
             });
             return null;
@@ -87,12 +81,11 @@ public class CancelCreateOrderDTXApplicationService {
     @DTXDistLock(keyExpression = "#p0.taskId")
     @Transactional
     @SubscribeForEvent
-    public void handleCommand(CancelSaveNewOrderReplyCommand deserialize) {
+    public void handle(CancelSaveNewOrderReplyCommand deserialize) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(deserialize.getId().toString(), (change) -> {
-            ReplyEvent replyEvent = new ReplyEvent(deserialize);
-            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(replyEvent.getTaskId());
+            Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(deserialize.getTaskId());
             byId.ifPresent(e -> {
-                e.handle(APP_CANCEL_SAVE_NEW_ORDER, replyEvent);
+                e.handle(CancelSaveNewOrderEvent.name, deserialize);
                 DomainRegistry.getDistributedTxRepository().store(e);
             });
             return null;
@@ -122,12 +115,12 @@ public class CancelCreateOrderDTXApplicationService {
 
     @Transactional
     @SubscribeForEvent
-    public void handleCommand(DTXFailedEvent event) {
+    public void handle(DTXFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
-            LocalTx localTx1 = new LocalTx(APP_CANCEL_GENERATE_PAYMENT_QR_LINK, AppConstant.GENERATE_PAYMENT_QR_LINK_FOR_CREATE_EVENT);
-            LocalTx localTx2 = new LocalTx(APP_CANCEL_DECREASE_ORDER_STORAGE, AppConstant.DECREASE_ORDER_STORAGE_FOR_CREATE_EVENT);
-            LocalTx localTx3 = new LocalTx(APP_CANCEL_CLEAR_CART, AppConstant.CLEAR_CART_FOR_CREATE_EVENT);
-            LocalTx localTx4 = new LocalTx(APP_CANCEL_SAVE_NEW_ORDER, AppConstant.SAVE_NEW_ORDER_FOR_CREATE_EVENT);
+            LocalTx localTx1 = new LocalTx(CancelGeneratePaymentQRLinkEvent.name, CancelGeneratePaymentQRLinkEvent.name);
+            LocalTx localTx2 = new LocalTx(CancelDecreaseOrderStorageForCreateEvent.name, CancelDecreaseOrderStorageForCreateEvent.name);
+            LocalTx localTx3 = new LocalTx(CancelClearCartEvent.name, CancelClearCartEvent.name);
+            LocalTx localTx4 = new LocalTx(CancelSaveNewOrderEvent.name, CancelSaveNewOrderEvent.name);
             Set<LocalTx> localTxes = new HashSet<>();
             localTxes.add(localTx1);
             localTxes.add(localTx2);

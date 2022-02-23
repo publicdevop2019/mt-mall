@@ -8,7 +8,6 @@ import com.mt.common.domain.model.restful.PatchCommand;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.cancel_conclude_order_dtx.CancelConcludeOrderDTX;
-import com.mt.saga.domain.model.conclude_order_dtx.ConcludeOrderDTX;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

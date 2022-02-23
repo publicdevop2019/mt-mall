@@ -7,7 +7,6 @@ import com.mt.common.domain.model.domain_event.StoredEventQuery;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.PageConfig;
 import com.mt.common.domain.model.restful.query.QueryConfig;
-import com.mt.saga.appliction.common.CommonDTXCardRepresentation;
 import com.mt.saga.appliction.common.CommonDTXRepresentation;
 import com.mt.saga.domain.model.reserve_order_dtx.ReserveOrderDTX;
 import com.mt.saga.domain.model.reserve_order_dtx.event.DecreaseOrderStorageForReserveEvent;
