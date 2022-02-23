@@ -50,7 +50,6 @@ public class InvalidOrderDTXDTXApplicationService {
             CommonOrderCommand command = event.getCommand();
             DomainRegistry.getIsolationService().hasNoActiveDtx((ignored) -> {
                 Set<LocalTx> localTxes = new HashSet<>();
-                DistributedTx distributedTx = new DistributedTx(localTxes, "InvalidOrderDtx", command.getTxId(), command.getOrderId());
                 LocalTx localTx1 = new LocalTx(RemovePaymentQRLinkForInvalidEvent.name, RemovePaymentQRLinkForInvalidEvent.name);
                 LocalTx localTx2 = new LocalTx(RestoreCartForInvalidEvent.name, RestoreCartForInvalidEvent.name);
                 LocalTx localTx3 = new LocalTx(RemoveOrderForInvalidEvent.name, RemoveOrderForInvalidEvent.name);
@@ -59,6 +58,7 @@ public class InvalidOrderDTXDTXApplicationService {
                 localTxes.add(localTx2);
                 localTxes.add(localTx3);
                 localTxes.add(localTx4);
+                DistributedTx distributedTx = new DistributedTx(localTxes, "InvalidOrderDtx", command.getTxId(), command.getOrderId());
                 distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 if (command.getOrderState().equals(BizOrderStatus.PAID_RECYCLED)) {
 

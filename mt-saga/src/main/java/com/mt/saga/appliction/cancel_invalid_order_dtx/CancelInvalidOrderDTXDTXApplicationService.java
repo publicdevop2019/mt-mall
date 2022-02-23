@@ -58,7 +58,6 @@ public class CancelInvalidOrderDTXDTXApplicationService {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getDistributedTx().getParameters().get("COMMAND"), CommonOrderCommand.class);
             HashSet<LocalTx> localTxes = new HashSet<>();
-            DistributedTx distributedTx = DistributedTx.cancelOf(event.getDistributedTx(), localTxes);
             LocalTx localTx1 = new LocalTx(CancelRemovePaymentQRLinkForInvalidEvent.name, CancelRemovePaymentQRLinkForInvalidEvent.name);
             LocalTx localTx2 = new LocalTx(CancelRestoreCartForInvalidEvent.name, CancelRestoreCartForInvalidEvent.name);
             LocalTx localTx3 = new LocalTx(CancelRemoveOrderForInvalidEvent.name, CancelRemoveOrderForInvalidEvent.name);
@@ -67,6 +66,7 @@ public class CancelInvalidOrderDTXDTXApplicationService {
             localTxes.add(localTx2);
             localTxes.add(localTx3);
             localTxes.add(localTx4);
+            DistributedTx distributedTx = DistributedTx.cancelOf(event.getDistributedTx(), localTxes);
 
             if (command.getOrderState().equals(BizOrderStatus.PAID_RECYCLED)) {
                 DomainEventPublisher.instance().publish(new CancelRemovePaymentQRLinkForInvalidEvent(distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));

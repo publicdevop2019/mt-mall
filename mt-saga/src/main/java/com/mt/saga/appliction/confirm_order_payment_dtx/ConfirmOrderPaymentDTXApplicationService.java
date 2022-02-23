@@ -65,7 +65,7 @@ public class ConfirmOrderPaymentDTXApplicationService {
 
             Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
             byId.ifPresent(e -> {
-                e.handle(UpdateOrderForConcludeEvent.name, command);
+                e.handle(UpdateOrderPaymentSuccessEvent.name, command);
                 DomainRegistry.getDistributedTxRepository().store(e);
             });
             return null;
