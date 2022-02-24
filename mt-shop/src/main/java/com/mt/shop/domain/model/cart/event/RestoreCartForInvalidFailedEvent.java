@@ -15,7 +15,7 @@ public class RestoreCartForInvalidFailedEvent extends DomainEvent {
     public RestoreCartForInvalidFailedEvent(long taskId) {
         this.taskId = taskId;
         setInternal(false);
-        setTopic(AppConstant.RESTORE_CART_FAILED_EVENT);
+        setTopic(AppConstant.LTX_FAILED_EVENT);
         setDomainId(new DomainId(String.valueOf(taskId)));
         setName(name);
     }

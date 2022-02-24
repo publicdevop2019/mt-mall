@@ -14,7 +14,7 @@ public class DistributedTxFailedEvent extends DomainEvent {
     public DistributedTxFailedEvent(DistributedTx distributedTx) {
         this.distributedTx = distributedTx;
         setInternal(true);
-        setTopic(AppConstant.DTX_FAILED_EVENT);
+        setTopic(AppConstant.CANCEL_DTX_EVENT);
         setDomainId(new DomainId(distributedTx.getId().toString()));
         setName(name);
     }

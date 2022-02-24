@@ -4,7 +4,6 @@ import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
 import com.mt.saga.appliction.distributed_tx.command.DistributedTxFailedEvent;
 import com.mt.saga.appliction.distributed_tx.command.DistributedTxSuccessEvent;
-import com.mt.saga.appliction.distributed_tx.command.LocalTxFailedEvent;
 import com.mt.saga.appliction.distributed_tx.command.ReplyEvent;
 import com.mt.saga.appliction.distributed_tx.command.create_order_dtx.GeneratePaymentQRLinkReplyCommand;
 import com.mt.saga.domain.model.distributed_tx.event.create_order_dtx.GeneratePaymentQRLinkEvent;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class CreateOrderDTXEventSubscriber {
+public class DistributedTxEventSubscriber {
     @Value("${mt.app.name.mt2}")
     private String profileAppName;
     @Value("${mt.app.name.mt3}")
@@ -109,24 +108,15 @@ public class CreateOrderDTXEventSubscriber {
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    private void listener7() {
-        CommonDomainRegistry.getEventStreamService().of(profileAppName, false, AppConstant.CLEAR_CART_FAILED_EVENT, (event) -> {
-            LocalTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), LocalTxFailedEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
-        });
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener8() {
-        CommonDomainRegistry.getEventStreamService().of(profileAppName, false, AppConstant.ORDER_UPDATE_FOR_CREATE_FAILED, (event) -> {
-            LocalTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), LocalTxFailedEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
-        });
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
     private void listener() {
-        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.DTX_FAILED_EVENT, (event) -> {
+        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CANCEL_DTX_EVENT, (event) -> {
+            DistributedTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxFailedEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
+        });
+    }
+    @EventListener(ApplicationReadyEvent.class)
+    private void listener16() {
+        CommonDomainRegistry.getEventStreamService().of("*", false, AppConstant.LTX_FAILED_EVENT, (event) -> {
             DistributedTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxFailedEvent.class);
             ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });

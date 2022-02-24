@@ -14,7 +14,7 @@ public class OrderUpdateForPaymentSuccessFailed  extends DomainEvent {
     public OrderUpdateForPaymentSuccessFailed(long taskId) {
         this.taskId = taskId;
         setInternal(false);
-        setTopic(AppConstant.ORDER_UPDATE_FOR_PAYMENT_SUCCESS_FAILED);
+        setTopic(AppConstant.LTX_FAILED_EVENT);
         setDomainId(new DomainId(String.valueOf(taskId)));
         setName(name);
     }

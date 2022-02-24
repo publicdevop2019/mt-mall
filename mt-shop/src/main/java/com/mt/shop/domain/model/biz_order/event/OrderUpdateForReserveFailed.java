@@ -15,7 +15,7 @@ public class OrderUpdateForReserveFailed extends DomainEvent {
     public OrderUpdateForReserveFailed(long taskId) {
         this.taskId = taskId;
         setInternal(false);
-        setTopic(AppConstant.ORDER_UPDATE_FOR_RESERVE_FAILED);
+        setTopic(AppConstant.LTX_FAILED_EVENT);
         setDomainId(new DomainId(String.valueOf(taskId)));
         setName(name);
     }

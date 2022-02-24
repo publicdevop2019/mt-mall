@@ -14,7 +14,7 @@ public class OrderUpdateForAddressUpdateFailed extends DomainEvent {
     public OrderUpdateForAddressUpdateFailed(long taskId) {
         this.taskId = taskId;
         setInternal(false);
-        setTopic(AppConstant.ORDER_UPDATE_FOR_ADDRESS_UPDATE_FAILED);
+        setTopic(AppConstant.LTX_FAILED_EVENT);
         setDomainId(new DomainId(String.valueOf(taskId)));
         setName(name);
     }

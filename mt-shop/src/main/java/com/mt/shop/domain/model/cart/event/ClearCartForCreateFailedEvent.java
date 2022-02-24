@@ -15,7 +15,7 @@ public class ClearCartForCreateFailedEvent extends DomainEvent {
     public ClearCartForCreateFailedEvent(long taskId) {
         this.taskId = taskId;
         setInternal(false);
-        setTopic(AppConstant.CLEAR_CART_FAILED_EVENT);
+        setTopic(AppConstant.LTX_FAILED_EVENT);
         setDomainId(new DomainId(String.valueOf(taskId)));
         setName(name);
     }

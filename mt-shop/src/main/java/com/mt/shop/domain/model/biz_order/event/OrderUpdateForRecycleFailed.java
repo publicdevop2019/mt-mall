@@ -14,7 +14,7 @@ public class OrderUpdateForRecycleFailed  extends DomainEvent {
     public OrderUpdateForRecycleFailed(long taskId) {
         this.taskId = taskId;
         setInternal(false);
-        setTopic(AppConstant.ORDER_UPDATE_FOR_RECYCLE_FAILED);
+        setTopic(AppConstant.LTX_FAILED_EVENT);
         setDomainId(new DomainId(String.valueOf(taskId)));
         setName(name);
     }
