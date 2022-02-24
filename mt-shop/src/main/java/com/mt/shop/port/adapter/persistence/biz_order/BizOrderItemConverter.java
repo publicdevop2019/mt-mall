@@ -1,7 +1,7 @@
 package com.mt.shop.port.adapter.persistence.biz_order;
 
 import com.mt.common.domain.CommonDomainRegistry;
-import com.mt.shop.domain.biz_order.CartDetail;
+import com.mt.shop.domain.model.biz_order.CartDetail;
 
 import javax.persistence.AttributeConverter;
 import java.util.List;

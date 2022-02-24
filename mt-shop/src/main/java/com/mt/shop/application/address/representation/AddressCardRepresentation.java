@@ -1,6 +1,6 @@
 package com.mt.shop.application.address.representation;
 
-import com.mt.shop.domain.address.Address;
+import com.mt.shop.domain.model.address.Address;
 import lombok.Data;
 
 @Data

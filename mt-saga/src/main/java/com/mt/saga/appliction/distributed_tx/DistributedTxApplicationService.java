@@ -74,8 +74,8 @@ public class DistributedTxApplicationService {
     public void concludeOrderFailed(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
 
-            LocalTx localTx1 = new LocalTx(CancelUpdateOrderForConcludeEvent.name, CancelUpdateOrderForConcludeEvent.name);
-            LocalTx localTx2 = new LocalTx(CancelDecreaseActualStorageForConcludeEvent.name, CancelDecreaseActualStorageForConcludeEvent.name);
+            LocalTx localTx1 = new LocalTx(CancelUpdateOrderForConcludeEvent.name);
+            LocalTx localTx2 = new LocalTx(CancelDecreaseActualStorageForConcludeEvent.name);
             Set<LocalTx> localTxes = new HashSet<>();
             localTxes.add(localTx1);
             localTxes.add(localTx2);
@@ -94,7 +94,7 @@ public class DistributedTxApplicationService {
     public void confirmPaymentFailed(DistributedTxFailedEvent deserialize) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(deserialize.getId().toString(), (change) -> {
 
-            LocalTx localTx1 = new LocalTx(CancelUpdateOrderPaymentEvent.name, CancelUpdateOrderPaymentEvent.name);
+            LocalTx localTx1 = new LocalTx(CancelUpdateOrderPaymentEvent.name);
             Set<LocalTx> localTxes = new HashSet<>();
             localTxes.add(localTx1);
             DistributedTx dtx = DistributedTx.cancelOf(deserialize.getDistributedTx(), localTxes);
@@ -110,10 +110,10 @@ public class DistributedTxApplicationService {
     @SubscribeForEvent
     public void createOrderFailed(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
-            LocalTx localTx1 = new LocalTx(CancelGeneratePaymentQRLinkEvent.name, CancelGeneratePaymentQRLinkEvent.name);
-            LocalTx localTx2 = new LocalTx(CancelDecreaseOrderStorageForCreateEvent.name, CancelDecreaseOrderStorageForCreateEvent.name);
-            LocalTx localTx3 = new LocalTx(CancelClearCartEvent.name, CancelClearCartEvent.name);
-            LocalTx localTx4 = new LocalTx(CancelSaveNewOrderEvent.name, CancelSaveNewOrderEvent.name);
+            LocalTx localTx1 = new LocalTx(CancelGeneratePaymentQRLinkEvent.name);
+            LocalTx localTx2 = new LocalTx(CancelDecreaseOrderStorageForCreateEvent.name);
+            LocalTx localTx3 = new LocalTx(CancelClearCartEvent.name);
+            LocalTx localTx4 = new LocalTx(CancelSaveNewOrderEvent.name);
             Set<LocalTx> localTxes = new HashSet<>();
             localTxes.add(localTx1);
             localTxes.add(localTx2);
@@ -139,10 +139,10 @@ public class DistributedTxApplicationService {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             CommonOrderCommand command = event.getCommand();
             DomainRegistry.getIsolationService().hasNoActiveDtx((ignored) -> {
-                LocalTx localTx1 = new LocalTx(GeneratePaymentQRLinkEvent.name, GeneratePaymentQRLinkEvent.name);
-                LocalTx localTx2 = new LocalTx(DecreaseOrderStorageForCreateEvent.name, DecreaseOrderStorageForCreateEvent.name);
-                LocalTx localTx3 = new LocalTx(ClearCartEvent.name, ClearCartEvent.name);
-                LocalTx localTx4 = new LocalTx(SaveNewOrderEvent.name, SaveNewOrderEvent.name);
+                LocalTx localTx1 = new LocalTx(GeneratePaymentQRLinkEvent.name);
+                LocalTx localTx2 = new LocalTx(DecreaseOrderStorageForCreateEvent.name);
+                LocalTx localTx3 = new LocalTx(ClearCartEvent.name);
+                LocalTx localTx4 = new LocalTx(SaveNewOrderEvent.name);
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
                 localTxes.add(localTx2);
@@ -169,10 +169,10 @@ public class DistributedTxApplicationService {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getDistributedTx().getParameters().get("COMMAND"), CommonOrderCommand.class);
             HashSet<LocalTx> localTxes = new HashSet<>();
-            LocalTx localTx1 = new LocalTx(CancelRemovePaymentQRLinkForInvalidEvent.name, CancelRemovePaymentQRLinkForInvalidEvent.name);
-            LocalTx localTx2 = new LocalTx(CancelRestoreCartForInvalidEvent.name, CancelRestoreCartForInvalidEvent.name);
-            LocalTx localTx3 = new LocalTx(CancelRemoveOrderForInvalidEvent.name, CancelRemoveOrderForInvalidEvent.name);
-            LocalTx localTx4 = new LocalTx(CancelIncreaseStorageForInvalidEvent.name, CancelIncreaseStorageForInvalidEvent.name);
+            LocalTx localTx1 = new LocalTx(CancelRemovePaymentQRLinkForInvalidEvent.name);
+            LocalTx localTx2 = new LocalTx(CancelRestoreCartForInvalidEvent.name);
+            LocalTx localTx3 = new LocalTx(CancelRemoveOrderForInvalidEvent.name);
+            LocalTx localTx4 = new LocalTx(CancelIncreaseStorageForInvalidEvent.name);
             localTxes.add(localTx1);
             localTxes.add(localTx2);
             localTxes.add(localTx3);
@@ -228,8 +228,8 @@ public class DistributedTxApplicationService {
     public void recycleOrderFailed(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
 
-            LocalTx localTx1 = new LocalTx(CancelIncreaseOrderStorageForRecycleEvent.name, CancelIncreaseOrderStorageForRecycleEvent.name);
-            LocalTx localTx2 = new LocalTx(CancelUpdateOrderForRecycleEvent.name, CancelUpdateOrderForRecycleEvent.name);
+            LocalTx localTx1 = new LocalTx(CancelIncreaseOrderStorageForRecycleEvent.name);
+            LocalTx localTx2 = new LocalTx(CancelUpdateOrderForRecycleEvent.name);
             Set<LocalTx> localTxes = new HashSet<>();
             localTxes.add(localTx1);
             localTxes.add(localTx2);
@@ -249,8 +249,8 @@ public class DistributedTxApplicationService {
     public void reserveOrderFailed(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
 
-            LocalTx localTx1 = new LocalTx(CancelDecreaseOrderStorageForReserveEvent.name, CancelDecreaseOrderStorageForReserveEvent.name);
-            LocalTx localTx2 = new LocalTx(CancelUpdateOrderForReserveEvent.name, CancelUpdateOrderForReserveEvent.name);
+            LocalTx localTx1 = new LocalTx(CancelDecreaseOrderStorageForReserveEvent.name);
+            LocalTx localTx2 = new LocalTx(CancelUpdateOrderForReserveEvent.name);
             Set<LocalTx> localTxes = new HashSet<>();
             localTxes.add(localTx1);
             localTxes.add(localTx2);
@@ -271,7 +271,7 @@ public class DistributedTxApplicationService {
     @SubscribeForEvent
     public void updateAddressFailed(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
-            LocalTx localTx1 = new LocalTx(CancelUpdateOrderForUpdateOrderAddressEvent.name, CancelUpdateOrderForUpdateOrderAddressEvent.name);
+            LocalTx localTx1 = new LocalTx(CancelUpdateOrderForUpdateOrderAddressEvent.name);
             Set<LocalTx> localTxes = new HashSet<>();
             localTxes.add(localTx1);
             DistributedTx dtx = DistributedTx.cancelOf(event.getDistributedTx(), localTxes);
@@ -290,8 +290,8 @@ public class DistributedTxApplicationService {
             String orderId = event.getCommand().getOrderId();
             DomainRegistry.getIsolationService().hasNoActiveDtx((ignored) -> {
 
-                LocalTx localTx1 = new LocalTx(UpdateOrderForConcludeEvent.name, UpdateOrderForConcludeEvent.name);
-                LocalTx localTx2 = new LocalTx(DecreaseActualStorageForConcludeEvent.name, DecreaseActualStorageForConcludeEvent.name);
+                LocalTx localTx1 = new LocalTx(UpdateOrderForConcludeEvent.name);
+                LocalTx localTx2 = new LocalTx(DecreaseActualStorageForConcludeEvent.name);
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
                 localTxes.add(localTx2);
@@ -316,7 +316,7 @@ public class DistributedTxApplicationService {
             String orderId = event.getCommand().getOrderId();
             DomainRegistry.getIsolationService().hasNoActiveDtx((ignored) -> {
 
-                LocalTx localTx1 = new LocalTx(UpdateOrderPaymentSuccessEvent.name, UpdateOrderPaymentSuccessEvent.name);
+                LocalTx localTx1 = new LocalTx(UpdateOrderPaymentSuccessEvent.name);
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
                 DistributedTx distributedTx = new DistributedTx(localTxes, "ConfirmOrderPaymentOrderDtx", event.getCommand().getTxId(), event.getCommand().getOrderId(), AppConstant.CONFIRM_ORDER_PAYMENT_FAILED_EVENT);
@@ -339,10 +339,10 @@ public class DistributedTxApplicationService {
             CommonOrderCommand command = event.getCommand();
             DomainRegistry.getIsolationService().hasNoActiveDtx((ignored) -> {
                 Set<LocalTx> localTxes = new HashSet<>();
-                LocalTx localTx1 = new LocalTx(RemovePaymentQRLinkForInvalidEvent.name, RemovePaymentQRLinkForInvalidEvent.name);
-                LocalTx localTx2 = new LocalTx(RestoreCartForInvalidEvent.name, RestoreCartForInvalidEvent.name);
-                LocalTx localTx3 = new LocalTx(RemoveOrderForInvalidEvent.name, RemoveOrderForInvalidEvent.name);
-                LocalTx localTx4 = new LocalTx(IncreaseStorageForInvalidEvent.name, IncreaseStorageForInvalidEvent.name);
+                LocalTx localTx1 = new LocalTx(RemovePaymentQRLinkForInvalidEvent.name);
+                LocalTx localTx2 = new LocalTx(RestoreCartForInvalidEvent.name);
+                LocalTx localTx3 = new LocalTx(RemoveOrderForInvalidEvent.name);
+                LocalTx localTx4 = new LocalTx(IncreaseStorageForInvalidEvent.name);
                 localTxes.add(localTx1);
                 localTxes.add(localTx2);
                 localTxes.add(localTx3);
@@ -406,8 +406,8 @@ public class DistributedTxApplicationService {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             String orderId = event.getCommand().getOrderId();
             DomainRegistry.getIsolationService().hasNoActiveDtx((ignored) -> {
-                LocalTx localTx1 = new LocalTx(IncreaseOrderStorageForRecycleEvent.name, IncreaseOrderStorageForRecycleEvent.name);
-                LocalTx localTx2 = new LocalTx(UpdateOrderForRecycleEvent.name, UpdateOrderForRecycleEvent.name);
+                LocalTx localTx1 = new LocalTx(IncreaseOrderStorageForRecycleEvent.name);
+                LocalTx localTx2 = new LocalTx(UpdateOrderForRecycleEvent.name);
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
                 localTxes.add(localTx2);
@@ -432,8 +432,8 @@ public class DistributedTxApplicationService {
             String orderId = event.getCommand().getOrderId();
             DomainRegistry.getIsolationService().hasNoActiveDtx((ignored) -> {
                 log.debug("start of creating {}", CreateReserveOrderDTXEvent.class.getName());
-                LocalTx localTx1 = new LocalTx(DecreaseOrderStorageForReserveEvent.name, DecreaseOrderStorageForReserveEvent.name);
-                LocalTx localTx2 = new LocalTx(UpdateOrderForReserveEvent.name, UpdateOrderForReserveEvent.name);
+                LocalTx localTx1 = new LocalTx(DecreaseOrderStorageForReserveEvent.name);
+                LocalTx localTx2 = new LocalTx(UpdateOrderForReserveEvent.name);
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
                 localTxes.add(localTx2);
@@ -457,7 +457,7 @@ public class DistributedTxApplicationService {
             String orderId = event.getCommand().getOrderId();
             DomainRegistry.getIsolationService().hasNoActiveDtx((ignored) -> {
                 log.debug("start of creating {}", event.getName());
-                LocalTx localTx1 = new LocalTx(UpdateOrderForUpdateOrderAddressEvent.name, UpdateOrderForUpdateOrderAddressEvent.name);
+                LocalTx localTx1 = new LocalTx(UpdateOrderForUpdateOrderAddressEvent.name);
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
                 DistributedTx dtx = new DistributedTx(localTxes, "UpdateOrderAddressDtx", event.getCommand().getTxId(), event.getCommand().getOrderId(), AppConstant.UPDATE_ORDER_ADDRESS_DTX_FAILED_EVENT);

@@ -1,7 +1,7 @@
 package com.mt.shop.port.adapter.persistence.cart;
 
 import com.mt.common.domain.CommonDomainRegistry;
-import com.mt.shop.domain.biz_order.BizOrderItemAddOn;
+import com.mt.shop.domain.model.biz_order.BizOrderItemAddOn;
 
 import javax.persistence.AttributeConverter;
 import java.util.Collection;

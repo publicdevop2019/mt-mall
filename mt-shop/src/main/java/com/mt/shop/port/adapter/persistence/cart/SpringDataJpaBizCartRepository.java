@@ -5,10 +5,10 @@ import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.QueryUtility;
 import com.mt.common.domain.model.sql.clause.IsDeletedClause;
-import com.mt.shop.domain.cart.BizCart;
-import com.mt.shop.domain.cart.BizCartRepository;
-import com.mt.shop.domain.cart.BizCart_;
-import com.mt.shop.domain.cart.CartQuery;
+import com.mt.shop.domain.model.cart.BizCart;
+import com.mt.shop.domain.model.cart.BizCartRepository;
+import com.mt.shop.domain.model.cart.BizCart_;
+import com.mt.shop.domain.model.cart.CartQuery;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.persistence.criteria.Order;

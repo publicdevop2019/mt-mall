@@ -1,6 +1,6 @@
 package com.mt.shop.application.biz_order.command;
 
-import com.mt.shop.domain.biz_order.BizOrderId;
+import com.mt.shop.domain.model.biz_order.BizOrderId;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;

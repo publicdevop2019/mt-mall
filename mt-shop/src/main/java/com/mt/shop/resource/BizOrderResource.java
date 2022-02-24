@@ -9,8 +9,8 @@ import com.mt.shop.application.biz_order.representation.AdminBizOrderCardReprese
 import com.mt.shop.application.biz_order.representation.AdminBizOrderRepresentation;
 import com.mt.shop.application.biz_order.representation.CustomerBizOrderCardRepresentation;
 import com.mt.shop.application.biz_order.representation.CustomerBizOrderRepresentation;
-import com.mt.shop.domain.biz_order.BizOrderSummary;
-import com.mt.shop.domain.biz_order.UserThreadLocal;
+import com.mt.shop.domain.model.biz_order.BizOrderSummary;
+import com.mt.shop.domain.model.biz_order.UserThreadLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

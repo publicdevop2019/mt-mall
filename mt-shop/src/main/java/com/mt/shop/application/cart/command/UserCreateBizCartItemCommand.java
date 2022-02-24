@@ -1,7 +1,7 @@
 package com.mt.shop.application.cart.command;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.mt.shop.domain.biz_order.BizOrderItemAddOn;
+import com.mt.shop.domain.model.biz_order.BizOrderItemAddOn;
 import lombok.Data;
 
 import java.io.Serializable;

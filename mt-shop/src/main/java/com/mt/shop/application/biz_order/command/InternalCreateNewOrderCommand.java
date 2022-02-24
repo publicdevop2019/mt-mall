@@ -1,8 +1,8 @@
 package com.mt.shop.application.biz_order.command;
 
-import com.mt.shop.domain.biz_order.BizOrderId;
-import com.mt.shop.domain.biz_order.BizOrderItemAddOn;
-import com.mt.shop.domain.biz_order.PaymentDetail;
+import com.mt.shop.domain.model.biz_order.BizOrderId;
+import com.mt.shop.domain.model.biz_order.BizOrderItemAddOn;
+import com.mt.shop.domain.model.biz_order.PaymentDetail;
 import lombok.Data;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 

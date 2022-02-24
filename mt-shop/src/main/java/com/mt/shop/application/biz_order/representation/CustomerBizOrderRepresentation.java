@@ -1,9 +1,9 @@
 package com.mt.shop.application.biz_order.representation;
 
 import com.mt.shop.application.biz_order.command.CustomerPlaceBizOrderCommand;
-import com.mt.shop.domain.biz_order.BizOrderSummary;
-import com.mt.shop.domain.biz_order.CartDetail;
-import com.mt.shop.domain.biz_order.ShippingDetail;
+import com.mt.shop.domain.model.biz_order.BizOrderSummary;
+import com.mt.shop.domain.model.biz_order.CartDetail;
+import com.mt.shop.domain.model.biz_order.ShippingDetail;
 import lombok.Data;
 
 import java.math.BigDecimal;

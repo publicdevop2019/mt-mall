@@ -14,9 +14,9 @@ import java.util.Optional;
 import static com.mt.common.CommonConstant.*;
 
 @RestController
-@RequestMapping(produces = "application/json", path = "createOrderDtx")
+@RequestMapping(produces = "application/json", path = "dtx")
 public class DistributeTxResource {
-    @GetMapping("admin")
+    @GetMapping
     public ResponseEntity<?> readForAdminByQuery(
             @RequestParam(value = HTTP_PARAM_QUERY, required = false) String queryParam,
             @RequestParam(value = HTTP_PARAM_PAGE, required = false) String pageParam,
@@ -26,7 +26,7 @@ public class DistributeTxResource {
         return ResponseEntity.ok(new SumPagedRep<>(dtx, DistributedTxCardRepresentation::new));
     }
 
-    @GetMapping("admin/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<?> readForAdminById(
             @PathVariable(name = "id") long id
     ) {
@@ -34,7 +34,7 @@ public class DistributeTxResource {
         return dtx.map(e -> ResponseEntity.ok(new DistributedTxRepresentation(e))).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    @PostMapping("admin/{dtxId}/cancel")
+    @PostMapping("{dtxId}/cancel")
     public ResponseEntity<?> cancelCreateOrderDtx(
             @PathVariable("dtxId") long dtxId
     ) {

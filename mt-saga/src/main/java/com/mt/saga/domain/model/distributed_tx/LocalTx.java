@@ -22,9 +22,9 @@ public class LocalTx {
     @Convert(converter = LTXStatus.DBConverter.class)
     private LTXStatus status = LTXStatus.PENDING;
 
-    public LocalTx(String name, String eventName) {
+    public LocalTx(String name) {
         this.name = name;
-        this.eventName = eventName;
+        this.eventName = name;
     }
 
     public void handle(ReplyEvent replyEvent) {
