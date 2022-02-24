@@ -1,6 +1,7 @@
 package com.mt.shop.domain.model.biz_order.event;
 
 import com.mt.shop.application.biz_order.command.InternalCreateNewOrderCommand;
+import com.mt.shop.domain.model.biz_order.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
