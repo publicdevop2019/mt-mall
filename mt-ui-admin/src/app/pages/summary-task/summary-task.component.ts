@@ -91,10 +91,8 @@ export class SummaryTaskComponent extends SummaryEntityComponent<IBizTask, IBizT
     this.formCreatedOb2 = this.fis.formCreated(this.formId2);
     const sub = this.formCreatedOb2.subscribe(() => {
       const sub = this.fis.formGroupCollection[this.formId2].valueChanges.subscribe(e => {
-        console.dir('here')
         this.entitySvc.pageNumber = 0;
-        if ((e.taskName as string).includes("cancel")) {
-          console.dir('here')
+        if ((e.taskName as string).includes("_cancel")) {
           this.isCancel = true;
           this.columnList = this.columnListCancel;
           if(this.fis.formGroupCollection[this.formId]){
@@ -107,10 +105,10 @@ export class SummaryTaskComponent extends SummaryEntityComponent<IBizTask, IBizT
             this.fis.formGroupCollection[this.formId].get(TableColumnConfigComponent.keyName).setValue(Object.keys(this.columnListNotCancel))
           }
         }
-        this.entitySvc.updateEntityName(e.taskName);
+        this.entitySvc.updateDtxName(e.taskName);
         this.deviceSvc.refreshSummary.next();
       });
-      this.fis.formGroupCollection[this.formId2].setValue({ taskName: entitySvc.getEntityName() }, { emitEvent: false });
+      this.fis.formGroupCollection[this.formId2].setValue({ taskName: entitySvc.getEventName() }, { emitEvent: false });
       this.subs.add(sub)
     })
     this.subs.add(sub)

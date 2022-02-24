@@ -33,7 +33,7 @@ public interface SpringDataJpaDistributedTxRepository extends JpaRepository<Dist
         public SumPagedRep<DistributedTx> execute(DistributedTxQuery query) {
             QueryUtility.QueryContext<DistributedTx> queryContext = QueryUtility.prepareContext(DistributedTx.class, query);
             Optional.ofNullable(query.getIds()).ifPresent(e -> QueryUtility.addLongInPredicate(query.getIds(), DistributedTx_.ID, queryContext));
-            Optional.ofNullable(query.getNames()).ifPresent(e -> QueryUtility.addStringInPredicate(query.getNames(), DistributedTx_.ID, queryContext));
+            Optional.ofNullable(query.getNames()).ifPresent(e -> QueryUtility.addStringInPredicate(query.getNames(), DistributedTx_.NAME, queryContext));
             Optional.ofNullable(query.getOrderIds()).ifPresent(e -> QueryUtility.addStringInPredicate(query.getOrderIds(), DistributedTx_.LOCK_ID, queryContext));
             Optional.ofNullable(query.getChangeIds()).ifPresent(e -> QueryUtility.addStringInPredicate(query.getChangeIds(), DistributedTx_.CHANGE_ID, queryContext));
             Optional.ofNullable(query.getStatus()).ifPresent(e -> QueryUtility.addStringEqualPredicate(query.getStatus().toString(), DistributedTx_.STATUS, queryContext));

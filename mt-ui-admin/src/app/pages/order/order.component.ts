@@ -73,46 +73,46 @@ export class OrderComponent implements OnDestroy {
       Object.assign(value0, value5)
       this.fis.restoreDynamicForm(this.formIdProduct, value0, var0.length)
     });
-    this.taskSvc.updateEntityName('/createOrderDtx')
+    this.taskSvc.updateDtxName('/createOrderDtx')
     const var0 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/cancelCreateOrderDtx')
+    this.taskSvc.updateDtxName('/cancelCreateOrderDtx')
     const var1 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/reserveOrderDtx')
+    this.taskSvc.updateDtxName('/reserveOrderDtx')
     const var2 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/cancelReserveOrderDtx')
+    this.taskSvc.updateDtxName('/cancelReserveOrderDtx')
     const var3 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/recycleOrderDtx')
+    this.taskSvc.updateDtxName('/recycleOrderDtx')
     const var4 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/cancelRecycleOrderDtx')
+    this.taskSvc.updateDtxName('/cancelRecycleOrderDtx')
     const var5 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/confirmOrderPaymentDtx')
+    this.taskSvc.updateDtxName('/confirmOrderPaymentDtx')
     const var6 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/cancelConfirmOrderPaymentDtx')
+    this.taskSvc.updateDtxName('/cancelConfirmOrderPaymentDtx')
     const var7 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/concludeOrderDtx')
+    this.taskSvc.updateDtxName('/concludeOrderDtx')
     const var8 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/cancelConcludeOrderDtx')
+    this.taskSvc.updateDtxName('/cancelConcludeOrderDtx')
     const var9 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/updateOrderAddressDtx')
+    this.taskSvc.updateDtxName('/updateOrderAddressDtx')
     const var10 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/cancelUpdateOrderAddressDtx')
+    this.taskSvc.updateDtxName('/cancelUpdateOrderAddressDtx')
     const var11 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/invalidOrderDtx')
+    this.taskSvc.updateDtxName('/invalidOrderDtx')
     const var12 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateEntityName('/cancelInvalidOrderDtx')
+    this.taskSvc.updateDtxName('/cancelInvalidOrderDtx')
     const var13 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
 
     combineLatest([var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11, var12, var13, this.formCreatedOb4]).pipe(take(1)).subscribe(next => {

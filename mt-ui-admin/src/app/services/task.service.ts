@@ -18,16 +18,18 @@ export interface IBizTask {
     cancelable?: boolean
     retryable?: boolean
 }
-export type DTX_EVENT_TYPE = '/createOrderDtx' | '/cancelCreateOrderDtx' | '/reserveOrderDtx' | '/cancelReserveOrderDtx' | '/recycleOrderDtx' | '/cancelRecycleOrderDtx'
-    | '/confirmOrderPaymentDtx' | '/cancelConfirmOrderPaymentDtx'
-    | '/concludeOrderDtx' | '/cancelConcludeOrderDtx' | '/updateOrderAddressDtx' | '/cancelUpdateOrderAddressDtx' | '/invalidOrderDtx' | '/cancelInvalidOrderDtx'
+export type DTX_EVENT_TYPE = 'CreateOrderDtx' | 'ReserveOrderDtx'| 'RecycleOrderDtx' 
+    | 'ConfirmOrderPaymentOrderDtx' 
+    | 'ConcludeOrderDtx' | 'UpdateOrderAddressDtx' | 'InvalidOrderDtx'
 @Injectable({
     providedIn: 'root'
 })
 export class TaskService extends EntityCommonService<IBizTask, IBizTask> {
     private SVC_NAME = '/saga-svc';
-    private ENTITY_NAME: DTX_EVENT_TYPE = '/createOrderDtx';
-    entityRepo: string = environment.serverUri + this.SVC_NAME + this.ENTITY_NAME+'/admin';
+    private ENTITY_NAME = '/dtx';
+    private dtxName: DTX_EVENT_TYPE = 'CreateOrderDtx';
+    private queryPrefix = 'name:createOrderDtx';
+    entityRepo: string = environment.serverUri + this.SVC_NAME + this.ENTITY_NAME;
     constructor(httpProxy: HttpProxyService, interceptor: CustomHttpInterceptor, deviceSvc: DeviceService) {
         super(httpProxy, interceptor, deviceSvc);
     }
@@ -37,31 +39,17 @@ export class TaskService extends EntityCommonService<IBizTask, IBizTask> {
     doResolve(id: string, reason: string) {
         return this.httpProxySvc.resolveCancelDtx(this.entityRepo, id, reason)
     }
-    updateEntityName(name: DTX_EVENT_TYPE) {
-        this.ENTITY_NAME = name;
-        this.entityRepo = environment.serverUri + this.SVC_NAME + this.ENTITY_NAME+'/admin';
+    updateDtxName(name: DTX_EVENT_TYPE) {
+        this.dtxName = name;
+        this.queryPrefix = "name:" + name;
     }
-    getEntityName() {
-        return this.ENTITY_NAME;
+    getEventName() {
+        return this.dtxName;
     }
-    readCancelEntityByQuery(num: number, size: number, query?: string, by?: string, order?: string, headers?: {}) {
-        return this.httpProxySvc.readEntityByQuery<IBizTask>(this.getCancelRepo(this.ENTITY_NAME), num, size, query, by, order, headers)
+    readEntityByQuery(num: number, size: number, query?: string, by?: string, order?: string, headers?: {}) {
+        return this.httpProxySvc.readEntityByQuery<IBizTask>(this.entityRepo, num, size, query ? (this.queryPrefix + ',' + query) : this.queryPrefix, by, order, headers)
     };
-    getCancelRepo(input: DTX_EVENT_TYPE) {
-        if (input === '/createOrderDtx')
-            return environment.serverUri + this.SVC_NAME + '/cancelCreateOrderDtx'+'/admin'
-        if (input === '/reserveOrderDtx')
-            return environment.serverUri + this.SVC_NAME + '/cancelReserveOrderDtx'+'/admin'
-        if (input === '/recycleOrderDtx')
-            return environment.serverUri + this.SVC_NAME + '/cancelRecycleOrderDtx'+'/admin'
-        if (input === '/confirmOrderPaymentDtx')
-            return environment.serverUri + this.SVC_NAME + '/cancelConfirmOrderPaymentDtx'+'/admin'
-        if (input === '/concludeOrderDtx')
-            return environment.serverUri + this.SVC_NAME + '/cancelConcludeOrderDtx'+'/admin'
-        if (input === '/updateOrderAddressDtx')
-            return environment.serverUri + this.SVC_NAME + '/cancelUpdateOrderAddressDtx'+'/admin'
-        if (input === '/invalidOrderDtx')
-            return environment.serverUri + this.SVC_NAME + '/cancelInvalidOrderDtx'+'/admin'
-        return ''
-    }
+    readCancelEntityByQuery(num: number, size: number, query?: string, by?: string, order?: string, headers?: {}) {
+        return this.httpProxySvc.readEntityByQuery<IBizTask>(this.entityRepo, num, size, `name:${this.dtxName + '_cancel'}`, by, order, headers)
+    };
 }

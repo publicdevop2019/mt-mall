@@ -42,7 +42,7 @@ public class DistributeTxResource {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("admin/{dtxId}/resolved")
+    @PostMapping("{dtxId}/resolve")
     public ResponseEntity<?> resolveDtx(
             @PathVariable("dtxId") long dtxId,
             @RequestBody ResolveReason reason

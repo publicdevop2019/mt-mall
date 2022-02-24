@@ -68,7 +68,7 @@ public class DistributedTxApplicationService {
     public static final String RESOLVE_DTX = "RESOLVE_DTX";
     private static final String CREATE_DTX = "CreateDtx";
     public static final String CANCEL_DTX = "CancelDtx";
-    public static final String CREATE_ORDER_DTX = "createOrderDtx";
+    public static final String CREATE_ORDER_DTX = "CreateOrderDtx";
     public static final String CONCLUDE_ORDER_DTX = "ConcludeOrderDtx";
     public static final String CONFIRM_ORDER_PAYMENT_ORDER_DTX = "ConfirmOrderPaymentOrderDtx";
     public static final String INVALID_ORDER_DTX = "InvalidOrderDtx";
@@ -527,6 +527,7 @@ public class DistributedTxApplicationService {
 
     @Transactional
     @SubscribeForEvent
+    @DTXDistLock(keyExpression = "#p0")
     public void cancel(long dtxId) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(String.valueOf(dtxId), (change) -> {
             Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(dtxId);

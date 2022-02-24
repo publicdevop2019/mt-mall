@@ -39,7 +39,7 @@ public class DistributedTxQuery extends QueryCriteria {
     }
 
     private void updateQueryParam(String queryParam) {
-        Map<String, String> stringStringMap = QueryUtility.parseQuery(queryParam, ID, ORDER_ID, CHANGE_ID, STATUS);
+        Map<String, String> stringStringMap = QueryUtility.parseQuery(queryParam, ID, ORDER_ID, CHANGE_ID, STATUS,NAME);
         Optional.ofNullable(stringStringMap.get(ID)).ifPresent(e -> {
             this.ids = Arrays.stream(e.split("\\.")).map(Long::parseLong).collect(Collectors.toSet());
         });
