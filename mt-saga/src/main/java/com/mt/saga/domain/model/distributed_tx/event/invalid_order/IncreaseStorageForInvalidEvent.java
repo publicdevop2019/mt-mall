@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class IncreaseStorageForInvalidEvent extends DomainEvent {
-    public static final String name = "INCREASE_STORAGE_FOR_INVALID_EVENT";
+    public static final String name = AppConstant.INCREASE_STORAGE_FOR_INVALID_EVENT;
     private List<PatchCommand> skuCommands;
     private String changeId;
     private String orderId;

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 public class ClearCartEvent extends DomainEvent {
-    public static final String name = "CLEAR_CART_EVENT";
+    public static final String name = AppConstant.CLEAR_CART_FOR_CREATE_EVENT;
     private String userId;
     private Set<String> ids;
     private String changeId;

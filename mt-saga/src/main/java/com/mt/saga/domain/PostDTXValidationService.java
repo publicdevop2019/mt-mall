@@ -1,11 +1,11 @@
 package com.mt.saga.domain;
 
 import com.mt.common.domain.CommonDomainRegistry;
+import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.common.domain.model.domain_event.StoredEvent;
 import com.mt.common.domain.model.event.MallNotificationEvent;
 import com.mt.saga.domain.model.distributed_tx.DTXStatus;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
-import com.mt.saga.infrastructure.Utility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +17,9 @@ public class PostDTXValidationService {
     public void validate(DistributedTx forwardDtx, DistributedTx backwardDtx) {
         if (forwardDtx.getStatus().equals(DTXStatus.SUCCESS) && backwardDtx.getStatus().equals(DTXStatus.SUCCESS)) {
             boolean b = forwardDtx.getLocalTxs().values().stream().anyMatch(e -> (
-                    !e.isEmptyOperation() && forwardDtx.isLocalTxEmptyOptByName(Utility.getCancelLtxName(e.getName()))
+                    !e.isEmptyOperation() && forwardDtx.isLocalTxEmptyOptByName(MQHelper.cancelOf(e.getName()))
                             ||
-                            e.isEmptyOperation() && !forwardDtx.isLocalTxEmptyOptByName(Utility.getCancelLtxName(e.getName()))
+                            e.isEmptyOperation() && !forwardDtx.isLocalTxEmptyOptByName(MQHelper.cancelOf(e.getName()))
             ));
             if (b) {
                 notifyAdmin(forwardDtx.getId(), backwardDtx.getId(), forwardDtx.getLockId());

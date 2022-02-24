@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class UpdateOrderForUpdateOrderAddressEvent extends DomainEvent {
-    public static final String name = "UPDATE_ORDER_FOR_UPDATE_ORDER_ADDRESS_EVENT";
+    public static final String name = AppConstant.UPDATE_ORDER_FOR_UPDATE_ORDER_ADDRESS_EVENT;
     private String orderId;
     private String userId;
     private BizOrderStatus orderState;

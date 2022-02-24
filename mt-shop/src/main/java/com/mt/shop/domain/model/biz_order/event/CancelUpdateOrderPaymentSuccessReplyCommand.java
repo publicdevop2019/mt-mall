@@ -8,18 +8,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import static com.mt.shop.infrastructure.AppConstant.SAGA_REPLY_EVENT;
+
 @Setter
 @Getter
 @NoArgsConstructor
 public class CancelUpdateOrderPaymentSuccessReplyCommand extends DomainEvent {
     private long taskId;
     private boolean emptyOpt;
+    private String replyOf;
     public static final String name="CANCEL_UPDATE_ORDER_PAYMENT_SUCCESS_REPLY_COMMAND";
     public CancelUpdateOrderPaymentSuccessReplyCommand(long taskId, boolean emptyOpt) {
         this.taskId = taskId;
         this.emptyOpt = emptyOpt;
         setInternal(false);
-        setTopic(MQHelper.replyCancelOf(AppConstant.UPDATE_ORDER_PAYMENT_SUCCESS_EVENT));
+        setTopic(SAGA_REPLY_EVENT);
+        replyOf = MQHelper.cancelOf(AppConstant.UPDATE_ORDER_PAYMENT_SUCCESS_EVENT);
         setDomainId(new DomainId(String.valueOf(taskId)));
         setName(name);
     }

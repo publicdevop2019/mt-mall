@@ -2,14 +2,13 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.distributed_tx.command.create_order_dtx.GeneratePaymentQRLinkReplyCommand;
-import com.mt.saga.domain.model.distributed_tx.event.create_order_dtx.ClearCartEvent;
-import com.mt.saga.domain.model.distributed_tx.event.create_order_dtx.DecreaseOrderStorageForCreateEvent;
-import com.mt.saga.domain.model.distributed_tx.event.create_order_dtx.SaveNewOrderEvent;
-import com.mt.saga.appliction.distributed_tx.command.ReplyEvent;
+import com.mt.saga.appliction.distributed_tx.command.DistributedTxFailedEvent;
 import com.mt.saga.appliction.distributed_tx.command.DistributedTxSuccessEvent;
 import com.mt.saga.appliction.distributed_tx.command.LocalTxFailedEvent;
-import com.mt.saga.domain.model.order_state_machine.event.CreateCreateOrderDTXEvent;
+import com.mt.saga.appliction.distributed_tx.command.ReplyEvent;
+import com.mt.saga.appliction.distributed_tx.command.create_order_dtx.GeneratePaymentQRLinkReplyCommand;
+import com.mt.saga.domain.model.distributed_tx.event.create_order_dtx.GeneratePaymentQRLinkEvent;
+import com.mt.saga.domain.model.order_state_machine.event.*;
 import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +29,55 @@ public class CreateOrderDTXEventSubscriber {
     private String appName;
 
     @EventListener(ApplicationReadyEvent.class)
-    private void listener() {
+    private void listener11() {
+        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_CONFIRM_ORDER_PAYMENT_DTX_EVENT, (event) -> {
+            CreateConfirmOrderPaymentDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateConfirmOrderPaymentDTXEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
+        });
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    private void listener15() {
+        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_UPDATE_ORDER_ADDRESS_DTX_EVENT, (event) -> {
+            CreateUpdateOrderAddressDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateUpdateOrderAddressDTXEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
+        });
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    private void listener14() {
+        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_RESERVE_ORDER_DTX_EVENT, (event) -> {
+            CreateReserveOrderDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateReserveOrderDTXEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
+        });
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    private void listener13() {
+        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_RECYCLE_ORDER_DTX_EVENT, (event) -> {
+            CreateRecycleOrderDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateRecycleOrderDTXEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
+        });
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    private void listener12() {
+        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_INVALID_ORDER_DTX_EVENT, (event) -> {
+            CreateInvalidOrderDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateInvalidOrderDTXEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
+        });
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    private void listener10() {
+        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_CONCLUDE_ORDER_DTX_EVENT, (event) -> {
+            CreateConcludeOrderDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateConcludeOrderDTXEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
+        });
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    private void listener9() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_CREATE_ORDER_DTX_EVENT, (event) -> {
             CreateCreateOrderDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateCreateOrderDTXEvent.class);
             ApplicationServiceRegistry.getDistributedTxApplicationService().createCreateOrderTask(deserialize);
@@ -39,39 +86,19 @@ public class CreateOrderDTXEventSubscriber {
 
 
     @EventListener(ApplicationReadyEvent.class)
-    private void listener1() {
-        CommonDomainRegistry.getEventStreamService().replyOf(profileAppName, false, AppConstant.CLEAR_CART_FOR_CREATE_EVENT, (event) -> {
+    private void listener0() {
+        CommonDomainRegistry.getEventStreamService().of("*", false, AppConstant.SAGA_REPLY_EVENT, (event) -> {
             ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, ClearCartEvent.name);
+            log.debug("handing saga reply event of {}", deserialize.getReplyOf());
+            if (deserialize.getReplyOf().equals(GeneratePaymentQRLinkEvent.name)) {
+                GeneratePaymentQRLinkReplyCommand deserialize2 = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), GeneratePaymentQRLinkReplyCommand.class);
+                ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize2);
+            } else {
+                ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, deserialize.getReplyOf());
+            }
         });
     }
 
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener3() {
-        CommonDomainRegistry.getEventStreamService().replyOf(profileAppName, false,
-                AppConstant.SAVE_NEW_ORDER_FOR_CREATE_EVENT,
-                (event) -> {
-                    ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
-                    ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, SaveNewOrderEvent.name);
-                });
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener4() {
-        CommonDomainRegistry.getEventStreamService().replyOf(mallAppName, false, AppConstant.DECREASE_ORDER_STORAGE_FOR_CREATE_EVENT
-                , (event) -> {
-                    ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
-                    ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, DecreaseOrderStorageForCreateEvent.name);
-                });
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener5() {
-        CommonDomainRegistry.getEventStreamService().replyOf(paymentAppName, false, AppConstant.GENERATE_PAYMENT_QR_LINK_FOR_CREATE_EVENT, (event) -> {
-            GeneratePaymentQRLinkReplyCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), GeneratePaymentQRLinkReplyCommand.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
-        });
-    }
 
     @EventListener(ApplicationReadyEvent.class)
     private void listener6() {
@@ -93,6 +120,14 @@ public class CreateOrderDTXEventSubscriber {
     private void listener8() {
         CommonDomainRegistry.getEventStreamService().of(profileAppName, false, AppConstant.ORDER_UPDATE_FOR_CREATE_FAILED, (event) -> {
             LocalTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), LocalTxFailedEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
+        });
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    private void listener() {
+        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.DTX_FAILED_EVENT, (event) -> {
+            DistributedTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxFailedEvent.class);
             ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }

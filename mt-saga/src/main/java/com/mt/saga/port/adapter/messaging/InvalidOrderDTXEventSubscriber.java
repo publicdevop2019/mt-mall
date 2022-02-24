@@ -28,46 +28,7 @@ public class InvalidOrderDTXEventSubscriber {
     @Value("${mt.app.name.mt6}")
     private String paymentAppName;
 
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener() {
-        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_INVALID_ORDER_DTX_EVENT, (event) -> {
-            CreateInvalidOrderDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateInvalidOrderDTXEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
-        });
-    }
 
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener1() {
-        CommonDomainRegistry.getEventStreamService().replyOf(profileAppName, false, AppConstant.REMOVE_ORDER_FOR_INVALID_EVENT, (event) -> {
-            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, RemoveOrderForInvalidEvent.name);
-        });
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener4() {
-        CommonDomainRegistry.getEventStreamService().replyOf(profileAppName, false, AppConstant.RESTORE_CART_FOR_INVALID_EVENT, (event) -> {
-            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, RestoreCartForInvalidEvent.name);
-        });
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener2() {
-        CommonDomainRegistry.getEventStreamService().replyOf(mallAppName, false, AppConstant.INCREASE_STORAGE_FOR_INVALID_EVENT, (event) -> {
-            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, IncreaseStorageForInvalidEvent.name);
-        });
-    }
-
-
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener6() {
-        CommonDomainRegistry.getEventStreamService().replyOf(paymentAppName, false, AppConstant.REMOVE_PAYMENT_QR_LINK_FOR_INVALID_EVENT, (event) -> {
-            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, RemovePaymentQRLinkForInvalidEvent.name);
-        });
-    }
 
     @EventListener(ApplicationReadyEvent.class)
     private void listener7() {

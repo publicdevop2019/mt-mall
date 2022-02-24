@@ -9,7 +9,6 @@ import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.distributed_tx.event.invalid_order.IncreaseStorageForInvalidEvent;
 import com.mt.saga.domain.model.order_state_machine.order.BizOrderStatus;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +19,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class CancelIncreaseStorageForInvalidEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(IncreaseStorageForInvalidEvent.name);
+    public static final String name = MQHelper.cancelOf(IncreaseStorageForInvalidEvent.name);
     private List<PatchCommand> skuCommands;
     private String changeId;
     private String orderId;
@@ -37,7 +36,7 @@ public class CancelIncreaseStorageForInvalidEvent extends DomainEvent {
         this.orderId = orderId;
         this.taskId = taskId;
         setInternal(false);
-        setTopic(MQHelper.cancelOf(AppConstant.INCREASE_STORAGE_FOR_INVALID_EVENT));
+        setTopic(MQHelper.cancelOf(IncreaseStorageForInvalidEvent.name));
         setDomainId(new DomainId(taskId.toString()));
         setName(name);
     }

@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SaveNewOrderEvent extends DomainEvent {
-    public static final String name = "SAVE_NEW_ORDER_EVENT";
+    public static final String name = AppConstant.SAVE_NEW_ORDER_FOR_CREATE_EVENT;
     private String orderId;
     private String userId;
     private BizOrderStatus orderState;

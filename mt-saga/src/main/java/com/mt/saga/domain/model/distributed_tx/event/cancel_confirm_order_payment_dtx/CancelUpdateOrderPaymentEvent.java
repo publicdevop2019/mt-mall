@@ -6,7 +6,6 @@ import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.model.distributed_tx.event.confirm_order_payment_dtx.UpdateOrderPaymentSuccessEvent;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +14,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class CancelUpdateOrderPaymentEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(UpdateOrderPaymentSuccessEvent.name);
+    public static final String name = MQHelper.cancelOf(UpdateOrderPaymentSuccessEvent.name);
     private String orderId;
     private String changeId;
     private long taskId;
@@ -29,6 +28,6 @@ public class CancelUpdateOrderPaymentEvent extends DomainEvent {
         setOrderVersion(command.getVersion());
         setInternal(false);
         setName(name);
-        setTopic(MQHelper.cancelOf(AppConstant.UPDATE_ORDER_FOR_PAYMENT_SUCCESS_EVENT));
+        setTopic(MQHelper.cancelOf(UpdateOrderPaymentSuccessEvent.name));
     }
 }

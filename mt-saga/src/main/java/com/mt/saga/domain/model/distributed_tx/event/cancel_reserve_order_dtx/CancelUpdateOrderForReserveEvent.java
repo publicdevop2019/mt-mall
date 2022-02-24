@@ -6,7 +6,6 @@ import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.model.distributed_tx.event.reserve_order_dtx.UpdateOrderForReserveEvent;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +14,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class CancelUpdateOrderForReserveEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(UpdateOrderForReserveEvent.name);
+    public static final String name = MQHelper.cancelOf(UpdateOrderForReserveEvent.name);
     private String changeId;
     private long taskId;
     private Integer orderVersion;
@@ -26,7 +25,7 @@ public class CancelUpdateOrderForReserveEvent extends DomainEvent {
         this.taskId = taskId;
         setInternal(false);
         setDomainId(new DomainId(taskId.toString()));
-        setTopic(MQHelper.cancelOf(AppConstant.UPDATE_ORDER_FOR_RESERVE_EVENT));
+        setTopic(MQHelper.cancelOf(UpdateOrderForReserveEvent.name));
         setOrderId(orderId);
         setOrderVersion(command.getVersion());
         setName(name);

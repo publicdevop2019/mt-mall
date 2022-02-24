@@ -6,7 +6,6 @@ import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.model.distributed_tx.event.recycle_order_dtx.UpdateOrderForRecycleEvent;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +14,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class CancelUpdateOrderForRecycleEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(UpdateOrderForRecycleEvent.name);
+    public static final String name = MQHelper.cancelOf(UpdateOrderForRecycleEvent.name);
     private String changeId;
     private long taskId;
     private String orderId;
@@ -23,7 +22,7 @@ public class CancelUpdateOrderForRecycleEvent extends DomainEvent {
 
     public CancelUpdateOrderForRecycleEvent(CommonOrderCommand command, String orderId, String changeId, Long taskId) {
         setInternal(false);
-        setTopic(MQHelper.cancelOf(AppConstant.UPDATE_ORDER_FOR_RECYCLE_EVENT));
+        setTopic(MQHelper.cancelOf(UpdateOrderForRecycleEvent.name));
         setChangeId(changeId);
         setTaskId(taskId);
         setOrderId(orderId);

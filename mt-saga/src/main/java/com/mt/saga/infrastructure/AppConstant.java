@@ -91,4 +91,6 @@ public class AppConstant {
     public static final String RESTORE_CART_FOR_INVALID_EVENT = "restore_cart_for_invalid_event";
 
 
+    public static final String DTX_FAILED_EVENT = "dtx_failed_event";
+    public static final String SAGA_REPLY_EVENT = "saga_reply_event";
 }

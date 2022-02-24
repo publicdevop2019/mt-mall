@@ -21,21 +21,7 @@ public class ConfirmOrderPaymentDTXEventSubscriber {
     @Value("${spring.application.name}")
     private String appName;
 
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener() {
-        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_CONFIRM_ORDER_PAYMENT_DTX_EVENT, (event) -> {
-            CreateConfirmOrderPaymentDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateConfirmOrderPaymentDTXEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
-        });
-    }
 
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener1() {
-        CommonDomainRegistry.getEventStreamService().replyOf(profileAppName, false, AppConstant.UPDATE_ORDER_FOR_PAYMENT_SUCCESS_EVENT, (event) -> {
-            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, UpdateOrderPaymentSuccessEvent.name);
-        });
-    }
 
     @EventListener(ApplicationReadyEvent.class)
     private void listener3() {

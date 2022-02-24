@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import static com.mt.shop.infrastructure.AppConstant.SAGA_REPLY_EVENT;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -15,12 +17,13 @@ public class UpdateOrderAddressForUpdateAddressReplyCommand extends DomainEvent 
     public static final String name = "UPDATE_ORDER_ADDRESS_FOR_UPDATE_ADDRESS_REPLY_COMMAND";
     private long taskId;
     private boolean emptyOpt;
-
+    private String replyOf;
     public UpdateOrderAddressForUpdateAddressReplyCommand(long taskId, boolean emptyOpt) {
         this.taskId = taskId;
         this.emptyOpt = emptyOpt;
         setInternal(false);
-        setTopic(MQHelper.replyOf(AppConstant.UPDATE_ORDER_FOR_UPDATE_ORDER_ADDRESS_EVENT));
+        setTopic(SAGA_REPLY_EVENT);
+        replyOf = AppConstant.UPDATE_ORDER_FOR_UPDATE_ORDER_ADDRESS_EVENT;
         setDomainId(new DomainId(String.valueOf(taskId)));
         setName(name);
     }

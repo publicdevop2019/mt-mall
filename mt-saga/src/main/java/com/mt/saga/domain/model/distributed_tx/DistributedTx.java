@@ -50,19 +50,18 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
     private Long forwardDtxId;
     private String resolveReason;
     private boolean isCancel;
-    private String cancelEventName;
 
-    public DistributedTx(Set<LocalTx> localTxs, String name, String changeId, String lockId,String cancelEventName) {
+    public DistributedTx(Set<LocalTx> localTxs, String name, String changeId, String lockId) {
         this.id = CommonDomainRegistry.getUniqueIdGeneratorService().id();
         this.localTxs = localTxs.stream().collect(Collectors.toMap(LocalTx::getName, e -> e));
         this.name = name;
         this.changeId = changeId;
         this.lockId = lockId;
-        this.cancelEventName = cancelEventName;
     }
 
     public static DistributedTx cancelOf(DistributedTx distributedTx, Set<LocalTx> localTxs) {
-        DistributedTx distributedTx1 = new DistributedTx(localTxs, distributedTx.getName() + "_cancel", distributedTx.getChangeId() + "_cancel", distributedTx.getLockId(),null);
+        DistributedTx distributedTx1 = new DistributedTx(localTxs,
+                distributedTx.getName() + "_cancel", distributedTx.getChangeId() + "_cancel", distributedTx.getLockId());
         distributedTx1.replaceParams(distributedTx.getParameters());
         distributedTx1.forwardDtxId = distributedTx.getId();
         distributedTx1.isCancel = true;
@@ -138,9 +137,8 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
         if (isCancel) {
             throw new IllegalStateException("can not cancel cancel dtx");
         }
-        Validator.notBlank(cancelEventName);
         if (status.equals(DTXStatus.STARTED)) {
-            DomainEventPublisher.instance().publish(new DistributedTxFailedEvent(this, cancelEventName));
+            DomainEventPublisher.instance().publish(new DistributedTxFailedEvent(this));
         } else {
             throw new IllegalStateException("can cancel started dtx only");
         }

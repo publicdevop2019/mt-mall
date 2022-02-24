@@ -10,7 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdateOrderForConcludeEvent extends DomainEvent {
-    public static final String name = "UPDATE_ORDER_FOR_CONCLUDE_EVENT";
+    public static final String name = AppConstant.UPDATE_ORDER_FOR_CONCLUDE_EVENT;
+
     private String changeId;
     private long taskId;
     private String orderId;

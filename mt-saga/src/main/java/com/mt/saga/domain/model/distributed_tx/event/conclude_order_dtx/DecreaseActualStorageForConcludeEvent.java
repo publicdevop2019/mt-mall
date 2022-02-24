@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class DecreaseActualStorageForConcludeEvent extends DomainEvent {
-    public static final String name = "DECREASE_ACTUAL_STORAGE_FOR_CONCLUDE_EVENT";
+    public static final String name = AppConstant.DECREASE_ACTUAL_STORAGE_FOR_CONCLUDE_EVENT;
     private List<PatchCommand> skuCommands;
     private String changeId;
     private String orderId;

@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class GeneratePaymentQRLinkEvent extends DomainEvent {
-    public static final String name = "GENERATE_PAYMENT_QR_LINK_EVENT";
+    public static final String name = AppConstant.GENERATE_PAYMENT_QR_LINK_FOR_CREATE_EVENT;
     private String orderId;
     private String changeId;
     private long taskId;

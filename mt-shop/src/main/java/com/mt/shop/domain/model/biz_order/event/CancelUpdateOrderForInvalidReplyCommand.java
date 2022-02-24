@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import static com.mt.shop.infrastructure.AppConstant.SAGA_REPLY_EVENT;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -15,12 +17,13 @@ public class CancelUpdateOrderForInvalidReplyCommand extends DomainEvent {
     public static final String name = "CANCEL_UPDATE_ORDER_FOR_INVALID_REPLY_COMMAND";
     private long taskId;
     private boolean emptyOpt;
-
+    private String replyOf;
     public CancelUpdateOrderForInvalidReplyCommand(long taskId, boolean emptyOpt) {
         this.taskId = taskId;
         this.emptyOpt = emptyOpt;
         setInternal(false);
-        setTopic(MQHelper.replyCancelOf(AppConstant.REMOVE_ORDER_FOR_INVALID_EVENT));
+        setTopic(SAGA_REPLY_EVENT);
+        replyOf = MQHelper.cancelOf(AppConstant.REMOVE_ORDER_FOR_INVALID_EVENT);
         setDomainId(new DomainId(String.valueOf(taskId)));
         setName(name);
     }

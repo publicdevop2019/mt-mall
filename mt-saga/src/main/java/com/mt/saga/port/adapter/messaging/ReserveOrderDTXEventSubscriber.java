@@ -24,29 +24,6 @@ public class ReserveOrderDTXEventSubscriber {
     @Value("${mt.app.name.mt3}")
     private String mallAppName;
 
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener() {
-        CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CREATE_RESERVE_ORDER_DTX_EVENT, (event) -> {
-            CreateReserveOrderDTXEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CreateReserveOrderDTXEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
-        });
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener1() {
-        CommonDomainRegistry.getEventStreamService().replyOf(profileAppName, false, AppConstant.UPDATE_ORDER_FOR_RESERVE_EVENT, (event) -> {
-            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, UpdateOrderForReserveEvent.name);
-        });
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    private void listener2() {
-        CommonDomainRegistry.getEventStreamService().replyOf(mallAppName, false, AppConstant.DECREASE_ORDER_STORAGE_FOR_RESERVE_EVENT, (event) -> {
-            ReplyEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ReplyEvent.class);
-            ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize, DecreaseOrderStorageForReserveEvent.name);
-        });
-    }
 
     @EventListener(ApplicationReadyEvent.class)
     private void listener4() {

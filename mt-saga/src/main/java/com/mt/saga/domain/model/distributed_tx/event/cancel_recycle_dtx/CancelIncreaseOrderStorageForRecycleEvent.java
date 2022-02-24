@@ -6,10 +6,9 @@ import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.common.domain.model.restful.PatchCommand;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
-import com.mt.saga.domain.model.order_state_machine.ProductService;
 import com.mt.saga.domain.model.distributed_tx.event.recycle_order_dtx.IncreaseOrderStorageForRecycleEvent;
+import com.mt.saga.domain.model.order_state_machine.ProductService;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +19,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class CancelIncreaseOrderStorageForRecycleEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(IncreaseOrderStorageForRecycleEvent.name);
+    public static final String name = MQHelper.cancelOf(IncreaseOrderStorageForRecycleEvent.name);
     private List<PatchCommand> skuCommands;
     private String changeId;
     private String orderId;
@@ -34,7 +33,7 @@ public class CancelIncreaseOrderStorageForRecycleEvent extends DomainEvent {
         this.orderId = orderId;
         setDomainId(new DomainId(taskId.toString()));
         setInternal(false);
-        setTopic(MQHelper.cancelOf(AppConstant.INCREASE_ORDER_STORAGE_FOR_RECYCLE_EVENT));
+        setTopic(MQHelper.cancelOf(IncreaseOrderStorageForRecycleEvent.name));
         setName(name);
     }
 

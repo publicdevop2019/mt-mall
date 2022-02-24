@@ -68,10 +68,40 @@ public class DistributedTxApplicationService {
     public static final String RESOLVE_DTX = "RESOLVE_DTX";
     private static final String CREATE_DTX = "CreateDtx";
     public static final String CANCEL_DTX = "CancelDtx";
+    public static final String CREATE_ORDER_DTX = "createOrderDtx";
+    public static final String CONCLUDE_ORDER_DTX = "ConcludeOrderDtx";
+    public static final String CONFIRM_ORDER_PAYMENT_ORDER_DTX = "ConfirmOrderPaymentOrderDtx";
+    public static final String INVALID_ORDER_DTX = "InvalidOrderDtx";
+    public static final String RECYCLE_ORDER_DTX = "RecycleOrderDtx";
+    public static final String RESERVE_ORDER_DTX = "ReserveOrderDtx";
+    public static final String UPDATE_ORDER_ADDRESS_DTX = "UpdateOrderAddressDtx";
 
     @Transactional
     @SubscribeForEvent
-    public void concludeOrderFailed(DistributedTxFailedEvent event) {
+    public void handle(DistributedTxFailedEvent event) {
+        if(CREATE_ORDER_DTX.equals(event.getDistributedTx().getName())){
+            createOrderFailed(event);
+        }
+        else if(CONCLUDE_ORDER_DTX.equals(event.getDistributedTx().getName())){
+            concludeOrderFailed(event);
+        }
+        else if(CONFIRM_ORDER_PAYMENT_ORDER_DTX.equals(event.getDistributedTx().getName())){
+            confirmPaymentFailed(event);
+        }
+        else if(INVALID_ORDER_DTX.equals(event.getDistributedTx().getName())){
+            invalidOrderFailed(event);
+        }
+        else if(RECYCLE_ORDER_DTX.equals(event.getDistributedTx().getName())){
+            recycleOrderFailed(event);
+        }
+        else if(RESERVE_ORDER_DTX.equals(event.getDistributedTx().getName())){
+            reserveOrderFailed(event);
+        }
+        else if(UPDATE_ORDER_ADDRESS_DTX.equals(event.getDistributedTx().getName())){
+            updateAddressFailed(event);
+        }
+    }
+    private void concludeOrderFailed(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
 
             LocalTx localTx1 = new LocalTx(CancelUpdateOrderForConcludeEvent.name);
@@ -89,9 +119,7 @@ public class DistributedTxApplicationService {
         }, CREATE_DTX);
     }
 
-    @Transactional
-    @SubscribeForEvent
-    public void confirmPaymentFailed(DistributedTxFailedEvent deserialize) {
+    private void confirmPaymentFailed(DistributedTxFailedEvent deserialize) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(deserialize.getId().toString(), (change) -> {
 
             LocalTx localTx1 = new LocalTx(CancelUpdateOrderPaymentEvent.name);
@@ -106,9 +134,7 @@ public class DistributedTxApplicationService {
         }, CREATE_DTX);
     }
 
-    @Transactional
-    @SubscribeForEvent
-    public void createOrderFailed(DistributedTxFailedEvent event) {
+    private void createOrderFailed(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             LocalTx localTx1 = new LocalTx(CancelGeneratePaymentQRLinkEvent.name);
             LocalTx localTx2 = new LocalTx(CancelDecreaseOrderStorageForCreateEvent.name);
@@ -133,39 +159,7 @@ public class DistributedTxApplicationService {
         }, CREATE_DTX);
     }
 
-    @SubscribeForEvent
-    @Transactional
-    public void createCreateOrderTask(CreateCreateOrderDTXEvent event) {
-        CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
-            CommonOrderCommand command = event.getCommand();
-            DomainRegistry.getIsolationService().hasNoActiveDtx((ignored) -> {
-                LocalTx localTx1 = new LocalTx(GeneratePaymentQRLinkEvent.name);
-                LocalTx localTx2 = new LocalTx(DecreaseOrderStorageForCreateEvent.name);
-                LocalTx localTx3 = new LocalTx(ClearCartEvent.name);
-                LocalTx localTx4 = new LocalTx(SaveNewOrderEvent.name);
-                Set<LocalTx> localTxes = new HashSet<>();
-                localTxes.add(localTx1);
-                localTxes.add(localTx2);
-                localTxes.add(localTx3);
-                localTxes.add(localTx4);
-                DistributedTx distributedTx = new DistributedTx(localTxes, "createOrderDtx", event.getCommand().getTxId(), event.getCommand().getOrderId(), AppConstant.CREATE_ORDER_DTX_FAILED_EVENT);
-                distributedTx.startLocalTx(GeneratePaymentQRLinkEvent.name);
-                distributedTx.startLocalTx(DecreaseOrderStorageForCreateEvent.name);
-                distributedTx.startLocalTx(ClearCartEvent.name);
-                distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
-                DomainEventPublisher.instance().publish(new GeneratePaymentQRLinkEvent(event.getCommand().getOrderId(), event.getCommand().getTxId(), distributedTx.getId()));
-                DomainEventPublisher.instance().publish(new DecreaseOrderStorageForCreateEvent(event.getCommand().getOrderId(), event.getCommand().getTxId(), distributedTx.getId(), command));
-                DomainEventPublisher.instance().publish(new ClearCartEvent(command, event.getCommand().getTxId(), distributedTx.getId()));
-                DomainRegistry.getDistributedTxRepository().store(distributedTx);
-            }, command.getOrderId());
-            return null;
-        }, CREATE_DTX);
-    }
-
-
-    @Transactional
-    @SubscribeForEvent
-    public void invalidOrderFailed(DistributedTxFailedEvent event) {
+    private void invalidOrderFailed(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getDistributedTx().getParameters().get("COMMAND"), CommonOrderCommand.class);
             HashSet<LocalTx> localTxes = new HashSet<>();
@@ -223,9 +217,7 @@ public class DistributedTxApplicationService {
         }, CREATE_DTX);
     }
 
-    @Transactional
-    @SubscribeForEvent
-    public void recycleOrderFailed(DistributedTxFailedEvent event) {
+    private void recycleOrderFailed(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
 
             LocalTx localTx1 = new LocalTx(CancelIncreaseOrderStorageForRecycleEvent.name);
@@ -244,9 +236,7 @@ public class DistributedTxApplicationService {
         }, CREATE_DTX);
     }
 
-    @Transactional
-    @SubscribeForEvent
-    public void reserveOrderFailed(DistributedTxFailedEvent event) {
+    private void reserveOrderFailed(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
 
             LocalTx localTx1 = new LocalTx(CancelDecreaseOrderStorageForReserveEvent.name);
@@ -267,9 +257,7 @@ public class DistributedTxApplicationService {
     }
 
 
-    @Transactional
-    @SubscribeForEvent
-    public void updateAddressFailed(DistributedTxFailedEvent event) {
+    private void updateAddressFailed(DistributedTxFailedEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             LocalTx localTx1 = new LocalTx(CancelUpdateOrderForUpdateOrderAddressEvent.name);
             Set<LocalTx> localTxes = new HashSet<>();
@@ -283,6 +271,37 @@ public class DistributedTxApplicationService {
         }, CREATE_DTX);
     }
 
+    @SubscribeForEvent
+    @Transactional
+    public void createCreateOrderTask(CreateCreateOrderDTXEvent event) {
+        CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
+            CommonOrderCommand command = event.getCommand();
+            DomainRegistry.getIsolationService().hasNoActiveDtx((ignored) -> {
+                LocalTx localTx1 = new LocalTx(GeneratePaymentQRLinkEvent.name);
+                LocalTx localTx2 = new LocalTx(DecreaseOrderStorageForCreateEvent.name);
+                LocalTx localTx3 = new LocalTx(ClearCartEvent.name);
+                LocalTx localTx4 = new LocalTx(SaveNewOrderEvent.name);
+                Set<LocalTx> localTxes = new HashSet<>();
+                localTxes.add(localTx1);
+                localTxes.add(localTx2);
+                localTxes.add(localTx3);
+                localTxes.add(localTx4);
+                DistributedTx distributedTx = new DistributedTx(localTxes, CREATE_ORDER_DTX, event.getCommand().getTxId(), event.getCommand().getOrderId());
+                distributedTx.startLocalTx(GeneratePaymentQRLinkEvent.name);
+                distributedTx.startLocalTx(DecreaseOrderStorageForCreateEvent.name);
+                distributedTx.startLocalTx(ClearCartEvent.name);
+                distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
+                DomainEventPublisher.instance().publish(new GeneratePaymentQRLinkEvent(event.getCommand().getOrderId(), event.getCommand().getTxId(), distributedTx.getId()));
+                DomainEventPublisher.instance().publish(new DecreaseOrderStorageForCreateEvent(event.getCommand().getOrderId(), event.getCommand().getTxId(), distributedTx.getId(), command));
+                DomainEventPublisher.instance().publish(new ClearCartEvent(command, event.getCommand().getTxId(), distributedTx.getId()));
+                DomainRegistry.getDistributedTxRepository().store(distributedTx);
+            }, command.getOrderId());
+            return null;
+        }, CREATE_DTX);
+    }
+
+
+
     @Transactional
     @SubscribeForEvent
     public void handle(CreateConcludeOrderDTXEvent event) {
@@ -295,7 +314,7 @@ public class DistributedTxApplicationService {
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
                 localTxes.add(localTx2);
-                DistributedTx distributedTx = new DistributedTx(localTxes, "ConcludeOrderDtx", event.getCommand().getTxId(), event.getCommand().getOrderId(), AppConstant.CONCLUDE_ORDER_DTX_FAILED_EVENT);
+                DistributedTx distributedTx = new DistributedTx(localTxes, CONCLUDE_ORDER_DTX, event.getCommand().getTxId(), event.getCommand().getOrderId());
                 distributedTx.startLocalTx(UpdateOrderForConcludeEvent.name);
                 distributedTx.startLocalTx(DecreaseActualStorageForConcludeEvent.name);
                 distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
@@ -319,7 +338,7 @@ public class DistributedTxApplicationService {
                 LocalTx localTx1 = new LocalTx(UpdateOrderPaymentSuccessEvent.name);
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
-                DistributedTx distributedTx = new DistributedTx(localTxes, "ConfirmOrderPaymentOrderDtx", event.getCommand().getTxId(), event.getCommand().getOrderId(), AppConstant.CONFIRM_ORDER_PAYMENT_FAILED_EVENT);
+                DistributedTx distributedTx = new DistributedTx(localTxes, CONFIRM_ORDER_PAYMENT_ORDER_DTX, event.getCommand().getTxId(), event.getCommand().getOrderId());
                 distributedTx.startLocalTx(UpdateOrderPaymentSuccessEvent.name);
                 distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 CommonOrderCommand command = event.getCommand();
@@ -347,7 +366,7 @@ public class DistributedTxApplicationService {
                 localTxes.add(localTx2);
                 localTxes.add(localTx3);
                 localTxes.add(localTx4);
-                DistributedTx distributedTx = new DistributedTx(localTxes, "InvalidOrderDtx", command.getTxId(), command.getOrderId(), AppConstant.INVALID_ORDER_DTX_FAILED_EVENT);
+                DistributedTx distributedTx = new DistributedTx(localTxes, INVALID_ORDER_DTX, command.getTxId(), command.getOrderId());
                 distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 if (command.getOrderState().equals(BizOrderStatus.PAID_RECYCLED)) {
 
@@ -411,7 +430,7 @@ public class DistributedTxApplicationService {
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
                 localTxes.add(localTx2);
-                DistributedTx dtx = new DistributedTx(localTxes, "RecycleOrderDtx", event.getCommand().getTxId(), event.getCommand().getOrderId(), AppConstant.RECYCLE_ORDER_DTX_FAILED_EVENT);
+                DistributedTx dtx = new DistributedTx(localTxes, RECYCLE_ORDER_DTX, event.getCommand().getTxId(), event.getCommand().getOrderId());
                 dtx.startAllLocalTx();
                 dtx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 CommonOrderCommand command = event.getCommand();
@@ -437,7 +456,7 @@ public class DistributedTxApplicationService {
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
                 localTxes.add(localTx2);
-                DistributedTx dtx = new DistributedTx(localTxes, "ReserveOrderDtx", event.getCommand().getTxId(), event.getCommand().getOrderId(), AppConstant.RESERVE_ORDER_DTX_FAILED_EVENT);
+                DistributedTx dtx = new DistributedTx(localTxes, RESERVE_ORDER_DTX, event.getCommand().getTxId(), event.getCommand().getOrderId());
                 dtx.startAllLocalTx();
                 dtx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 CommonOrderCommand command = event.getCommand();
@@ -460,7 +479,7 @@ public class DistributedTxApplicationService {
                 LocalTx localTx1 = new LocalTx(UpdateOrderForUpdateOrderAddressEvent.name);
                 Set<LocalTx> localTxes = new HashSet<>();
                 localTxes.add(localTx1);
-                DistributedTx dtx = new DistributedTx(localTxes, "UpdateOrderAddressDtx", event.getCommand().getTxId(), event.getCommand().getOrderId(), AppConstant.UPDATE_ORDER_ADDRESS_DTX_FAILED_EVENT);
+                DistributedTx dtx = new DistributedTx(localTxes, UPDATE_ORDER_ADDRESS_DTX, event.getCommand().getTxId(), event.getCommand().getOrderId());
                 dtx.startAllLocalTx();
                 dtx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 CommonOrderCommand command = event.getCommand();

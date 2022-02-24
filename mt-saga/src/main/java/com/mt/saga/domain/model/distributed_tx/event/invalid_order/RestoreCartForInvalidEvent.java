@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 public class RestoreCartForInvalidEvent extends DomainEvent {
-    public static final String name = "RESTORE_CART_EVENT";
+    public static final String name = AppConstant.RESTORE_CART_FOR_INVALID_EVENT;
     private String userId;
     private Set<String> ids;
     private String changeId;

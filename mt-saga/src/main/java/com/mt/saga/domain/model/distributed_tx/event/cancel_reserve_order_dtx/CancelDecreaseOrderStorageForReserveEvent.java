@@ -8,7 +8,6 @@ import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.distributed_tx.event.reserve_order_dtx.DecreaseOrderStorageForReserveEvent;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +18,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class CancelDecreaseOrderStorageForReserveEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(DecreaseOrderStorageForReserveEvent.name);
+    public static final String name = MQHelper.cancelOf(DecreaseOrderStorageForReserveEvent.name);
     private List<PatchCommand> skuCommands;
     private String changeId;
     private String orderId;
@@ -33,7 +32,7 @@ public class CancelDecreaseOrderStorageForReserveEvent extends DomainEvent {
         this.taskId = taskId;
         setInternal(false);
         setDomainId(new DomainId(taskId.toString()));
-        setTopic(MQHelper.cancelOf(AppConstant.DECREASE_ORDER_STORAGE_FOR_RESERVE_EVENT));
+        setTopic(MQHelper.cancelOf(DecreaseOrderStorageForReserveEvent.name));
         setName(name);
     }
 }

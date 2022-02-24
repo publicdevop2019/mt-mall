@@ -6,7 +6,6 @@ import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.model.distributed_tx.event.create_order_dtx.SaveNewOrderEvent;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +14,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class CancelSaveNewOrderEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(SaveNewOrderEvent.name);
+    public static final String name = MQHelper.cancelOf(SaveNewOrderEvent.name);
     private String orderId;
     private String userId;
     private String changeId;
@@ -26,7 +25,7 @@ public class CancelSaveNewOrderEvent extends DomainEvent {
         setOrderId(command.getOrderId());
         setUserId(command.getUserId());
         setInternal(false);
-        setTopic(MQHelper.cancelOf(AppConstant.SAVE_NEW_ORDER_FOR_CREATE_EVENT));
+        setTopic(MQHelper.cancelOf(SaveNewOrderEvent.name));
         setTaskId(taskId);
         setChangeId(changeId);
         setDomainId(new DomainId(taskId.toString()));

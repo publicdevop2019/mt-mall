@@ -6,7 +6,6 @@ import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.model.distributed_tx.event.invalid_order.RemoveOrderForInvalidEvent;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +14,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class CancelRemoveOrderForInvalidEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(RemoveOrderForInvalidEvent.name);
+    public static final String name = MQHelper.cancelOf(RemoveOrderForInvalidEvent.name);
     private String orderId;
     private String changeId;
     private long taskId;
@@ -27,7 +26,7 @@ public class CancelRemoveOrderForInvalidEvent extends DomainEvent {
         this.taskId = taskId;
         setOrderVersion(command.getVersion());
         setInternal(false);
-        setTopic(MQHelper.cancelOf(AppConstant.REMOVE_ORDER_FOR_INVALID_EVENT));
+        setTopic(MQHelper.cancelOf(RemoveOrderForInvalidEvent.name));
         setDomainId(new DomainId(taskId.toString()));
         setName(name);
     }

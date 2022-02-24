@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class UpdateOrderPaymentSuccessEvent extends DomainEvent {
-    public static final String name = "UPDATE_ORDER_PAYMENT_SUCCESS_EVENT";
+    public static final String name = AppConstant.UPDATE_ORDER_FOR_PAYMENT_SUCCESS_EVENT;
     private String orderId;
     private String userId;
     private BizOrderStatus orderState;

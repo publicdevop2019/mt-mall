@@ -8,7 +8,6 @@ import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
 import com.mt.saga.domain.model.distributed_tx.event.conclude_order_dtx.DecreaseActualStorageForConcludeEvent;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +18,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class CancelDecreaseActualStorageForConcludeEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(DecreaseActualStorageForConcludeEvent.name);
+    public static final String name = MQHelper.cancelOf(DecreaseActualStorageForConcludeEvent.name);
     private List<PatchCommand> skuCommands;
     private String changeId;
     private String orderId;
@@ -34,6 +33,6 @@ public class CancelDecreaseActualStorageForConcludeEvent extends DomainEvent {
         setName(name);
         setDomainId(new DomainId(taskId.toString()));
         setInternal(false);
-        setTopic(MQHelper.cancelOf(AppConstant.DECREASE_ACTUAL_STORAGE_FOR_CONCLUDE_EVENT));
+        setTopic(MQHelper.cancelOf(DecreaseActualStorageForConcludeEvent.name));
     }
 }

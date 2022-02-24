@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class UpdateOrderForRecycleEvent extends DomainEvent {
-    public static final String name = "UPDATE_ORDER_FOR_RECYCLE_EVENT";
+    public static final String name = AppConstant.UPDATE_ORDER_FOR_RECYCLE_EVENT;
     private String changeId;
     private long taskId;
     private String orderId;

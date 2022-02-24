@@ -6,14 +6,13 @@ import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.model.distributed_tx.event.conclude_order_dtx.UpdateOrderForConcludeEvent;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class CancelUpdateOrderForConcludeEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(UpdateOrderForConcludeEvent.name);
+    public static final String name = MQHelper.cancelOf(UpdateOrderForConcludeEvent.name);
     private String changeId;
     private long taskId;
     private String orderId;
@@ -22,7 +21,7 @@ public class CancelUpdateOrderForConcludeEvent extends DomainEvent {
     public CancelUpdateOrderForConcludeEvent(CommonOrderCommand command, String orderId, String changeId, Long taskId) {
         setName(name);
         setInternal(false);
-        setTopic(MQHelper.cancelOf(AppConstant.UPDATE_ORDER_FOR_CONCLUDE_EVENT));
+        setTopic(MQHelper.cancelOf(UpdateOrderForConcludeEvent.name));
         setChangeId(changeId);
         setTaskId(taskId);
         setDomainId(new DomainId(taskId.toString()));

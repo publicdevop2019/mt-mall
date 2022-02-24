@@ -7,4 +7,5 @@ import lombok.Getter;
 public class ReplyEvent extends DomainEvent {
     private  Long taskId;
     private  boolean emptyOpt;
+    private  String replyOf;
 }

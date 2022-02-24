@@ -7,7 +7,6 @@ import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.model.distributed_tx.event.invalid_order.RestoreCartForInvalidEvent;
 import com.mt.saga.domain.model.order_state_machine.order.CartDetail;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 public class CancelRestoreCartForInvalidEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(RestoreCartForInvalidEvent.name);
+    public static final String name = MQHelper.cancelOf(RestoreCartForInvalidEvent.name);
     private String userId;
     private Set<String> ids;
     private String changeId;
@@ -37,7 +36,7 @@ public class CancelRestoreCartForInvalidEvent extends DomainEvent {
         setName(name);
         setDomainId(new DomainId(taskId.toString()));
         setInternal(false);
-        setTopic(MQHelper.cancelOf(AppConstant.RESTORE_CART_FOR_INVALID_EVENT));
+        setTopic(MQHelper.cancelOf(RestoreCartForInvalidEvent.name));
         setName(name);
         HashMap<String, Integer> stringIntegerHashMap = new HashMap<>();
         deserialize.getProductList().forEach(e -> {

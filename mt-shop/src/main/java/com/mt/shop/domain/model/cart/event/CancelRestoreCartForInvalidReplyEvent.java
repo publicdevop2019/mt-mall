@@ -7,18 +7,21 @@ import com.mt.shop.infrastructure.AppConstant;
 import lombok.Getter;
 import lombok.Setter;
 
+import static com.mt.shop.infrastructure.AppConstant.SAGA_REPLY_EVENT;
+
 @Getter
 @Setter
 public class CancelRestoreCartForInvalidReplyEvent extends DomainEvent {
     public static final String name = "CANCEL_RESTORE_CART_FOR_INVALID_REPLY_EVENT";
     private boolean emptyOpt;
     private long taskId;
-
+    private String replyOf;
     public CancelRestoreCartForInvalidReplyEvent(long taskId, boolean emptyOpt) {
         this.emptyOpt = emptyOpt;
         this.taskId = taskId;
         setInternal(false);
-        setTopic(MQHelper.replyCancelOf(AppConstant.RESTORE_CART_FOR_INVALID_EVENT));
+        setTopic(SAGA_REPLY_EVENT);
+        replyOf=MQHelper.cancelOf(AppConstant.RESTORE_CART_FOR_INVALID_EVENT);
         setDomainId(new DomainId(String.valueOf(taskId)));
         setName(name);
     }

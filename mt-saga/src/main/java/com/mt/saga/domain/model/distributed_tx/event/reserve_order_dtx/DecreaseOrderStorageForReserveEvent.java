@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class DecreaseOrderStorageForReserveEvent extends DomainEvent {
-    public static final String name = "DECREASE_ORDER_STORAGE_FOR_RESERVE_EVENT";
+    public static final String name = AppConstant.DECREASE_ORDER_STORAGE_FOR_RESERVE_EVENT;
     private List<PatchCommand> skuCommands;
     private String changeId;
     private String orderId;

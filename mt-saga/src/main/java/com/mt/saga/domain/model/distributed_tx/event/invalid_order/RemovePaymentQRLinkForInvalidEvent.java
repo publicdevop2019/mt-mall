@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class RemovePaymentQRLinkForInvalidEvent extends DomainEvent {
-    public static final String name = "REMOVE_PAYMENT_QR_LINK_FOR_INVALID_EVENT";
+    public static final String name = AppConstant.REMOVE_PAYMENT_QR_LINK_FOR_INVALID_EVENT;
     private String orderId;
     private String changeId;
     private long taskId;

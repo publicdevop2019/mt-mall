@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class IncreaseOrderStorageForRecycleEvent extends DomainEvent {
-    public static final String name = "INCREASE_ORDER_STORAGE_FOR_RECYCLE_EVENT";
+    public static final String name = AppConstant.INCREASE_ORDER_STORAGE_FOR_RECYCLE_EVENT;
     private List<PatchCommand> skuCommands;
     private String changeId;
     private String orderId;

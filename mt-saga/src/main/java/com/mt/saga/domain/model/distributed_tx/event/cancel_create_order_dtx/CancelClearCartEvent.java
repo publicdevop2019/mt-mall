@@ -7,7 +7,6 @@ import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.model.distributed_tx.event.create_order_dtx.ClearCartEvent;
 import com.mt.saga.domain.model.order_state_machine.order.CartDetail;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor
 public class CancelClearCartEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(ClearCartEvent.name);
+    public static final String name = MQHelper.cancelOf(ClearCartEvent.name);
     private String userId;
     private Set<String> ids;
     private Map<String, Integer> idVersionMap;
@@ -37,7 +36,7 @@ public class CancelClearCartEvent extends DomainEvent {
         this.taskId = taskId;
         setDomainId(new DomainId(taskId.toString()));
         setInternal(false);
-        setTopic(MQHelper.cancelOf(AppConstant.CLEAR_CART_FOR_CREATE_EVENT));
+        setTopic(MQHelper.cancelOf(ClearCartEvent.name));
         HashMap<String, Integer> stringIntegerHashMap = new HashMap<>();
         command.getProductList().forEach(e -> {
             stringIntegerHashMap.put(e.getCartId(), e.getVersion());

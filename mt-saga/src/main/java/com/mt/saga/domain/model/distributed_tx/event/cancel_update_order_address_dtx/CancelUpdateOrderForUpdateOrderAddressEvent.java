@@ -4,10 +4,9 @@ import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.DomainEvent;
 import com.mt.common.domain.model.domain_event.MQHelper;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
-import com.mt.saga.domain.model.order_state_machine.order.BizOrderAddressCmdRep;
 import com.mt.saga.domain.model.distributed_tx.event.update_order_address_dtx.UpdateOrderForUpdateOrderAddressEvent;
+import com.mt.saga.domain.model.order_state_machine.order.BizOrderAddressCmdRep;
 import com.mt.saga.infrastructure.AppConstant;
-import com.mt.saga.infrastructure.Utility;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +15,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class CancelUpdateOrderForUpdateOrderAddressEvent extends DomainEvent {
-    public static final String name = Utility.getCancelLtxName(UpdateOrderForUpdateOrderAddressEvent.name);
+    public static final String name = MQHelper.cancelOf(UpdateOrderForUpdateOrderAddressEvent.name);
     private String orderId;
     private String changeId;
     private long taskId;
@@ -32,7 +31,7 @@ public class CancelUpdateOrderForUpdateOrderAddressEvent extends DomainEvent {
         setOrderVersion(command.getVersion());
         setInternal(false);
         setName(name);
-        setTopic(MQHelper.cancelOf(AppConstant.UPDATE_ORDER_FOR_UPDATE_ORDER_ADDRESS_EVENT));
+        setTopic(MQHelper.cancelOf(UpdateOrderForUpdateOrderAddressEvent.name));
         setAddress(command.getOriginalAddress());
         setModifiedByUserAt(command.getOriginalModifiedByUserAt());
     }
