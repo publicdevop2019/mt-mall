@@ -9,13 +9,7 @@ import { IBottomSheet } from 'src/app/clazz/summary.component';
 import { ObjectDetailComponent } from 'src/app/components/object-detail/object-detail.component';
 import { OverlayService } from 'src/app/services/overlay.service';
 import { IStoredEvent, StoredEventService } from 'src/app/services/stored-event.service';
-import { IBizTask, TaskService } from 'src/app/services/task.service';
-interface ILtxStatus {
-  id: string;
-  name: string;
-  emptyOpt: boolean;
-  status: 'SUCCESS' | 'STARTED' | 'PENDING';
-}
+import { IDtxDetail, ILtxDetail, TaskService } from 'src/app/services/task.service';
 interface IStoredEventExt extends IStoredEvent {
   serviceName: string
 }
@@ -25,11 +19,11 @@ interface IStoredEventExt extends IStoredEvent {
   styleUrls: ['./task.component.css']
 })
 export class TaskComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'status', 'emptyOpt', 'retry'];
+  displayedColumns: string[] = ['name', 'status', 'emptyOpt', 'skipped','retry'];
   eventDisplayedColumns: string[] = ['id', 'belongsTo', 'eventBody', 'timestamp', 'name', 'internal', 'retry'];
-  dataSource: MatTableDataSource<ILtxStatus>;
+  dataSource: MatTableDataSource<ILtxDetail>;
   eventDataSource: MatTableDataSource<IStoredEventExt> = new MatTableDataSource([]);
-  taskBottomSheet: IBottomSheet<IBizTask>;
+  taskBottomSheet: IBottomSheet<IDtxDetail>;
   constructor(
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: any, // keep as any is needed
     private bottomSheetRef: MatBottomSheetRef<TaskComponent>,
@@ -40,10 +34,7 @@ export class TaskComponent implements OnInit {
     private overlaySvc: OverlayService,
   ) {
     this.taskBottomSheet = data;
-    const next: ILtxStatus[] = []
-    Object.keys(this.taskBottomSheet.from.statusMap).forEach(e => {
-      next.push({ id: this.taskBottomSheet.from.idMap[e], name: e, emptyOpt: this.taskBottomSheet.from.emptyOptMap[e], status: this.taskBottomSheet.from.statusMap[e] })
-    })
+    const next: ILtxDetail[] = this.taskBottomSheet.from.ltx
     this.dataSource = new MatTableDataSource(next);
     this.entitySvc.resetServiceName();
     this.findEventsByDomainId();
@@ -81,7 +72,7 @@ export class TaskComponent implements OnInit {
     this.entitySvc.setServiceName(event.serviceName)
     this.entitySvc.retry(event.id).subscribe()
   }
-  launchOverlay(el: MatIcon, data: IBizTask) {
+  launchOverlay(el: MatIcon, data: IDtxDetail) {
     this.overlaySvc.data = data;
     let config = new OverlayConfig();
     config.hasBackdrop = true;

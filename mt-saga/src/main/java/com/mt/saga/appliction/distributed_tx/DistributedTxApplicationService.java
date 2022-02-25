@@ -34,7 +34,7 @@ import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import com.mt.saga.domain.model.distributed_tx.DistributedTxQuery;
 import com.mt.saga.domain.model.distributed_tx.LocalTx;
 import com.mt.saga.appliction.distributed_tx.command.ReplyEvent;
-import com.mt.saga.appliction.distributed_tx.command.DistributedTxFailedEvent;
+import com.mt.saga.appliction.distributed_tx.command.CancelDistributedTxEvent;
 import com.mt.saga.appliction.distributed_tx.command.DistributedTxSuccessEvent;
 import com.mt.saga.appliction.distributed_tx.command.LocalTxFailedEvent;
 import com.mt.saga.domain.model.distributed_tx.event.cancel_conclude_order_dtx.CancelDecreaseActualStorageForConcludeEvent;
@@ -51,7 +51,6 @@ import com.mt.saga.domain.model.distributed_tx.event.recycle_order_dtx.UpdateOrd
 import com.mt.saga.domain.model.distributed_tx.event.reserve_order_dtx.DecreaseOrderStorageForReserveEvent;
 import com.mt.saga.domain.model.distributed_tx.event.reserve_order_dtx.UpdateOrderForReserveEvent;
 import com.mt.saga.domain.model.distributed_tx.event.update_order_address_dtx.UpdateOrderForUpdateOrderAddressEvent;
-import com.mt.saga.infrastructure.AppConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,7 +77,7 @@ public class DistributedTxApplicationService {
 
     @Transactional
     @SubscribeForEvent
-    public void handle(DistributedTxFailedEvent event) {
+    public void handle(CancelDistributedTxEvent event) {
         if(CREATE_ORDER_DTX.equals(event.getDistributedTx().getName())){
             createOrderFailed(event);
         }
@@ -101,7 +100,7 @@ public class DistributedTxApplicationService {
             updateAddressFailed(event);
         }
     }
-    private void concludeOrderFailed(DistributedTxFailedEvent event) {
+    private void concludeOrderFailed(CancelDistributedTxEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
 
             LocalTx localTx1 = new LocalTx(CancelUpdateOrderForConcludeEvent.name);
@@ -119,7 +118,7 @@ public class DistributedTxApplicationService {
         }, CREATE_DTX);
     }
 
-    private void confirmPaymentFailed(DistributedTxFailedEvent deserialize) {
+    private void confirmPaymentFailed(CancelDistributedTxEvent deserialize) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(deserialize.getId().toString(), (change) -> {
 
             LocalTx localTx1 = new LocalTx(CancelUpdateOrderPaymentEvent.name);
@@ -134,7 +133,7 @@ public class DistributedTxApplicationService {
         }, CREATE_DTX);
     }
 
-    private void createOrderFailed(DistributedTxFailedEvent event) {
+    private void createOrderFailed(CancelDistributedTxEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             LocalTx localTx1 = new LocalTx(CancelGeneratePaymentQRLinkEvent.name);
             LocalTx localTx2 = new LocalTx(CancelDecreaseOrderStorageForCreateEvent.name);
@@ -159,7 +158,7 @@ public class DistributedTxApplicationService {
         }, CREATE_DTX);
     }
 
-    private void invalidOrderFailed(DistributedTxFailedEvent event) {
+    private void invalidOrderFailed(CancelDistributedTxEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getDistributedTx().getParameters().get("COMMAND"), CommonOrderCommand.class);
             HashSet<LocalTx> localTxes = new HashSet<>();
@@ -217,7 +216,7 @@ public class DistributedTxApplicationService {
         }, CREATE_DTX);
     }
 
-    private void recycleOrderFailed(DistributedTxFailedEvent event) {
+    private void recycleOrderFailed(CancelDistributedTxEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
 
             LocalTx localTx1 = new LocalTx(CancelIncreaseOrderStorageForRecycleEvent.name);
@@ -236,7 +235,7 @@ public class DistributedTxApplicationService {
         }, CREATE_DTX);
     }
 
-    private void reserveOrderFailed(DistributedTxFailedEvent event) {
+    private void reserveOrderFailed(CancelDistributedTxEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
 
             LocalTx localTx1 = new LocalTx(CancelDecreaseOrderStorageForReserveEvent.name);
@@ -257,7 +256,7 @@ public class DistributedTxApplicationService {
     }
 
 
-    private void updateAddressFailed(DistributedTxFailedEvent event) {
+    private void updateAddressFailed(CancelDistributedTxEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             LocalTx localTx1 = new LocalTx(CancelUpdateOrderForUpdateOrderAddressEvent.name);
             Set<LocalTx> localTxes = new HashSet<>();

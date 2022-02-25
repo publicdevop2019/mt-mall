@@ -9,7 +9,7 @@ import { IBottomSheet, ISumRep } from 'src/app/clazz/summary.component';
 import { ORDER_ADDRESS_CONFIG, ORDER_DETAIL_CONFIG, ORDER_PRODUCT_CONFIG, ORDER_TASK_CONFIG } from 'src/app/form-configs/order.config';
 import { IAddress, ICartItem, IOrder } from 'src/app/clazz/validation/interfaze-common';
 import { OrderService } from 'src/app/services/order.service';
-import { IBizTask, TaskService } from 'src/app/services/task.service';
+import { IDtxDetail, TaskService } from 'src/app/services/task.service';
 
 @Component({
   selector: 'app-order',
@@ -73,83 +73,17 @@ export class OrderComponent implements OnDestroy {
       Object.assign(value0, value5)
       this.fis.restoreDynamicForm(this.formIdProduct, value0, var0.length)
     });
-    this.taskSvc.updateDtxName('/createOrderDtx')
-    const var0 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
+    const var0 = this.taskSvc.getAllDtx(0, 50, "orderId:" + this.orderBottomSheet.from.id)
 
-    this.taskSvc.updateDtxName('/cancelCreateOrderDtx')
-    const var1 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    this.taskSvc.updateDtxName('/reserveOrderDtx')
-    const var2 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    this.taskSvc.updateDtxName('/cancelReserveOrderDtx')
-    const var3 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    this.taskSvc.updateDtxName('/recycleOrderDtx')
-    const var4 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    this.taskSvc.updateDtxName('/cancelRecycleOrderDtx')
-    const var5 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    this.taskSvc.updateDtxName('/confirmOrderPaymentDtx')
-    const var6 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    this.taskSvc.updateDtxName('/cancelConfirmOrderPaymentDtx')
-    const var7 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    this.taskSvc.updateDtxName('/concludeOrderDtx')
-    const var8 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    this.taskSvc.updateDtxName('/cancelConcludeOrderDtx')
-    const var9 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    this.taskSvc.updateDtxName('/updateOrderAddressDtx')
-    const var10 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    this.taskSvc.updateDtxName('/cancelUpdateOrderAddressDtx')
-    const var11 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    this.taskSvc.updateDtxName('/invalidOrderDtx')
-    const var12 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    this.taskSvc.updateDtxName('/cancelInvalidOrderDtx')
-    const var13 = this.taskSvc.readEntityByQuery(0, 10, "orderId:" + this.orderBottomSheet.from.id)
-
-    combineLatest([var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11, var12, var13, this.formCreatedOb4]).pipe(take(1)).subscribe(next => {
+    combineLatest([var0, this.formCreatedOb4]).pipe(take(1)).subscribe(next => {
       let combined = [
-        ...(next[0] as ISumRep<IBizTask>).data,
-        ...(next[1] as ISumRep<IBizTask>).data,
-        ...(next[2] as ISumRep<IBizTask>).data,
-        ...(next[3] as ISumRep<IBizTask>).data,
-        ...(next[4] as ISumRep<IBizTask>).data,
-        ...(next[5] as ISumRep<IBizTask>).data,
-        ...(next[6] as ISumRep<IBizTask>).data,
-        ...(next[7] as ISumRep<IBizTask>).data,
-        ...(next[8] as ISumRep<IBizTask>).data,
-        ...(next[9] as ISumRep<IBizTask>).data,
-        ...(next[10] as ISumRep<IBizTask>).data,
-        ...(next[11] as ISumRep<IBizTask>).data,
-        ...(next[12] as ISumRep<IBizTask>).data,
-        ...(next[13] as ISumRep<IBizTask>).data,
+        ...(next[0] as ISumRep<IDtxDetail>).data,
       ];
       let value0 = this.fis.parsePayloadArr(combined.map(e => e.createdAt), 'createdAt');
       let value2 = this.fis.parsePayloadArr(combined.map(e => e.id), 'id');
       let value8 = this.fis.parsePayloadArr(combined.map(e => e.changeId), 'transactionId');
       const names = [
-        ...(next[0] as ISumRep<IBizTask>).data.map(() => 'CREATE_ORDER_DTX'),
-        ...(next[1] as ISumRep<IBizTask>).data.map(() => 'CANCEL_CREATE_ORDER_DTX'),
-        ...(next[2] as ISumRep<IBizTask>).data.map(() => 'RESERVE_ORDER_DTX'),
-        ...(next[3] as ISumRep<IBizTask>).data.map(() => 'CANCEL_RESERVE_ORDER_DTX'),
-        ...(next[4] as ISumRep<IBizTask>).data.map(() => 'RECYCLE_ORDER_DTX'),
-        ...(next[5] as ISumRep<IBizTask>).data.map(() => 'CANCEL_RECYCLE_ORDER_DTX'),
-        ...(next[6] as ISumRep<IBizTask>).data.map(() => 'CONFIRM_PAYMENT_DTX'),
-        ...(next[7] as ISumRep<IBizTask>).data.map(() => 'CANCEL_CONFIRM_PAYMENT_DTX'),
-        ...(next[8] as ISumRep<IBizTask>).data.map(() => 'CONCLUDE_ORDER_DTX'),
-        ...(next[9] as ISumRep<IBizTask>).data.map(() => 'CANCEL_CONCLUDE_ORDER_DTX'),
-        ...(next[10] as ISumRep<IBizTask>).data.map(() => 'UPDATE_ORDER_ADDRESS_DTX'),
-        ...(next[11] as ISumRep<IBizTask>).data.map(() => 'CANCEL_UPDATE_ORDER_ADDRESS_DTX'),
-        ...(next[12] as ISumRep<IBizTask>).data.map(() => 'INVALID_ORDER_DTX'),
-        ...(next[13] as ISumRep<IBizTask>).data.map(() => 'CANCEL_INVALID_ORDER_DTX'),
+        ...(next[0] as ISumRep<IDtxDetail>).data.map((e) => e.name),
       ].filter(e => e)
       // let value9 = this.fis.parsePayloadArr(name, 'taskName');
       const translatedStatus = combined.map(e => this.tSvc.get(e.status));
@@ -190,9 +124,13 @@ export class OrderComponent implements OnDestroy {
   beforePatchProduct(productList: ICartItem[]): ICartItem[] {
     return productList.map(e => {
       e.attributesSales = e.attributesSales.map(ee => {
-        let attrId = ee.split(":")[0];
-        let value = ee.split(":")[1];
-        return e.attrIdMap[attrId] + ":" + value
+        if(ee){
+          let attrId = ee.split(":")[0];
+          let value = ee.split(":")[1];
+          return e.attrIdMap[attrId] + ":" + value
+        }else{
+          return ee;
+        }
       });
       return e;
     })

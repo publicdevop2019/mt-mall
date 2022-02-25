@@ -12,14 +12,14 @@ import { ISearchConfig } from 'src/app/components/search/search.component';
 import { TableColumnConfigComponent } from 'src/app/components/table-column-config/table-column-config.component';
 import { FORM_CONFIG } from 'src/app/form-configs/task.config';
 import { DeviceService } from 'src/app/services/device.service';
-import { IBizTask, TaskService } from 'src/app/services/task.service';
+import { IDtxDetail, TaskService } from 'src/app/services/task.service';
 import { TaskComponent } from '../task/task.component';
 @Component({
   selector: 'app-summary-task',
   templateUrl: './summary-task.component.html',
   styleUrls: ['./summary-task.component.css']
 })
-export class SummaryTaskComponent extends SummaryEntityComponent<IBizTask, IBizTask> implements OnDestroy {
+export class SummaryTaskComponent extends SummaryEntityComponent<IDtxDetail, IDtxDetail> implements OnDestroy {
   formId2 = 'summaryTask';
   formInfo2: IForm = JSON.parse(JSON.stringify(FORM_CONFIG));
   private formCreatedOb2: Observable<string>;
@@ -131,7 +131,7 @@ export class SummaryTaskComponent extends SummaryEntityComponent<IBizTask, IBizT
     this.fis.reset(this.formId2);
   }
   cancelledIds: { key: string, value: string }[] = [];
-  updateSummaryData(inputs: ISumRep<IBizTask>) {
+  updateSummaryData(inputs: ISumRep<IDtxDetail>) {
     super.updateSummaryData(inputs);
     if (!this.isCancel) {
       let cancelChangeIds: string[] = inputs.data.map(e => e.changeId + "_cancel");
@@ -141,20 +141,20 @@ export class SummaryTaskComponent extends SummaryEntityComponent<IBizTask, IBizT
         });
     }
   }
-  hasCancel(dtx: IBizTask) {
+  hasCancel(dtx: IDtxDetail) {
     return !!this.cancelledIds.find(e => e.key === dtx.changeId)
   }
-  cancelStatus(dtx: IBizTask) {
+  cancelStatus(dtx: IDtxDetail) {
     return this.cancelledIds.find(e => e.key === dtx.changeId)?.value
   }
-  openBottomSheetExt(row: IBizTask): void {
+  openBottomSheetExt(row: IDtxDetail): void {
     let config = new MatBottomSheetConfig();
     config.autoFocus = true;
     config.panelClass = 'fix-height'
     this.entitySvc.readById(row.id).subscribe(next => {
       next.cancelable = this.cancelStatus(row) !== 'SUCCESS';
       next.retryable = (!this.cancelStatus(row) || this.cancelStatus(row) === 'SUCCESS' || this.cancelStatus(row) === 'RESOLVED');
-      config.data = <IBottomSheet<IBizTask>>{ context: 'edit', from: next };
+      config.data = <IBottomSheet<IDtxDetail>>{ context: 'edit', from: next };
       this.bottomSheet.open(this.sheetComponent, config);
     })
   }

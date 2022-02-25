@@ -19,3 +19,4 @@
 | mt-ui-admin | 商城管理UI |Angular
 | mt-ui-user | 商城UI |Angular
 | mt-saga | 基于Saga模式的分布式事务管理  |Spring Boot, RabbitMQ
+| mt-integration-test | 集成测试  |Spring Boot Test

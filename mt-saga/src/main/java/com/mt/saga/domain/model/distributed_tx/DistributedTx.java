@@ -13,7 +13,7 @@ import com.mt.common.domain.model.validate.Validator;
 import com.mt.saga.appliction.distributed_tx.command.ReplyEvent;
 import com.mt.saga.appliction.distributed_tx.command.ResolveReason;
 import com.mt.saga.domain.DomainRegistry;
-import com.mt.saga.appliction.distributed_tx.command.DistributedTxFailedEvent;
+import com.mt.saga.appliction.distributed_tx.command.CancelDistributedTxEvent;
 import com.mt.saga.appliction.distributed_tx.command.DistributedTxSuccessEvent;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -128,7 +128,9 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
         boolean b = this.localTxs.values().stream().allMatch(e -> e.getStatus().equals(LTXStatus.SUCCESS));
         if (b) {
             this.status = DTXStatus.SUCCESS;
-            DomainRegistry.getIsolationService().removeActiveDtx(lockId);
+            if(!isCancel){
+                DomainRegistry.getIsolationService().removeActiveDtx(lockId);
+            }
             DomainEventPublisher.instance().publish(new DistributedTxSuccessEvent(this));
         }
     }
@@ -138,7 +140,7 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
             throw new IllegalStateException("can not cancel cancel dtx");
         }
         if (status.equals(DTXStatus.STARTED)) {
-            DomainEventPublisher.instance().publish(new DistributedTxFailedEvent(this));
+            DomainEventPublisher.instance().publish(new CancelDistributedTxEvent(this));
         } else {
             throw new IllegalStateException("can cancel started dtx only");
         }

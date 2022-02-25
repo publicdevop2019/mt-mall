@@ -2,8 +2,9 @@ package com.mt.saga.port.adapter.messaging;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.ApplicationServiceRegistry;
-import com.mt.saga.appliction.distributed_tx.command.DistributedTxFailedEvent;
+import com.mt.saga.appliction.distributed_tx.command.CancelDistributedTxEvent;
 import com.mt.saga.appliction.distributed_tx.command.DistributedTxSuccessEvent;
+import com.mt.saga.appliction.distributed_tx.command.LocalTxFailedEvent;
 import com.mt.saga.appliction.distributed_tx.command.ReplyEvent;
 import com.mt.saga.appliction.distributed_tx.command.create_order_dtx.GeneratePaymentQRLinkReplyCommand;
 import com.mt.saga.domain.model.distributed_tx.event.create_order_dtx.GeneratePaymentQRLinkEvent;
@@ -110,14 +111,14 @@ public class DistributedTxEventSubscriber {
     @EventListener(ApplicationReadyEvent.class)
     private void listener() {
         CommonDomainRegistry.getEventStreamService().of(appName, true, AppConstant.CANCEL_DTX_EVENT, (event) -> {
-            DistributedTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxFailedEvent.class);
+            CancelDistributedTxEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), CancelDistributedTxEvent.class);
             ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }
     @EventListener(ApplicationReadyEvent.class)
     private void listener16() {
         CommonDomainRegistry.getEventStreamService().of("*", false, AppConstant.LTX_FAILED_EVENT, (event) -> {
-            DistributedTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxFailedEvent.class);
+            LocalTxFailedEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), LocalTxFailedEvent.class);
             ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }

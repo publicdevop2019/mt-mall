@@ -7,11 +7,11 @@ import com.mt.saga.infrastructure.AppConstant;
 import lombok.Getter;
 
 @Getter
-public class DistributedTxFailedEvent extends DomainEvent {
-    public static final String name = "DTX_FAILED_EVENT";
+public class CancelDistributedTxEvent extends DomainEvent {
+    public static final String name = "CANCEL_DTX_EVENT";
     private DistributedTx distributedTx;
-    private DistributedTxFailedEvent(){}
-    public DistributedTxFailedEvent(DistributedTx distributedTx) {
+    private CancelDistributedTxEvent(){}
+    public CancelDistributedTxEvent(DistributedTx distributedTx) {
         this.distributedTx = distributedTx;
         setInternal(true);
         setTopic(AppConstant.CANCEL_DTX_EVENT);

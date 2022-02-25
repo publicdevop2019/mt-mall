@@ -9,12 +9,13 @@ import com.mt.common.domain.model.restful.query.QueryConfig;
 import com.mt.saga.domain.model.distributed_tx.DTXStatus;
 import com.mt.saga.domain.model.distributed_tx.DistributedTx;
 import com.mt.saga.domain.model.distributed_tx.LTXStatus;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -24,9 +25,7 @@ public class DistributedTxRepresentation {
     protected String changeId;
     protected String orderId;
     protected long createdAt;
-    protected Map<String, LTXStatus> statusMap = new HashMap<>();
-    protected Map<String, Boolean> emptyOptMap = new HashMap<>();
-    protected Map<String, Long> idMap = new HashMap<>();
+    private List<LtxRepresentation> ltx;
 
     public DistributedTxRepresentation(DistributedTx var0) {
         setId(var0.getId());
@@ -38,13 +37,26 @@ public class DistributedTxRepresentation {
                 new StoredEventQuery("domainId:" + var0.getId(),
                         PageConfig.defaultConfig().getRawValue()
                         , QueryConfig.skipCount().value()));
-        var0.getLocalTxs().values().forEach(ltx -> {
-            statusMap.put(ltx.getName(), ltx.getStatus());
-            emptyOptMap.put(ltx.getName(), ltx.isEmptyOperation());
+        ltx = var0.getLocalTxs().values().stream().map(ltx -> {
             Optional<StoredEvent> first = query.getData().stream().filter(e -> e.getName().equals(ltx.getName())).findFirst();
-            first.ifPresent(e -> {
-                idMap.put(ltx.getName(), e.getId());
-            });
-        });
+            return new LtxRepresentation(ltx.getName(), first.map(StoredEvent::getId).orElse(null), ltx.isEmptyOperation(), ltx.isSkipped(), ltx.getStatus());
+        }).collect(Collectors.toList());
+    }
+
+    @Data
+    private static class LtxRepresentation {
+        private String name;
+        private Long id;
+        private boolean emptyOperation;
+        private boolean skipped;
+        private LTXStatus status;
+
+        public LtxRepresentation(String name, Long id, boolean emptyOperation, boolean skipped, LTXStatus status) {
+            this.name = name;
+            this.id = id;
+            this.status = status;
+            this.emptyOperation = emptyOperation;
+            this.skipped = skipped;
+        }
     }
 }

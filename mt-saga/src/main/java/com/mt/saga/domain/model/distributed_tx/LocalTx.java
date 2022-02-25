@@ -19,6 +19,7 @@ public class LocalTx {
     private String name;
     private String eventName;
     private boolean emptyOperation = false;
+    private boolean skipped = false;
     @Convert(converter = LTXStatus.DBConverter.class)
     private LTXStatus status = LTXStatus.PENDING;
 
@@ -42,6 +43,7 @@ public class LocalTx {
     public void skip() {
         status = LTXStatus.SUCCESS;
         emptyOperation = true;
+        skipped = true;
     }
 
 
