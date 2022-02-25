@@ -159,15 +159,15 @@ public class UserAction {
         return random;
     }
 
-    public ResponseEntity<DefaultOAuth2AccessToken> getRegisterToken() {
+    public String getRegisterToken() {
         return getJwtClientCredential(CLIENT_ID_REGISTER_ID, EMPTY_CLIENT_SECRET);
     }
 
     public ResponseEntity<DefaultOAuth2AccessToken> registerAnUser(ResourceOwner user) {
-        ResponseEntity<DefaultOAuth2AccessToken> registerTokenResponse = getRegisterToken();
+        String registerToken = getRegisterToken();
         PendingResourceOwner pendingResourceOwner = new PendingResourceOwner();
-        createPendingUser(user, registerTokenResponse.getBody().getValue(), pendingResourceOwner);
-        return enterActivationCode(user, registerTokenResponse.getBody().getValue(), pendingResourceOwner);
+        createPendingUser(user, registerToken, pendingResourceOwner);
+        return enterActivationCode(user, registerToken, pendingResourceOwner);
     }
 
     public ResponseEntity<DefaultOAuth2AccessToken> enterActivationCode(ResourceOwner user, String registerToken, PendingResourceOwner pendingResourceOwner) {
@@ -193,9 +193,9 @@ public class UserAction {
 
     public String registerResourceOwnerThenLogin() {
         ResourceOwner randomResourceOwner = randomCreateUserDraft();
-        registerAnUser(randomResourceOwner);
-        ResponseEntity<DefaultOAuth2AccessToken> loginTokenResponse = getJwtPassword(randomResourceOwner.getEmail(), randomResourceOwner.getPassword());
-        return loginTokenResponse.getBody().getValue();
+        if (registerRealUser)
+            registerAnUser(randomResourceOwner);
+        return getJwtForUser(randomResourceOwner.getEmail(), randomResourceOwner.getPassword());
     }
 
     public ResponseEntity<DefaultOAuth2AccessToken> getJwtPassword(String username, String userPwd) {
@@ -206,7 +206,7 @@ public class UserAction {
         if (registerRealUser) {
             return getJwtPasswordWithClient(CLIENT_ID_LOGIN_ID, EMPTY_CLIENT_SECRET, username, userPwd).getBody().getValue();
         } else {
-            String substring = "MOCK"+username.substring(0, 8);
+            String substring = "MOCK" + username.substring(0, 8);
             String head = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im1hbnl0cmVlLWlkIn0.";
             String body = "{\"uid\":\"" + substring + "\",\"aud\":[\"0C8HPGLXHMET\",\"0C8HPGF4GBUP\"],\"user_name\":null,\"scope\":[\"0P8HPG99R56P\"],\"exp\":1645762519,\"iat\":1645761319,\"projectId\":\"0P8HPG99R56P\",\"client_id\":\"0C8HQM52YN7K\"}";
             String footer = ".dtEFAb1DFuwsdxL9MLIJNCucg2DCfWW0_9vt1IQ6__hlMm2qwICOtIoLNWLsc8PdkTDY_DDyFPVFSmip1W0ulLYD28VlusrJgzizCdDePTsXvn9qpqSnaurljSK3BQZEdS84MET97po2XfTQYUXhbvbihTm1VPNwSF9BxdBuRC2E6EjMUTLmvbukOWN57_khwhd_uWH24uNSWIhrGy7QyVYjdUAHeyKbhuORlyPQzZbQgAM8dMKD5wtnoivdH9DvuemqkSjjVpCllJpLhjQfSh6mRNXXfAX5MHgCsxGtc9svvXnwrEQyFcU8KfcxGWmBm1SB9Pkd0BEKxEwKYhwNVA";
@@ -227,15 +227,23 @@ public class UserAction {
         return restTemplate.exchange(PROXY_URL_TOKEN, HttpMethod.POST, request, DefaultOAuth2AccessToken.class);
     }
 
-    public ResponseEntity<DefaultOAuth2AccessToken> getJwtClientCredential(String clientId, String clientSecret) {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", GRANT_TYPE_CLIENT_CREDENTIALS);
-        params.add("scope", "not_used");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(clientId, clientSecret);
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-        return restTemplate.exchange(URL, HttpMethod.POST, request, DefaultOAuth2AccessToken.class);
+    public String getJwtClientCredential(String clientId, String clientSecret) {
+        if (registerRealUser) {
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("grant_type", GRANT_TYPE_CLIENT_CREDENTIALS);
+            params.add("scope", "not_used");
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBasicAuth(clientId, clientSecret);
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+            return restTemplate.exchange(URL, HttpMethod.POST, request, DefaultOAuth2AccessToken.class).getBody().getValue();
+        } else {
+            String head = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im1hbnl0cmVlLWlkIn0.";
+            String body = "{\"uid\":\"" + "MOCK" + clientId + "\",\"aud\":[\"0C8HPGLXHMET\",\"0C8HPGF4GBUP\"],\"user_name\":null,\"scope\":[\"0P8HPG99R56P\"],\"exp\":1645762519,\"iat\":1645761319,\"projectId\":\"0P8HPG99R56P\",\"client_id\":\"0C8HQM52YN7K\"}";
+            String footer = ".dtEFAb1DFuwsdxL9MLIJNCucg2DCfWW0_9vt1IQ6__hlMm2qwICOtIoLNWLsc8PdkTDY_DDyFPVFSmip1W0ulLYD28VlusrJgzizCdDePTsXvn9qpqSnaurljSK3BQZEdS84MET97po2XfTQYUXhbvbihTm1VPNwSF9BxdBuRC2E6EjMUTLmvbukOWN57_khwhd_uWH24uNSWIhrGy7QyVYjdUAHeyKbhuORlyPQzZbQgAM8dMKD5wtnoivdH9DvuemqkSjjVpCllJpLhjQfSh6mRNXXfAX5MHgCsxGtc9svvXnwrEQyFcU8KfcxGWmBm1SB9Pkd0BEKxEwKYhwNVA";
+            return head + Base64.getEncoder().encodeToString(body.getBytes()) + footer;
+        }
+
     }
 
     public OrderDetail createOrderDetailForUser(String authToken) {
@@ -399,8 +407,7 @@ public class UserAction {
     }
 
     public String getDefaultAdminToken() {
-        ResponseEntity<DefaultOAuth2AccessToken> loginTokenResponse = getJwtPassword(ACCOUNT_USERNAME_ADMIN, ACCOUNT_PASSWORD_ADMIN);
-        return loginTokenResponse.getBody().getValue();
+        return getJwtForUser(ACCOUNT_USERNAME_ADMIN, ACCOUNT_PASSWORD_ADMIN);
     }
 
     public HttpEntity getHttpRequest(String authorizeToken) {
@@ -512,7 +519,7 @@ public class UserAction {
     }
 
     public ResponseEntity<ProductDetailCustomRepresentation> readProductDetailById(String id) {
-        String url = UserAction.proxyUrl + UserAction.SVC_NAME_PRODUCT + "/products/public/" + id;
+        String url = helper.getUserProfileUrl("/products/public/" + id);
         return restTemplate.exchange(url, HttpMethod.GET, null, ProductDetailCustomRepresentation.class);
     }
 

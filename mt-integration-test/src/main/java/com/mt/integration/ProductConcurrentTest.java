@@ -70,7 +70,7 @@ public class ProductConcurrentTest {
         patchCommands.add(patchCommand);
         Integer threadCount = 50;
         HttpHeaders headers2 = new HttpHeaders();
-        headers2.setBearerAuth(action.getJwtClientCredential(CLIENT_ID_SAGA_ID, COMMON_CLIENT_SECRET).getBody().getValue());
+        headers2.setBearerAuth(action.getJwtClientCredential(CLIENT_ID_SAGA_ID, COMMON_CLIENT_SECRET));
         ArrayList<Integer> integers = new ArrayList<>();
         integers.add(200);
         integers.add(400);
@@ -145,7 +145,7 @@ public class ProductConcurrentTest {
         patchCommand3.setPath("/" + skuId3 + "/storageOrder");
 
         HttpHeaders headers2 = new HttpHeaders();
-        headers2.setBearerAuth(action.getJwtClientCredential(CLIENT_ID_USER_PROFILE_ID, COMMON_CLIENT_SECRET).getBody().getValue());
+        headers2.setBearerAuth(action.getJwtClientCredential(CLIENT_ID_USER_PROFILE_ID, COMMON_CLIENT_SECRET));
         headers2.setContentType(MediaType.APPLICATION_JSON);
         ArrayList<Integer> integers = new ArrayList<>();
         integers.add(200);

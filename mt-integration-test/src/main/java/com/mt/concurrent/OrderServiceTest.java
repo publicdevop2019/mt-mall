@@ -102,8 +102,7 @@ public class OrderServiceTest {
         Assert.assertEquals(HttpStatus.OK, exchange.getStatusCode());
         Assert.assertNotNull(exchange.getHeaders().getLocation().toString());
         String orderIdFromPaymentLink = getOrderId(exchange.getHeaders().getLocation().toString());
-        ResponseEntity<DefaultOAuth2AccessToken> jwtClientCredential = action.getJwtClientCredential(CLIENT_ID_SAGA_ID, COMMON_CLIENT_SECRET);
-        String sagaToken = jwtClientCredential.getBody().getValue();
+        String sagaToken = action.getJwtClientCredential(CLIENT_ID_SAGA_ID, COMMON_CLIENT_SECRET);
         UpdateBizOrderCommand updateBizOrderCommand = new UpdateBizOrderCommand();
         updateBizOrderCommand.setOrderId(orderIdFromPaymentLink);
         updateBizOrderCommand.setVersion(0);
@@ -138,8 +137,7 @@ public class OrderServiceTest {
         Assert.assertEquals(HttpStatus.OK, exchange.getStatusCode());
         Assert.assertNotNull(exchange.getHeaders().getLocation().toString());
         String orderIdFromPaymentLink = getOrderId(exchange.getHeaders().getLocation().toString());
-        ResponseEntity<DefaultOAuth2AccessToken> jwtClientCredential = action.getJwtClientCredential(CLIENT_ID_SAGA_ID, COMMON_CLIENT_SECRET);
-        String value = jwtClientCredential.getBody().getValue();
+        String value = action.getJwtClientCredential(CLIENT_ID_SAGA_ID, COMMON_CLIENT_SECRET);
         UpdateBizOrderCommand updateBizOrderCommand = new UpdateBizOrderCommand();
         updateBizOrderCommand.setOrderId(orderIdFromPaymentLink);
         updateBizOrderCommand.setVersion(0);

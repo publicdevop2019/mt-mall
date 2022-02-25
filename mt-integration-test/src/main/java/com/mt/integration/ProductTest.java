@@ -385,7 +385,7 @@ public class ProductTest {
     TestHelper helper;
     @Test
     public void shop_customer_should_not_query_all() {
-        String url = UserAction.proxyUrl + UserAction.SVC_NAME_PRODUCT + PRODUCTS_PUBLIC;
+        String url = helper.getUserProfileUrl(PRODUCTS_PUBLIC);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(null, headers);
