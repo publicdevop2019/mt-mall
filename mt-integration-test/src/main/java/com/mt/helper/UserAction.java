@@ -153,7 +153,7 @@ public class UserAction {
 
     public ResourceOwner randomRegisterAnUser() {
         ResourceOwner random = randomCreateUserDraft();
-        registerAnUser(random);
+        ResponseEntity<DefaultOAuth2AccessToken> defaultOAuth2AccessTokenResponseEntity = registerAnUser(random);
         return random;
     }
 
