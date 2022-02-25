@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.runner.Description;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
@@ -30,8 +30,6 @@ import static org.junit.Assert.assertTrue;
 @Component
 @Slf4j
 public class UserAction {
-    @Autowired
-    private TestHelper helper;
     public static final String TEST_TEST_VALUE = "3T8BRPK17W8A:S";
     public static final String TEST_TEST_VALUE_2 = "3T8BRPK17W94:上装";
     public static final String GRANT_TYPE_PASSWORD = "password";
@@ -49,14 +47,19 @@ public class UserAction {
     public static final String SVC_NAME_AUTH = "/auth-svc";
     public static final String SVC_NAME_PRODUCT = "/product-svc";
     public static final String SVC_NAME_PROFILE = "/profile-svc";
-    public static final String CLIENTS = "/clients";
-    public List<ResourceOwner> testUser = new ArrayList<>();
-    public ObjectMapper mapper = new ObjectMapper().configure(MapperFeature.USE_ANNOTATIONS, false).setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    public TestRestTemplate restTemplate = new TestRestTemplate();
-    //        public static String proxyUrl = "http://api.manytreetechnology.com:" + 8111;
     public static String proxyUrl = "http://192.168.2.23:" + 8111;
     public static final String URL = UserAction.proxyUrl + SVC_NAME_AUTH + "/oauth/token";
     public static String PROXY_URL_TOKEN = proxyUrl + SVC_NAME_AUTH + "/oauth/token";
+    public List<ResourceOwner> testUser = new ArrayList<>();
+    public ObjectMapper mapper = new ObjectMapper().configure(MapperFeature.USE_ANNOTATIONS, false).setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    public TestRestTemplate restTemplate = new TestRestTemplate();
+    @Autowired
+    private TestHelper helper;
+    @Value("${register_real_user}")
+    private boolean registerRealUser;
+
+    public UserAction() {
+    }
 
     /**
      * copied from https://www.planetgeek.ch/2009/08/25/how-to-find-a-concurrency-bug-with-java/
@@ -107,12 +110,9 @@ public class UserAction {
 //        failedRecordRepo.save(failedRecord);
     }
 
-    public UserAction() {
-    }
-
     public void initTestUser() {
         if (testUser.size() == 0) {
-        log.debug("start of creating test users");
+            log.debug("start of creating test users");
             ResourceOwner resourceOwner1 = randomRegisterAnUser();
             ResourceOwner resourceOwner2 = randomRegisterAnUser();
             ResourceOwner resourceOwner3 = randomRegisterAnUser();
@@ -133,9 +133,9 @@ public class UserAction {
             testUser.add(resourceOwner8);
             testUser.add(resourceOwner9);
             testUser.add(resourceOwner10);
-        log.debug("end of creating test users");
-        }else{
-        log.debug("test users already exist");
+            log.debug("end of creating test users");
+        } else {
+            log.debug("test users already exist");
 
         }
     }
@@ -153,7 +153,9 @@ public class UserAction {
 
     public ResourceOwner randomRegisterAnUser() {
         ResourceOwner random = randomCreateUserDraft();
-        ResponseEntity<DefaultOAuth2AccessToken> defaultOAuth2AccessTokenResponseEntity = registerAnUser(random);
+        if (registerRealUser) {
+            ResponseEntity<DefaultOAuth2AccessToken> defaultOAuth2AccessTokenResponseEntity = registerAnUser(random);
+        }
         return random;
     }
 
@@ -198,6 +200,18 @@ public class UserAction {
 
     public ResponseEntity<DefaultOAuth2AccessToken> getJwtPassword(String username, String userPwd) {
         return getJwtPasswordWithClient(CLIENT_ID_LOGIN_ID, EMPTY_CLIENT_SECRET, username, userPwd);
+    }
+
+    public String getJwtForUser(String username, String userPwd) {
+        if (registerRealUser) {
+            return getJwtPasswordWithClient(CLIENT_ID_LOGIN_ID, EMPTY_CLIENT_SECRET, username, userPwd).getBody().getValue();
+        } else {
+            String substring = "MOCK"+username.substring(0, 8);
+            String head = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im1hbnl0cmVlLWlkIn0.";
+            String body = "{\"uid\":\"" + substring + "\",\"aud\":[\"0C8HPGLXHMET\",\"0C8HPGF4GBUP\"],\"user_name\":null,\"scope\":[\"0P8HPG99R56P\"],\"exp\":1645762519,\"iat\":1645761319,\"projectId\":\"0P8HPG99R56P\",\"client_id\":\"0C8HQM52YN7K\"}";
+            String footer = ".dtEFAb1DFuwsdxL9MLIJNCucg2DCfWW0_9vt1IQ6__hlMm2qwICOtIoLNWLsc8PdkTDY_DDyFPVFSmip1W0ulLYD28VlusrJgzizCdDePTsXvn9qpqSnaurljSK3BQZEdS84MET97po2XfTQYUXhbvbihTm1VPNwSF9BxdBuRC2E6EjMUTLmvbukOWN57_khwhd_uWH24uNSWIhrGy7QyVYjdUAHeyKbhuORlyPQzZbQgAM8dMKD5wtnoivdH9DvuemqkSjjVpCllJpLhjQfSh6mRNXXfAX5MHgCsxGtc9svvXnwrEQyFcU8KfcxGWmBm1SB9Pkd0BEKxEwKYhwNVA";
+            return head + Base64.getEncoder().encodeToString(body.getBytes()) + footer;
+        }
     }
 
     public ResponseEntity<DefaultOAuth2AccessToken> getJwtPasswordWithClient(String clientId, String clientSecret, String username, String userPwd) {
@@ -262,7 +276,7 @@ public class UserAction {
     public OrderDetail createBizOrderForUserAndProduct(String defaultUserToken, String productId) {
         ResponseEntity<ProductDetailCustomRepresentation> productDetailCustomRepresentationResponseEntity = readProductDetailById(productId);
         SnapshotProduct snapshotProduct = selectProduct(productDetailCustomRepresentationResponseEntity.getBody());
-        String url2 = helper.getUserProfileUrl("/cart/user") ;
+        String url2 = helper.getUserProfileUrl("/cart/user");
         restTemplate.exchange(url2, HttpMethod.POST, getHttpRequestAsString(defaultUserToken, snapshotProduct), String.class);
 
         ResponseEntity<SumTotalSnapshotProduct> exchange5 = restTemplate.exchange(url2, HttpMethod.GET, getHttpRequest(defaultUserToken), SumTotalSnapshotProduct.class);
@@ -285,7 +299,7 @@ public class UserAction {
     }
 
     public ResponseEntity<ProductCustomerSummaryPaginatedRepresentation> readProductsByQuery(String query) {
-        String url = helper.getUserProfileUrl("/products/public?" + query) ;
+        String url = helper.getUserProfileUrl("/products/public?" + query);
         ResponseEntity<ProductCustomerSummaryPaginatedRepresentation> exchange = restTemplate.exchange(url, HttpMethod.GET, null, ProductCustomerSummaryPaginatedRepresentation.class);
         return exchange;
     }
@@ -303,7 +317,7 @@ public class UserAction {
         }
         SnapshotProduct snapshotProduct = new SnapshotProduct();
         snapshotProduct.setName(productDetail.getName());
-        snapshotProduct.setProductId(productDetail.getId().toString());
+        snapshotProduct.setProductId(productDetail.getId());
         snapshotProduct.setSelectedOptions(productDetail.getSelectedOptions());
         snapshotProduct.setImageUrlSmall(productDetail.getImageUrlSmall());
 
@@ -388,12 +402,6 @@ public class UserAction {
         ResponseEntity<DefaultOAuth2AccessToken> loginTokenResponse = getJwtPassword(ACCOUNT_USERNAME_ADMIN, ACCOUNT_PASSWORD_ADMIN);
         return loginTokenResponse.getBody().getValue();
     }
-
-    public String getDefaultUserToken() {
-        ResponseEntity<DefaultOAuth2AccessToken> loginTokenResponse = getJwtPassword(ACCOUNT_USERNAME_USER, ACCOUNT_PASSWORD_USER);
-        return loginTokenResponse.getBody().getValue();
-    }
-
 
     public HttpEntity getHttpRequest(String authorizeToken) {
         HttpHeaders headers = new HttpHeaders();

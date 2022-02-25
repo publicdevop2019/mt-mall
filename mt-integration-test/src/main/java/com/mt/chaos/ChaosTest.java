@@ -54,7 +54,7 @@ public class ChaosTest {
                 // randomly pick test user
                 log.info("thread start");
                 ResourceOwner user = action.testUser.get(new Random().nextInt(action.testUser.size()));
-                String userAuthToken = action.getJwtPassword(user.getEmail(), user.getPassword()).getBody().getValue();
+                String userAuthToken = action.getJwtForUser(user.getEmail(), user.getPassword());
                 OrderDetail orderDetail1 = action.createOrderDetailForUser(userAuthToken);
                 log.info("draft order generated");
                 String url3 = helper.getUserProfileUrl("/orders/user");

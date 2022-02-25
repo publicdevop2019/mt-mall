@@ -1,6 +1,6 @@
 package com.mt.saga.port.adapter.http;
 
-import com.mt.common.domain.model.service_discovery.EurekaHelper;
+import com.mt.common.domain.model.service_discovery.ServiceDiscovery;
 import com.mt.saga.domain.model.order_state_machine.ProductService;
 import com.mt.saga.domain.model.order_state_machine.order.CartDetail;
 import com.mt.saga.domain.model.order_state_machine.product.ProductsSummary;
@@ -25,7 +25,7 @@ public class HttpProductService extends ProductService {
     private String productUrl;
 
     @Autowired
-    private EurekaHelper eurekaHelper;
+    private ServiceDiscovery eurekaHelper;
     @Autowired
     private RestTemplate restTemplate;
 
