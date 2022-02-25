@@ -2,14 +2,14 @@
 <Configuration status="warn">
     <Properties>
         <Property name="location">./logs</Property>
-        <Property name="name">SagaOrchestrator</Property>
+        <Property name="name">SystemTest</Property>
     </Properties>
 
     <Appenders>
         <RollingFile name="fileLogger" fileName="${location}/${name}.log"
                      filePattern="${location}/archived/${name}-%d{yyyy-MM-dd}.%i.log" immediateFlush="false">
             <PatternLayout>
-                <pattern>%X{UUID} %X{CLIENT_IP} %d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%thread] %level %logger{36} - %msg%n</pattern>
+                <pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%thread] %level %logger{36} - %msg%n</pattern>
             </PatternLayout>
             <Policies>
                 <OnStartupTriggeringPolicy/>
@@ -19,7 +19,7 @@
         </RollingFile>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout
-                    pattern="%X{UUID} %X{CLIENT_IP} %d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%thread] %level %logger{36} - %msg%n"/>
+                    pattern="%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%thread] %level %logger{36} - %msg%n"/>
         </Console>
     </Appenders>
     <Loggers>
@@ -27,7 +27,7 @@
             <appender-ref ref="console"/>
             <appender-ref ref="fileLogger"/>
         </Logger>
-        <Root level="info" additivity="false" includeLocation="false">
+        <Root level="error" additivity="false" includeLocation="false">
             <appender-ref ref="console"/>
             <appender-ref ref="fileLogger"/>
         </Root>

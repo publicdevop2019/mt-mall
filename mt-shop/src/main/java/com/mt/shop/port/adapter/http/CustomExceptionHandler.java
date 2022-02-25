@@ -40,7 +40,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             BizOrderPaymentMismatchException.class,
             BizOrderUpdateAddressAfterPaymentException.class,
             VersionMismatchException.class,
-            AggregateOutdatedException.class
+            AggregateOutdatedException.class,
+            IllegalStateException.class,
+            IllegalArgumentException.class
     })
     protected ResponseEntity<?> handle400Exception(RuntimeException ex, WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage(ex);
