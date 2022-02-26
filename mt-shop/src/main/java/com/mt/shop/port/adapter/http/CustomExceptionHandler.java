@@ -6,10 +6,10 @@ import com.mt.shop.application.product.exception.AttributeNameNotFoundException;
 import com.mt.shop.application.product.exception.NoLowestPriceFoundException;
 import com.mt.shop.application.product.exception.SkuAlreadyExistException;
 import com.mt.shop.application.product.exception.SkuNotExistException;
-import com.mt.shop.domain.biz_order.exception.BizOrderCreationException;
-import com.mt.shop.domain.biz_order.exception.BizOrderPaymentMismatchException;
-import com.mt.shop.domain.biz_order.exception.BizOrderUpdateAddressAfterPaymentException;
-import com.mt.shop.domain.biz_order.exception.VersionMismatchException;
+import com.mt.shop.domain.model.biz_order.exception.BizOrderCreationException;
+import com.mt.shop.domain.model.biz_order.exception.BizOrderPaymentMismatchException;
+import com.mt.shop.domain.model.biz_order.exception.BizOrderUpdateAddressAfterPaymentException;
+import com.mt.shop.domain.model.biz_order.exception.VersionMismatchException;
 import com.mt.shop.domain.model.image.FileSizeException;
 import com.mt.shop.domain.model.image.FileTypeException;
 import com.mt.shop.domain.model.image.FileUploadException;
@@ -40,7 +40,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             BizOrderPaymentMismatchException.class,
             BizOrderUpdateAddressAfterPaymentException.class,
             VersionMismatchException.class,
-            AggregateOutdatedException.class
+            AggregateOutdatedException.class,
+            IllegalStateException.class,
+            IllegalArgumentException.class
     })
     protected ResponseEntity<?> handle400Exception(RuntimeException ex, WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage(ex);

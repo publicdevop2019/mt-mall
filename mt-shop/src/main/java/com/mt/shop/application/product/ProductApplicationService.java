@@ -160,15 +160,25 @@ public class ProductApplicationService {
     @Transactional
     public void patchBatch(List<PatchCommand> commands, String changeId) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(changeId, (ignored) -> {
-            List<PatchCommand> skuChange = commands.stream().filter(e -> e.getPath().contains("/" + ProductRepresentation.ADMIN_REP_SKU_LITERAL)).collect(Collectors.toList());
-            List<PatchCommand> productChange = commands.stream().filter(e -> !e.getPath().contains("/" + ProductRepresentation.ADMIN_REP_SKU_LITERAL)).collect(Collectors.toList());
-            if (!productChange.isEmpty())
-                DomainRegistry.getProductRepository().patchBatch(productChange);
-            if (!skuChange.isEmpty()) {
-                DomainEventPublisher.instance().publish(new ProductPatchBatched(Product.convertToSkuCommands(skuChange)));
-            }
+            internalPatchBatch(commands);
             return null;
         }, "Product");
+    }
+
+    public void internalPatchBatch(List<PatchCommand> commands) {
+        List<PatchCommand> skuChange = commands.stream().filter(e ->
+                e.getPath().contains("/"+ProductRepresentation.ProductSkuAdminRepresentation.ADMIN_REP_SKU_STORAGE_ACTUAL_LITERAL )
+                        ||
+                        e.getPath().contains("/"+ProductRepresentation.ProductSkuAdminRepresentation.ADMIN_REP_SKU_STORAGE_ORDER_LITERAL )).collect(Collectors.toList());
+        List<PatchCommand> productChange = commands.stream().filter(e -> e.getPath().contains("/" + ProductRepresentation.ADMIN_REP_START_AT_LITERAL)
+                ||
+                e.getPath().contains("/" + ProductRepresentation.ADMIN_REP_START_AT_LITERAL)
+        ).collect(Collectors.toList());
+        if (!productChange.isEmpty())
+            DomainRegistry.getProductRepository().patchBatch(productChange);
+        if (!skuChange.isEmpty()) {
+            DomainEventPublisher.instance().publish(new ProductPatchBatched(skuChange));
+        }
     }
 
 }

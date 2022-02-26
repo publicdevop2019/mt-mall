@@ -4,6 +4,7 @@ public class AppConstant {
     public static final String APP_HANDLER = "_mall_handler";
 
     public static final String DECREASE_ORDER_STORAGE_FOR_CREATE_EVENT = "decrease_order_storage_event";
+    public static final String SAGA_REPLY_EVENT = "saga_reply_event";
 
     public static final String DECREASE_ACTUAL_STORAGE_FOR_CONCLUDE_EVENT = "decrease_actual_storage_for_conclude_event";
 
@@ -19,15 +20,6 @@ public class AppConstant {
     public static final String SAVE_NEW_ORDER_EVENT = "save_new_order_event";
 
     public static final String CLEAR_CART_EVENT = "clear_cart_event";
-    public static final String CLEAR_CART_FAILED_EVENT = "clear_cart_failed_event";
-    public static final String RESTORE_CART_FAILED_EVENT = "restore_cart_failed_event";
-    public static final String ORDER_UPDATE_FOR_ADDRESS_UPDATE_FAILED = "order_update_for_address_update_failed_event";
-    public static final String ORDER_UPDATE_FOR_RESERVE_FAILED = "order_update_for_reserve_failed_event";
-    public static final String ORDER_UPDATE_FOR_RECYCLE_FAILED = "order_update_for_recycle_failed_event";
-    public static final String ORDER_UPDATE_FOR_PAYMENT_SUCCESS_FAILED = "order_update_for_payment_success_failed_event";
-    public static final String ORDER_UPDATE_FOR_INVALID_FAILED = "order_update_for_invalid_failed_event";
-    public static final String ORDER_UPDATE_FOR_CREATE_FAILED = "order_update_for_create_failed_event";
-    public static final String ORDER_UPDATE_FOR_CONCLUDE_FAILED = "order_update_for_conclude_failed_event";
 
     public static final String UPDATE_ORDER_FOR_RESERVE_EVENT = "update_order_for_reserve_event";
 
@@ -39,4 +31,5 @@ public class AppConstant {
     public static final String UPDATE_ORDER_FOR_CONCLUDE_EVENT = "update_order_for_conclude_event";
 
     public static final String UPDATE_ORDER_FOR_RECYCLE_EVENT = "update_order_for_recycle_event";
+    public static final String LTX_FAILED_EVENT = "saga_ltx_failed";
 }

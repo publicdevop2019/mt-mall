@@ -77,7 +77,7 @@ public class CatalogApplicationService {
             Optional<Catalog> optionalCatalog = DomainRegistry.getCatalogRepository().catalogOfId(catalogId);
             if (optionalCatalog.isPresent()) {
                 Catalog catalog = optionalCatalog.get();
-                catalog.replace(command.getName(), new CatalogId(command.getParentId()), command.getAttributes().stream().map(LinkedTag::new).collect(Collectors.toSet()), command.getCatalogType());
+                catalog.replace(command.getName(), command.getParentId() != null ? new CatalogId(command.getParentId()) : null, command.getAttributes().stream().map(LinkedTag::new).collect(Collectors.toSet()), command.getCatalogType());
                 DomainRegistry.getCatalogRepository().add(catalog);
             }
             return null;

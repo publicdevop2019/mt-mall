@@ -1,7 +1,7 @@
 package com.mt.shop.application.biz_order.representation;
 
-import com.mt.shop.domain.biz_order.BizOrder;
-import com.mt.shop.domain.biz_order.CartDetail;
+import com.mt.shop.domain.model.biz_order.BizOrder;
+import com.mt.shop.domain.model.biz_order.CartDetail;
 import lombok.Data;
 
 import java.util.Set;

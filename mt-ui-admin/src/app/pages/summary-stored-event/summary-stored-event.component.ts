@@ -14,7 +14,7 @@ import { FORM_CONFIG } from 'src/app/form-configs/stored-event.config';
 import { DeviceService } from 'src/app/services/device.service';
 import { OverlayService } from 'src/app/services/overlay.service';
 import { IStoredEvent, StoredEventService } from 'src/app/services/stored-event.service';
-import { IBizTask } from 'src/app/services/task.service';
+import { IDtxDetail } from 'src/app/services/task.service';
 @Component({
   selector: 'app-summary-stored-event',
   templateUrl: './summary-stored-event.component.html',
@@ -72,7 +72,7 @@ export class SummaryStoredEventComponent extends SummaryEntityComponent<IStoredE
       })
     })
   }
-  launchOverlay(el: MatIcon, data: IBizTask) {
+  launchOverlay(el: MatIcon, data: IDtxDetail) {
     this.overlaySvc.data = data;
     let config = new OverlayConfig();
     config.hasBackdrop = true;
@@ -88,5 +88,8 @@ export class SummaryStoredEventComponent extends SummaryEntityComponent<IStoredE
   }
   doRetry(id:string){
     this.entitySvc.retry(id).subscribe()
+  }
+  ngOnDestroy(): void {
+      this.fis.reset(this.formId)
   }
 }

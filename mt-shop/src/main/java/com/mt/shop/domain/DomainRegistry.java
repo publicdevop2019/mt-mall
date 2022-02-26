@@ -1,11 +1,11 @@
 package com.mt.shop.domain;
 
-import com.mt.shop.domain.address.AddressRepository;
-import com.mt.shop.domain.address.AddressValidationService;
-import com.mt.shop.domain.biz_order.BizOderSummaryRepository;
-import com.mt.shop.domain.biz_order.BizOrderService;
-import com.mt.shop.domain.cart.BizCartRepository;
-import com.mt.shop.domain.cart.BizCartValidationService;
+import com.mt.shop.domain.model.address.AddressRepository;
+import com.mt.shop.domain.model.address.AddressValidationService;
+import com.mt.shop.domain.model.biz_order.BizOderSummaryRepository;
+import com.mt.shop.domain.model.biz_order.BizOrderService;
+import com.mt.shop.domain.model.cart.BizCartRepository;
+import com.mt.shop.domain.model.cart.BizCartValidationService;
 import com.mt.shop.domain.model.catalog.CatalogRepository;
 import com.mt.shop.domain.model.catalog.CatalogService;
 import com.mt.shop.domain.model.catalog.CatalogValidationService;

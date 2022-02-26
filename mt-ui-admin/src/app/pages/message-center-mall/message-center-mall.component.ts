@@ -10,7 +10,7 @@ import { ObjectDetailComponent } from 'src/app/components/object-detail/object-d
 import { DeviceService } from 'src/app/services/device.service';
 import { IMallMonitorMsg, MessageMallService } from 'src/app/services/message-mall.service';
 import { OverlayService } from 'src/app/services/overlay.service';
-import { IBizTask } from 'src/app/services/task.service';
+import { IDtxDetail } from 'src/app/services/task.service';
 
 @Component({
   selector: 'app-message-center-mall',
@@ -36,7 +36,7 @@ export class MessageCenterMallComponent extends SummaryEntityComponent<IMallMoni
     super(entitySvc, deviceSvc, bottomSheet,fis, -2);
     super.doSearch({value:'',resetPage:false})
   }
-  launchOverlay(el: MatIcon, data: IBizTask) {
+  launchOverlay(el: MatIcon, data: IDtxDetail) {
     this.overlaySvc.data = data;
     let config = new OverlayConfig();
     config.hasBackdrop = true;

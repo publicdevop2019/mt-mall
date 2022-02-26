@@ -33,10 +33,25 @@
                     N/A
                 </ng-container>
                 <ng-container *ngIf="row.status==='SUCCESS'">
-                    <mat-icon *ngIf="row.emptyOpt" [color]="'primary'">
+                    <mat-icon *ngIf="row.emptyOperation" [color]="'primary'">
                         check_circle_outline
                     </mat-icon>
-                    <mat-icon *ngIf="row.emptyOpt===false" [color]="'primary'">cancel
+                    <mat-icon *ngIf="row.emptyOperation===false" [color]="'primary'">cancel
+                    </mat-icon>
+                </ng-container>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="skipped">
+            <th mat-header-cell *matHeaderCellDef>{{'SKIPPED'|translate}} </th>
+            <td mat-cell *matCellDef="let row">
+                <ng-container *ngIf="row.skipped">
+                    <mat-icon [color]="'primary'">
+                        check_circle_outline
+                    </mat-icon>
+                </ng-container>
+                <ng-container *ngIf="!row.skipped">
+                    <mat-icon [color]="'primary'">cancel
                     </mat-icon>
                 </ng-container>
             </td>

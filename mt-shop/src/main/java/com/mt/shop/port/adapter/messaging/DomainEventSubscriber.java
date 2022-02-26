@@ -51,7 +51,7 @@ public class DomainEventSubscriber {
         CommonDomainRegistry.getEventStreamService().of(sagaName, false,AppConstant.DECREASE_ORDER_STORAGE_FOR_CREATE_EVENT,(event) -> {
             InternalSkuPatchCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), InternalSkuPatchCommand.class);
             ApplicationServiceRegistry.getSkuApplicationService().handle(deserialize,
-                    MQHelper.replyOf(AppConstant.DECREASE_ORDER_STORAGE_FOR_CREATE_EVENT));
+                    AppConstant.DECREASE_ORDER_STORAGE_FOR_CREATE_EVENT);
         });
     }
 
@@ -60,7 +60,7 @@ public class DomainEventSubscriber {
         CommonDomainRegistry.getEventStreamService().cancelOf(sagaName, false,  AppConstant.DECREASE_ORDER_STORAGE_FOR_CREATE_EVENT, (event) -> {
             InternalSkuPatchCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), InternalSkuPatchCommand.class);
             ApplicationServiceRegistry.getSkuApplicationService().handleCancel(deserialize,
-                    MQHelper.replyCancelOf(AppConstant.DECREASE_ORDER_STORAGE_FOR_CREATE_EVENT));
+                    MQHelper.cancelOf(AppConstant.DECREASE_ORDER_STORAGE_FOR_CREATE_EVENT));
         });
     }
 
@@ -69,7 +69,7 @@ public class DomainEventSubscriber {
         CommonDomainRegistry.getEventStreamService().of(sagaName, false, AppConstant.DECREASE_ACTUAL_STORAGE_FOR_CONCLUDE_EVENT, (event) -> {
             InternalSkuPatchCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), InternalSkuPatchCommand.class);
             ApplicationServiceRegistry.getSkuApplicationService().handle(deserialize,
-                    MQHelper.replyOf(AppConstant.DECREASE_ACTUAL_STORAGE_FOR_CONCLUDE_EVENT));
+                    AppConstant.DECREASE_ACTUAL_STORAGE_FOR_CONCLUDE_EVENT);
         });
     }
     @EventListener(ApplicationReadyEvent.class)
@@ -77,7 +77,7 @@ public class DomainEventSubscriber {
         CommonDomainRegistry.getEventStreamService().of(sagaName, false, AppConstant.INCREASE_ORDER_STORAGE_FOR_RECYCLE_EVENT, (event) -> {
             InternalSkuPatchCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), InternalSkuPatchCommand.class);
             ApplicationServiceRegistry.getSkuApplicationService().handle(deserialize,
-                    MQHelper.replyOf(AppConstant.INCREASE_ORDER_STORAGE_FOR_RECYCLE_EVENT));
+                    AppConstant.INCREASE_ORDER_STORAGE_FOR_RECYCLE_EVENT);
         });
     }
     @EventListener(ApplicationReadyEvent.class)
@@ -85,7 +85,7 @@ public class DomainEventSubscriber {
         CommonDomainRegistry.getEventStreamService().of(sagaName, false, AppConstant.DECREASE_ORDER_STORAGE_FOR_RESERVE_EVENT, (event) -> {
             InternalSkuPatchCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), InternalSkuPatchCommand.class);
             ApplicationServiceRegistry.getSkuApplicationService().handle(deserialize,
-                    MQHelper.replyOf(AppConstant.DECREASE_ORDER_STORAGE_FOR_RESERVE_EVENT));
+                    AppConstant.DECREASE_ORDER_STORAGE_FOR_RESERVE_EVENT);
         });
     }
     @EventListener(ApplicationReadyEvent.class)
@@ -93,7 +93,7 @@ public class DomainEventSubscriber {
         CommonDomainRegistry.getEventStreamService().cancelOf(sagaName, false, AppConstant.DECREASE_ACTUAL_STORAGE_FOR_CONCLUDE_EVENT, (event) -> {
             InternalSkuPatchCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), InternalSkuPatchCommand.class);
             ApplicationServiceRegistry.getSkuApplicationService().handleCancel(deserialize,
-                    MQHelper.replyCancelOf(AppConstant.DECREASE_ACTUAL_STORAGE_FOR_CONCLUDE_EVENT));
+                    MQHelper.cancelOf(AppConstant.DECREASE_ACTUAL_STORAGE_FOR_CONCLUDE_EVENT));
         });
     }
     @EventListener(ApplicationReadyEvent.class)
@@ -101,7 +101,7 @@ public class DomainEventSubscriber {
         CommonDomainRegistry.getEventStreamService().cancelOf(sagaName, false, AppConstant.INCREASE_ORDER_STORAGE_FOR_RECYCLE_EVENT, (event) -> {
             InternalSkuPatchCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), InternalSkuPatchCommand.class);
             ApplicationServiceRegistry.getSkuApplicationService().handleCancel(deserialize,
-                    MQHelper.replyCancelOf(AppConstant.INCREASE_ORDER_STORAGE_FOR_RECYCLE_EVENT));
+                    MQHelper.cancelOf(AppConstant.INCREASE_ORDER_STORAGE_FOR_RECYCLE_EVENT));
         });
     }
     @EventListener(ApplicationReadyEvent.class)
@@ -109,7 +109,7 @@ public class DomainEventSubscriber {
         CommonDomainRegistry.getEventStreamService().cancelOf(sagaName, false, AppConstant.DECREASE_ORDER_STORAGE_FOR_RESERVE_EVENT, (event) -> {
             InternalSkuPatchCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), InternalSkuPatchCommand.class);
             ApplicationServiceRegistry.getSkuApplicationService().handleCancel(deserialize,
-                    MQHelper.replyCancelOf(AppConstant.DECREASE_ORDER_STORAGE_FOR_RESERVE_EVENT));
+                    MQHelper.cancelOf(AppConstant.DECREASE_ORDER_STORAGE_FOR_RESERVE_EVENT));
         } );
     }
     @EventListener(ApplicationReadyEvent.class)
@@ -117,7 +117,7 @@ public class DomainEventSubscriber {
         CommonDomainRegistry.getEventStreamService().of(sagaName, false, AppConstant.INCREASE_STORAGE_FOR_INVALID_EVENT, (event) -> {
             InternalSkuPatchCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), InternalSkuPatchCommand.class);
             ApplicationServiceRegistry.getSkuApplicationService().handle(deserialize,
-                    MQHelper.replyOf(AppConstant.INCREASE_STORAGE_FOR_INVALID_EVENT));
+                    AppConstant.INCREASE_STORAGE_FOR_INVALID_EVENT);
         });
     }
     @EventListener(ApplicationReadyEvent.class)
@@ -125,7 +125,7 @@ public class DomainEventSubscriber {
         CommonDomainRegistry.getEventStreamService().cancelOf(sagaName, false, AppConstant.INCREASE_STORAGE_FOR_INVALID_EVENT, (event) -> {
             InternalSkuPatchCommand deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), InternalSkuPatchCommand.class);
             ApplicationServiceRegistry.getSkuApplicationService().handleCancel(deserialize,
-                    MQHelper.replyCancelOf(AppConstant.INCREASE_STORAGE_FOR_INVALID_EVENT));
+                    MQHelper.cancelOf(AppConstant.INCREASE_STORAGE_FOR_INVALID_EVENT));
         });
     }
 }

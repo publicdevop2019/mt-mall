@@ -1,6 +1,6 @@
 package com.mt.shop.application.biz_order.command;
 
-import com.mt.shop.domain.biz_order.ShippingDetail;
+import com.mt.shop.domain.model.biz_order.ShippingDetail;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

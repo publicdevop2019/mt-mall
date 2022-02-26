@@ -161,7 +161,24 @@ public class SkuApplicationService {
             });
         } catch (UpdateQueryBuilder.PatchCommandExpectNotMatchException ex) {
             log.debug("unable to update sku due to expect not match ", ex);
-            notifyAdmin(patchCommands,changeId);
+            notifyAdmin(patchCommands, changeId);
+            throw ex;
+        }
+    }
+
+    private void internalPatchBatch(List<PatchCommand> commands, String changeId) {
+        List<PatchCommand> patchCommands = List.copyOf(CommonDomainRegistry.getCustomObjectSerializer().deepCopyCollection(commands, PatchCommand.class));
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        try {
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    DomainRegistry.getSkuRepository().patchBatch(commands);
+                }
+            });
+        } catch (UpdateQueryBuilder.PatchCommandExpectNotMatchException ex) {
+            log.debug("unable to update sku due to expect not match ", ex);
+            notifyAdmin(patchCommands, changeId);
             throw ex;
         }
     }
@@ -188,7 +205,7 @@ public class SkuApplicationService {
             if (ProductPatchBatched.class.getName().equals(event.getName())) {
                 ProductPatchBatched deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), ProductPatchBatched.class);
                 log.debug("consuming ProductPatchBatched with id {}", deserialize.getId());
-                patchBatch(deserialize.getPatchCommands(), event.getId().toString());
+                internalPatchBatch(deserialize.getPatchCommands(), event.getId().toString());
             }
             return null;
         }, AGGREGATE_NAME);
@@ -203,13 +220,13 @@ public class SkuApplicationService {
     }
 
     private void create(List<CreateSkuCommand> createSkuCommands, String changId) {
-        createSkuCommands.forEach(command -> doCreate(command, changId+"_"+command.getSkuId(), command.getSkuId()));
+        createSkuCommands.forEach(command -> doCreate(command, changId + "_" + command.getSkuId(), command.getSkuId()));
     }
 
     @SubscribeForEvent
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
-    public void handle(InternalSkuPatchCommand event, String replyTopic) {
+    public void handle(InternalSkuPatchCommand event, String eventName) {
         //deep copy bcz we are optimizing patch command after
         InternalSkuPatchCommand original = CommonDomainRegistry.getCustomObjectSerializer().nativeDeepCopy(event);
         List<PatchCommand> commands = event.getSkuCommands();
@@ -222,7 +239,7 @@ public class SkuApplicationService {
                         DomainRegistry.getSkuRepository().patchBatch(commands);
                         return null;
                     }, (ignored) -> {
-                        DomainEventPublisher.instance().publish(new SkuPatchedReplyEvent(ignored.isEmptyOpt(), event.getTaskId(), replyTopic));
+                        DomainEventPublisher.instance().publish(new SkuPatchedReplyEvent(ignored.isEmptyOpt(), event.getTaskId(), eventName));
                         return null;
                     }, AGGREGATE_NAME);
                 }
@@ -236,7 +253,7 @@ public class SkuApplicationService {
 
     @SubscribeForEvent
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
-    public void handleCancel(InternalSkuPatchCommand event, String replyTopic) {
+    public void handleCancel(InternalSkuPatchCommand event, String eventName) {
         //deep copy bcz we are optimizing patch command after
         InternalSkuPatchCommand original = CommonDomainRegistry.getCustomObjectSerializer().nativeDeepCopy(event);
         log.debug("start of handle cancel for {}", event.getChangeId());
@@ -251,7 +268,7 @@ public class SkuApplicationService {
                         DomainRegistry.getSkuRepository().patchBatch(patchCommands);
                         return null;
                     }, (ignored) -> {
-                        DomainEventPublisher.instance().publish(new SkuPatchedReplyEvent(ignored.isEmptyOpt(), event.getTaskId(), replyTopic));
+                        DomainEventPublisher.instance().publish(new SkuPatchedReplyEvent(ignored.isEmptyOpt(), event.getTaskId(), eventName));
                         return null;
                     }, AGGREGATE_NAME);
                 }
@@ -277,7 +294,7 @@ public class SkuApplicationService {
         CommonDomainRegistry.getEventStreamService().next(appName, event.isInternal(), event.getTopic(), storedEvent);
     }
 
-    private void notifyAdmin(List<PatchCommand> patchCommands,String changeId) {
+    private void notifyAdmin(List<PatchCommand> patchCommands, String changeId) {
         //directly publish msg to stream
         MallNotificationEvent event = MallNotificationEvent.create(MT3_SKU_UPDATE_FAILED);
         event.setChangeId(changeId);

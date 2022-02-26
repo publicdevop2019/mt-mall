@@ -3,10 +3,10 @@ package com.mt.shop.port.adapter.persistence.address;
 import com.mt.common.domain.model.audit.Auditable_;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.QueryUtility;
-import com.mt.shop.domain.address.Address;
-import com.mt.shop.domain.address.AddressQuery;
-import com.mt.shop.domain.address.AddressRepository;
-import com.mt.shop.domain.address.Address_;
+import com.mt.shop.domain.model.address.Address;
+import com.mt.shop.domain.model.address.AddressQuery;
+import com.mt.shop.domain.model.address.AddressRepository;
+import com.mt.shop.domain.model.address.Address_;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

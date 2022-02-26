@@ -1,7 +1,5 @@
 package com.mt.saga.infrastructure;
 
-import com.mt.common.domain.model.domain_event.MQHelper;
-
 public class AppConstant {
     public static final String APP_HANDLER_SUFFIX = "_saga_handler";
     public static final String APP_CHANGE_ID_CANCEL_SUFFIX = "_cancel";
@@ -40,56 +38,28 @@ public class AppConstant {
     //start of update order address
     public static final String UPDATE_ORDER_FOR_UPDATE_ORDER_ADDRESS_EVENT = "update_order_for_update_order_address_event";
     //end of update order address
+    public static final String DTX_SUCCESS_EVENT = "dtx_success_event";
 
     //start of create dtx
     public static final String CREATE_CREATE_ORDER_DTX_EVENT = "create_create_order_dtx_event";
     public static final String CREATE_INVALID_ORDER_DTX_EVENT = "create_invalid_order_dtx_event";
-    public static final String CREATE_ORDER_DTX_FAILED_EVENT = "create_order_dtx_failed_event";
-    public static final String INVALID_ORDER_DTX_FAILED_EVENT = "invalid_order_dtx_failed_event";
 
     public static final String CREATE_RECYCLE_ORDER_DTX_EVENT = "create_recycle_order_dtx_event";
-    public static final String RECYCLE_ORDER_DTX_FAILED_EVENT = "recycle_order_failed_event";
 
     public static final String CREATE_UPDATE_ORDER_ADDRESS_DTX_EVENT = "create_update_order_address_dtx_event";
-    public static final String UPDATE_ORDER_ADDRESS_DTX_FAILED_EVENT = "update_order_address_dtx_failed_event";
 
     public static final String CREATE_CONFIRM_ORDER_PAYMENT_DTX_EVENT = "create_confirm_order_payment_dtx_event";
-    public static final String CONFIRM_ORDER_PAYMENT_FAILED_EVENT = "confirm_order_payment_failed_event";
 
     public static final String CREATE_RESERVE_ORDER_DTX_EVENT = "create_reserve_order_dtx_event";
-    public static final String RESERVE_ORDER_DTX_FAILED_EVENT = "reserve_order_dtx_failed_event";
 
     public static final String CREATE_CONCLUDE_ORDER_DTX_EVENT = "create_conclude_order_dtx_event";
-    public static final String CONCLUDE_ORDER_DTX_FAILED_EVENT = "conclude_order_dtx_failed_event";
-    public static final String CONCLUDE_ORDER_DTX_SUCCESS_EVENT = "conclude_order_success_event";
-    public static final String CREATE_ORDER_DTX_SUCCESS_EVENT = "create_order_success_event";
-    public static final String INVALID_ORDER_DTX_SUCCESS_EVENT = "invalid_order_dtx_success_event";
-    public static final String RECYCLE_ORDER_DTX_SUCCESS_EVENT = "recycle_order_success_event";
-    public static final String RESERVE_ORDER_DTX_SUCCESS_EVENT = "reserve_order_success_event";
-    public static final String UPDATE_ORDER_ADDRESS_DTX_SUCCESS_EVENT = "update_order_address_dtx_success_event";
     //end of create dtx
 
     public static final String ORDER_OPERATION_EVENT = "order_operation_event";
-    public static final String CONFIRM_ORDER_PAYMENT_DTX_SUCCESS_EVENT = "confirm_order_payment_success_event";
-    public static final String CANCEL_RESERVE_ORDER_DTX_SUCCESS_EVENT = "cancel_reserve_order_dtx_success_event";
-    public static final String CANCEL_INVALID_ORDER_DTX_SUCCESS_EVENT = "cancel_invalid_order_dtx_success_event";
-    public static final String CANCEL_CREATE_ORDER_DTX_SUCCESS_EVENT = "cancel_create_order_dtx_success_event";
-
-    public static final String CLEAR_CART_FAILED_EVENT = "clear_cart_failed_event";
-    public static final String ORDER_UPDATE_FOR_ADDRESS_UPDATE_FAILED = "order_update_for_address_update_failed_event";
-    public static final String ORDER_UPDATE_FOR_RESERVE_FAILED = "order_update_for_reserve_failed_event";
-    public static final String ORDER_UPDATE_FOR_RECYCLE_FAILED = "order_update_for_recycle_failed_event";
-    public static final String ORDER_UPDATE_FOR_PAYMENT_SUCCESS_FAILED = "order_update_for_payment_success_failed_event";
-    public static final String ORDER_UPDATE_FOR_INVALID_FAILED = "order_update_for_invalid_failed_event";
-    public static final String RESTORE_CART_FAILED_EVENT = "restore_cart_failed_event";
-    public static final String ORDER_UPDATE_FOR_CREATE_FAILED = "order_update_for_create_failed_event";
-    public static final String ORDER_UPDATE_FOR_CONCLUDE_FAILED = "order_update_for_conclude_failed_event";
-
-    public static final String CANCEL_RECYCLE_ORDER_DTX_SUCCESS_EVENT = "cancel_recycle_order_dtx_success_event";
-    public static final String CANCEL_CONFIRM_ORDER_PAYMENT_DTX_SUCCESS_EVENT = "cancel_confirm_order_payment_dtx_success_event";
-    public static final String CANCEL_UPDATE_ORDER_ADDRESS_DTX_SUCCESS_EVENT = "cancel_update_order_address_dtx_success_event";
-    public static final String CANCEL_CONCLUDE_ORDER_DTX_SUCCESS_EVENT = "cancel_conclude_order_dtx_success_event";
     public static final String RESTORE_CART_FOR_INVALID_EVENT = "restore_cart_for_invalid_event";
 
 
+    public static final String CANCEL_DTX_EVENT = "sage_cancel_dtx_event";
+    public static final String SAGA_REPLY_EVENT = "saga_reply_event";
+    public static final String LTX_FAILED_EVENT = "saga_ltx_failed";
 }

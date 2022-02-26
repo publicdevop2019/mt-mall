@@ -155,47 +155,6 @@ public class Product extends Auditable {
         DomainEventPublisher.instance().publish(new ProductCreated(productId, createSkuCommands, UUID.randomUUID().toString()));
     }
 
-    public static List<PatchCommand> convertToSkuCommands(List<PatchCommand> hasNestedEntity) {
-        Set<String> collect = hasNestedEntity.stream().map(e -> e.getPath().split("/")[1]).collect(Collectors.toSet());
-        String join = "id:" + String.join(".", collect);
-        SumPagedRep<Product> products = DomainRegistry.getProductRepository().productsOfQuery(new ProductQuery(join, null, "sc:1", false));
-        hasNestedEntity.forEach(e -> {
-            String[] split = e.getPath().split("/");
-            String id = split[1];
-            String fieldName = split[split.length - 1];
-            String attrSales = parseAttrSales(e);
-            Optional<Product> first = products.getData().stream().filter(ee -> ee.getProductId().getDomainId().equals(id)).findFirst();
-            if (first.isPresent()) {
-                String domainId = first.get().getAttrSalesMap().get(attrSales);
-                e.setPath("/" + domainId + "/" + fieldName);
-            } else {
-                throw new AggregateNotExistException();
-            }
-        });
-
-        return hasNestedEntity;
-    }
-
-    /**
-     * @param command [{"op":"add","path":"/837195323695104/skus?query=attributesSales:835604723556352-淡粉色,835604663263232-185~/100A~/XXL/storageActual","value":"1"}]
-     * @return 835604723556352:淡粉色,835604663263232:185/100A/XXL
-     */
-    private static String parseAttrSales(PatchCommand command) {
-        AtomicInteger index = new AtomicInteger();
-        String[] split1 = command.getPath().split("/");
-        String collect = Arrays.stream(split1).filter((e) -> index.getAndIncrement() > 1).collect(Collectors.joining("/"));
-        String replace = collect.replace(ProductRepresentation.ADMIN_REP_SKU_LITERAL + "?" + HTTP_PARAM_QUERY + "=" + ProductRepresentation.ProductSkuAdminRepresentation.ADMIN_REP_ATTR_SALES_LITERAL + ":", "");
-        String replace1 = replace.replace("~/", "$");
-        String[] split = replace1.split("/");
-        if (split.length != 2)
-            throw new NoUpdatableFieldException();
-        String $ = split[0].replace("-", ":").replace("$", "/");
-        return Arrays.stream($.split(",")).sorted((a, b) -> {
-            long l = Long.parseLong(a.split(":")[0]);
-            long l1 = Long.parseLong(b.split(":")[0]);
-            return Long.compare(l, l1);
-        }).collect(Collectors.joining(","));
-    }
 
     private void setLowestPrice(BigDecimal lowestPrice) {
         Validator.greaterThanOrEqualTo(lowestPrice, BigDecimal.ZERO);
@@ -491,7 +450,7 @@ public class Product extends Auditable {
             patchCommands.add(patchCommand);
         }
         if (patchCommands.size() > 0)
-            ApplicationServiceRegistry.getProductApplicationService().patchBatch(patchCommands, changeId);
+            ApplicationServiceRegistry.getProductApplicationService().internalPatchBatch(patchCommands);
     }
 
     private String toSkuQueryPath(UpdateProductCommand.UpdateProductAdminSkuCommand command, String storageType) {

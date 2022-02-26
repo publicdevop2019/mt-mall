@@ -1,7 +1,7 @@
 package com.mt.shop.application.biz_order.command;
 
 import com.mt.common.domain.model.domain_event.DomainEvent;
-import com.mt.shop.domain.biz_order.BizOrderId;
+import com.mt.shop.domain.model.biz_order.BizOrderId;
 import lombok.Getter;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 

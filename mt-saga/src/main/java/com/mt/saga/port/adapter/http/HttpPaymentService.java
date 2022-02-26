@@ -1,7 +1,7 @@
 package com.mt.saga.port.adapter.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mt.common.domain.model.service_discovery.EurekaHelper;
+import com.mt.common.domain.model.service_discovery.ServiceDiscovery;
 import com.mt.saga.domain.model.order_state_machine.PaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class HttpPaymentService implements PaymentService {
     @Autowired
     private ObjectMapper mapper;
     @Autowired
-    private EurekaHelper eurekaHelper;
+    private ServiceDiscovery eurekaHelper;
 
     @Override
     public Boolean confirmPaymentStatus(String orderId) {

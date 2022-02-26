@@ -5,8 +5,8 @@ import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.shop.application.ApplicationServiceRegistry;
 import com.mt.shop.application.cart.command.UserCreateBizCartItemCommand;
 import com.mt.shop.application.cart.representation.UserBizCartItemCardRep;
-import com.mt.shop.domain.biz_order.UserThreadLocal;
-import com.mt.shop.domain.cart.BizCart;
+import com.mt.shop.domain.model.biz_order.UserThreadLocal;
+import com.mt.shop.domain.model.cart.BizCart;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
