@@ -13,6 +13,7 @@ export const environment = {
   // getTokenUri: 'http://localhost:4300/proxy/auth-svc/oauth/token',
   oauthRedirectUri: 'http://localhost:4200',
   profileUrl:'http://localhost:4200/proxy/product-svc',
+  apiUrl:'http://localhost:8111', 
 };
 import 'zone.js/dist/zone-error';  // Included with Angular CLI.import { NgModel } from '@angular/forms';
 

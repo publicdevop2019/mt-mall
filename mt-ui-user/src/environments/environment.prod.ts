@@ -10,4 +10,5 @@ export const environment = {
   getTokenUri: 'https://api.duoshu.org/auth-svc/oauth/token',
   oauthRedirectUri: 'https://www.duoshu.org/mall',
   profileUrl:'https://api.duoshu.org/product-svc', 
+  apiUrl:'https://api.duoshu.org', 
 };
