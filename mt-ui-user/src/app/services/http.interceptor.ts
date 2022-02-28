@@ -44,7 +44,7 @@ export class CustomHttpInterceptor implements HttpInterceptor {
                     this.handleErrorResponse(req, next)
                 );
             } else {
-                return this.httpClient.get(environment.apiUrl + '/auth-svc/csrf').pipe(switchMap(_ => {
+                return this.httpClient.get(environment.apiUrl + '/auth-svc/csrf', { withCredentials: true }).pipe(switchMap(_ => {
                     req = req.clone({ setHeaders: { 'X-XSRF-TOKEN': getCookie('XSRF-TOKEN') }, withCredentials: true });
                     return next.handle(req).pipe(
                         this.handleErrorResponse(req, next)
