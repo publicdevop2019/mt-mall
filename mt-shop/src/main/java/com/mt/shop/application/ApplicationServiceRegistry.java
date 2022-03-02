@@ -7,6 +7,7 @@ import com.mt.shop.application.cart.CartApplicationService;
 import com.mt.shop.application.catalog.CatalogApplicationService;
 import com.mt.shop.application.filter.FilterApplicationService;
 import com.mt.shop.application.image.ImageApplicationService;
+import com.mt.shop.application.notification.NotificationApplicationService;
 import com.mt.shop.application.payment.PaymentApplicationService;
 import com.mt.shop.application.product.ProductApplicationService;
 import com.mt.shop.application.sku.SkuApplicationService;
@@ -41,6 +42,13 @@ public class ApplicationServiceRegistry {
     private static AddressApplicationService addressApplicationService;
     @Getter
     private static CartApplicationService cartApplicationService;
+    @Getter
+    private static NotificationApplicationService notificationApplicationService;
+
+    @Autowired
+    public void setNotificationApplicationService(NotificationApplicationService notificationApplicationService) {
+        ApplicationServiceRegistry.notificationApplicationService = notificationApplicationService;
+    }
 
     @Autowired
     private void setCartApplicationService(CartApplicationService cartApplicationService) {

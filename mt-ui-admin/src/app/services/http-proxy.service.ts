@@ -18,10 +18,10 @@ export interface IPatch {
 export interface IPatchCommand extends IPatch {
     expect: number,
 }
-export interface IUser{
-    id:string
-    email:string
-    createdAt:string
+export interface IUser {
+    id: string
+    email: string
+    createdAt: string
 }
 @Injectable({
     providedIn: 'root'
@@ -108,14 +108,8 @@ export class HttpProxyService {
             });
         });
     }
-    batchUpdateUserStatus(entityRepo: string, ids: string[], status: 'LOCK' | 'UNLOCK', changeId: string) {
-        let headerConfig = new HttpHeaders();
-        headerConfig = headerConfig.set('changeId', changeId)
-        return new Observable<boolean>(e => {
-            this._httpClient.patch(entityRepo, this.getUserStatusPatch(status, ids), { headers: headerConfig }).subscribe(next => {
-                e.next(true)
-            });
-        });
+    getCSRF() {
+        return this._httpClient.get('https://api.duoshu.org/auth-svc/csrf')
     }
 
     private getPageParam(pageNumer?: number, pageSize?: number, sortBy?: string, sortOrder?: string): string {
@@ -253,14 +247,14 @@ export class HttpProxyService {
         headers && Object.keys(headers).forEach(e => {
             headerConfig = headerConfig.set(e, headers[e] + '')
         })
-        return this._httpClient.get<S>(entityRepo+ '/' + id, { headers: headerConfig });
+        return this._httpClient.get<S>(entityRepo + '/' + id, { headers: headerConfig });
     };
     readEntityByQuery<T>(entityRepo: string, num: number, size: number, query?: string, by?: string, order?: string, headers?: {}) {
         let headerConfig = new HttpHeaders();
         headers && Object.keys(headers).forEach(e => {
             headerConfig = headerConfig.set(e, headers[e] + '')
         })
-        return this._httpClient.get<ISumRep<T>>(entityRepo  + this.getQueryParam([this.addPrefix(query), this.getPageParam(num, size, by, order)]), { headers: headerConfig })
+        return this._httpClient.get<ISumRep<T>>(entityRepo + this.getQueryParam([this.addPrefix(query), this.getPageParam(num, size, by, order)]), { headers: headerConfig })
     }
     addPrefix(query: string): string {
         let var0: string = query;
@@ -275,7 +269,7 @@ export class HttpProxyService {
         let headerConfig = new HttpHeaders();
         headerConfig = headerConfig.set('changeId', changeId)
         return new Observable<boolean>(e => {
-            this._httpClient.put(entityRepo  + '/' + id, entity, { headers: headerConfig }).subscribe(next => {
+            this._httpClient.put(entityRepo + '/' + id, entity, { headers: headerConfig }).subscribe(next => {
                 e.next(true)
             });
         });

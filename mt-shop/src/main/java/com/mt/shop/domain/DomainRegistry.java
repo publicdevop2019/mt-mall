@@ -15,6 +15,8 @@ import com.mt.shop.domain.model.filter.FilterValidationService;
 import com.mt.shop.domain.model.image.ImageRepository;
 import com.mt.shop.domain.model.meta.MetaRepository;
 import com.mt.shop.domain.model.meta.MetaService;
+import com.mt.shop.domain.model.notification.NotificationService;
+import com.mt.shop.domain.model.notification.NotificationRepository;
 import com.mt.shop.domain.model.payment.PaymentRepository;
 import com.mt.shop.domain.model.payment.ThirdPartyPaymentService;
 import com.mt.shop.domain.model.product.ProductRepository;
@@ -81,7 +83,19 @@ public class DomainRegistry {
     private static AddressValidationService addressValidationService;
     @Getter
     private static BizCartValidationService bizCartValidationService;
+    @Getter
+    private static NotificationRepository notificationRepository;
+    @Getter
+    private static NotificationService notificationService;
 
+    @Autowired
+    private void setNotificationService(NotificationService mallNotificationRepository) {
+        DomainRegistry.notificationService = mallNotificationRepository;
+    }
+    @Autowired
+    private void setNotificationRepository(NotificationRepository notificationRepository) {
+        DomainRegistry.notificationRepository = notificationRepository;
+    }
     @Autowired
     private void setBizCartRepository(BizCartRepository bizCartRepository) {
         DomainRegistry.bizCartRepository = bizCartRepository;

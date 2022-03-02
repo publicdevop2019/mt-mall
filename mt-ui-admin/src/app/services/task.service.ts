@@ -34,7 +34,7 @@ export class TaskService extends EntityCommonService<IDtxDetail, IDtxDetail> {
     private SVC_NAME = '/saga-svc';
     private ENTITY_NAME = '/dtx';
     private dtxName: DTX_EVENT_TYPE = 'CreateOrderDtx';
-    private queryPrefix = 'name:createOrderDtx';
+    private queryPrefix = 'name:CreateOrderDtx';
     entityRepo: string = environment.serverUri + this.SVC_NAME + this.ENTITY_NAME;
     constructor(httpProxy: HttpProxyService, interceptor: CustomHttpInterceptor, deviceSvc: DeviceService) {
         super(httpProxy, interceptor, deviceSvc);

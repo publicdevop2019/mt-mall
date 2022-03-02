@@ -122,4 +122,13 @@ public class DistributedTxEventSubscriber {
             ApplicationServiceRegistry.getDistributedTxApplicationService().handle(deserialize);
         });
     }
+
+    @EventListener(ApplicationReadyEvent.class)
+    private void listener17() {
+        CommonDomainRegistry.getEventStreamService().subscribe(appName, true,  "post_conclude_order_notification_handler", (event) -> {
+            DistributedTxSuccessEvent deserialize = CommonDomainRegistry.getCustomObjectSerializer().deserialize(event.getEventBody(), DistributedTxSuccessEvent.class);
+            ApplicationServiceRegistry.getDistributedTxApplicationService().notifyAdmin(deserialize);
+        }, AppConstant.DTX_SUCCESS_EVENT);
+    }
+
 }

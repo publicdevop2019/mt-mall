@@ -18,7 +18,9 @@ export class CustomHttpInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<any> {
     if (this._httpProxy.currentUserAuthInfo && this._httpProxy.currentUserAuthInfo.access_token)
       if (
-        req.url.indexOf('oauth/token') > -1 && req.method === 'POST'
+        (req.url.indexOf('oauth/token') > -1 && req.method === 'POST')
+        ||
+        (req.url.indexOf('csrf') > -1 && req.method === 'GET')
       ) {
         /**
          * skip Bearer header for public urls
@@ -47,13 +49,6 @@ export class CustomHttpInterceptor implements HttpInterceptor {
           this.openSnackbar('METHOD_NOT_SUPPORTED');
           return throwError(error);
         } else if (error.status === 403) {
-          //for csrf request, retry 
-          if (getCookie('XSRF-TOKEN')) {
-            req = req.clone({ setHeaders: { 'X-XSRF-TOKEN': getCookie('XSRF-TOKEN') }, withCredentials: true });
-          } else {
-            this.openSnackbar('ACCESS_IS_NOT_ALLOWED');
-            return throwError(error);
-          }
           return next.handle(req).pipe(catchError((error: HttpErrorResponse) => {
             this.openSnackbar('ACCESS_IS_NOT_ALLOWED');
             return throwError(error);

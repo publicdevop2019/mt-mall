@@ -114,7 +114,18 @@ export class NavBarComponent implements OnInit {
   ];
   private _mobileQueryListener: () => void;
   @ViewChild("snav", { static: true }) snav: MatSidenav;
-  constructor(public authSvc:AuthService, public httpProxySvc: HttpProxyService, changeDetectorRef: ChangeDetectorRef, media: MediaMatcher, public route: ActivatedRoute, public router: Router, public translate: TranslateService, public deviceSvc: DeviceService, public msgSvc: MessageService) {
+  constructor(
+    public authSvc: AuthService,
+    public httpProxySvc: HttpProxyService,
+    changeDetectorRef: ChangeDetectorRef,
+    media: MediaMatcher,
+    public route: ActivatedRoute,
+    public router: Router,
+    public translate: TranslateService,
+    public deviceSvc: DeviceService,
+    public msgSvc: MessageService
+  
+    ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
@@ -132,7 +143,7 @@ export class NavBarComponent implements OnInit {
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
   ngOnInit() {
-    this.msgSvc.connectMallMonitor();
+    this.msgSvc.connectNotification();
   }
   doLogout() {
     logout()

@@ -5,11 +5,18 @@ import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.distributed_lock.DTXDistLock;
 import com.mt.common.domain.model.domain_event.DomainEventPublisher;
 import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+import com.mt.common.domain.model.event.MallNotificationEvent;
 import com.mt.common.domain.model.restful.SumPagedRep;
+import com.mt.saga.appliction.distributed_tx.command.*;
 import com.mt.saga.appliction.distributed_tx.command.create_order_dtx.GeneratePaymentQRLinkReplyCommand;
-import com.mt.saga.appliction.distributed_tx.command.ResolveReason;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.domain.DomainRegistry;
+import com.mt.saga.domain.model.distributed_tx.DistributedTx;
+import com.mt.saga.domain.model.distributed_tx.DistributedTxQuery;
+import com.mt.saga.domain.model.distributed_tx.LocalTx;
+import com.mt.saga.domain.model.distributed_tx.event.cancel_conclude_order_dtx.CancelDecreaseActualStorageForConcludeEvent;
+import com.mt.saga.domain.model.distributed_tx.event.cancel_conclude_order_dtx.CancelUpdateOrderForConcludeEvent;
+import com.mt.saga.domain.model.distributed_tx.event.cancel_confirm_order_payment_dtx.CancelUpdateOrderPaymentEvent;
 import com.mt.saga.domain.model.distributed_tx.event.cancel_create_order_dtx.CancelClearCartEvent;
 import com.mt.saga.domain.model.distributed_tx.event.cancel_create_order_dtx.CancelDecreaseOrderStorageForCreateEvent;
 import com.mt.saga.domain.model.distributed_tx.event.cancel_create_order_dtx.CancelGeneratePaymentQRLinkEvent;
@@ -30,27 +37,17 @@ import com.mt.saga.domain.model.distributed_tx.event.create_order_dtx.ClearCartE
 import com.mt.saga.domain.model.distributed_tx.event.create_order_dtx.DecreaseOrderStorageForCreateEvent;
 import com.mt.saga.domain.model.distributed_tx.event.create_order_dtx.GeneratePaymentQRLinkEvent;
 import com.mt.saga.domain.model.distributed_tx.event.create_order_dtx.SaveNewOrderEvent;
-import com.mt.saga.domain.model.distributed_tx.DistributedTx;
-import com.mt.saga.domain.model.distributed_tx.DistributedTxQuery;
-import com.mt.saga.domain.model.distributed_tx.LocalTx;
-import com.mt.saga.appliction.distributed_tx.command.ReplyEvent;
-import com.mt.saga.appliction.distributed_tx.command.CancelDistributedTxEvent;
-import com.mt.saga.appliction.distributed_tx.command.DistributedTxSuccessEvent;
-import com.mt.saga.appliction.distributed_tx.command.LocalTxFailedEvent;
-import com.mt.saga.domain.model.distributed_tx.event.cancel_conclude_order_dtx.CancelDecreaseActualStorageForConcludeEvent;
-import com.mt.saga.domain.model.distributed_tx.event.cancel_conclude_order_dtx.CancelUpdateOrderForConcludeEvent;
-import com.mt.saga.domain.model.distributed_tx.event.cancel_confirm_order_payment_dtx.CancelUpdateOrderPaymentEvent;
 import com.mt.saga.domain.model.distributed_tx.event.invalid_order.IncreaseStorageForInvalidEvent;
 import com.mt.saga.domain.model.distributed_tx.event.invalid_order.RemoveOrderForInvalidEvent;
 import com.mt.saga.domain.model.distributed_tx.event.invalid_order.RemovePaymentQRLinkForInvalidEvent;
 import com.mt.saga.domain.model.distributed_tx.event.invalid_order.RestoreCartForInvalidEvent;
-import com.mt.saga.domain.model.order_state_machine.event.*;
-import com.mt.saga.domain.model.order_state_machine.order.BizOrderStatus;
 import com.mt.saga.domain.model.distributed_tx.event.recycle_order_dtx.IncreaseOrderStorageForRecycleEvent;
 import com.mt.saga.domain.model.distributed_tx.event.recycle_order_dtx.UpdateOrderForRecycleEvent;
 import com.mt.saga.domain.model.distributed_tx.event.reserve_order_dtx.DecreaseOrderStorageForReserveEvent;
 import com.mt.saga.domain.model.distributed_tx.event.reserve_order_dtx.UpdateOrderForReserveEvent;
 import com.mt.saga.domain.model.distributed_tx.event.update_order_address_dtx.UpdateOrderForUpdateOrderAddressEvent;
+import com.mt.saga.domain.model.order_state_machine.event.*;
+import com.mt.saga.domain.model.order_state_machine.order.BizOrderStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +62,6 @@ public class DistributedTxApplicationService {
 
     public static final String DTX_COMMAND = "COMMAND";
     public static final String RESOLVE_DTX = "RESOLVE_DTX";
-    private static final String CREATE_DTX = "CreateDtx";
     public static final String CANCEL_DTX = "CancelDtx";
     public static final String CREATE_ORDER_DTX = "CreateOrderDtx";
     public static final String CONCLUDE_ORDER_DTX = "ConcludeOrderDtx";
@@ -74,32 +70,28 @@ public class DistributedTxApplicationService {
     public static final String RECYCLE_ORDER_DTX = "RecycleOrderDtx";
     public static final String RESERVE_ORDER_DTX = "ReserveOrderDtx";
     public static final String UPDATE_ORDER_ADDRESS_DTX = "UpdateOrderAddressDtx";
+    private static final String CREATE_DTX = "CreateDtx";
 
     @Transactional
     @SubscribeForEvent
     public void handle(CancelDistributedTxEvent event) {
-        if(CREATE_ORDER_DTX.equals(event.getDistributedTx().getName())){
+        if (CREATE_ORDER_DTX.equals(event.getDistributedTx().getName())) {
             createOrderFailed(event);
-        }
-        else if(CONCLUDE_ORDER_DTX.equals(event.getDistributedTx().getName())){
+        } else if (CONCLUDE_ORDER_DTX.equals(event.getDistributedTx().getName())) {
             concludeOrderFailed(event);
-        }
-        else if(CONFIRM_ORDER_PAYMENT_ORDER_DTX.equals(event.getDistributedTx().getName())){
+        } else if (CONFIRM_ORDER_PAYMENT_ORDER_DTX.equals(event.getDistributedTx().getName())) {
             confirmPaymentFailed(event);
-        }
-        else if(INVALID_ORDER_DTX.equals(event.getDistributedTx().getName())){
+        } else if (INVALID_ORDER_DTX.equals(event.getDistributedTx().getName())) {
             invalidOrderFailed(event);
-        }
-        else if(RECYCLE_ORDER_DTX.equals(event.getDistributedTx().getName())){
+        } else if (RECYCLE_ORDER_DTX.equals(event.getDistributedTx().getName())) {
             recycleOrderFailed(event);
-        }
-        else if(RESERVE_ORDER_DTX.equals(event.getDistributedTx().getName())){
+        } else if (RESERVE_ORDER_DTX.equals(event.getDistributedTx().getName())) {
             reserveOrderFailed(event);
-        }
-        else if(UPDATE_ORDER_ADDRESS_DTX.equals(event.getDistributedTx().getName())){
+        } else if (UPDATE_ORDER_ADDRESS_DTX.equals(event.getDistributedTx().getName())) {
             updateAddressFailed(event);
         }
     }
+
     private void concludeOrderFailed(CancelDistributedTxEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
 
@@ -298,7 +290,6 @@ public class DistributedTxApplicationService {
             return null;
         }, CREATE_DTX);
     }
-
 
 
     @Transactional
@@ -575,4 +566,19 @@ public class DistributedTxApplicationService {
         }, CANCEL_DTX);
     }
 
+    @Transactional
+    @SubscribeForEvent
+    public void notifyAdmin(DistributedTxSuccessEvent deserialize) {
+        Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(deserialize.getTaskId());
+        byId.ifPresent(e -> {
+            if (CONCLUDE_ORDER_DTX.equals(e.getName())) {
+                CommonApplicationServiceRegistry.getIdempotentService().idempotent(String.valueOf(deserialize.getOrderId()), (change) -> {
+                    MallNotificationEvent new_order_confirmed = MallNotificationEvent.create("NEW_ORDER_CONFIRMED");
+                    new_order_confirmed.setOrderId(deserialize.getOrderId());
+                    DomainEventPublisher.instance().publish(new_order_confirmed);
+                    return null;
+                }, "order_notification");
+            }
+        });
+    }
 }

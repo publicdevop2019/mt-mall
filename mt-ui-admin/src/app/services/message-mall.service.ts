@@ -16,10 +16,10 @@ export interface IMallMonitorMsg extends IIdBasedEntity {
     providedIn: 'root'
 })
 export class MessageMallService extends EntityCommonService<IMallMonitorMsg, IMallMonitorMsg>{
-    private SVC_NAME = '/messenger-svc';
-    private ENTITY_NAME = '/mallNotifications';
+    private SVC_NAME = '/product-svc';
+    private ENTITY_NAME = '/notifications';
     entityRepo: string = environment.serverUri + this.SVC_NAME + this.ENTITY_NAME;
-    role: string = 'admin';
+    role: string = '';
     constructor(httpProxy: HttpProxyService, interceptor: CustomHttpInterceptor,deviceSvc:DeviceService) {
         super(httpProxy, interceptor,deviceSvc);
     }

@@ -711,4 +711,5 @@ export const zhHans = {
     "InvalidOrderDtx_cancel": "取消撤销订单",
     "CANCEL_UPDATE_ORDER_FOR_RESERVE_REPLY_COMMAND": "(取消)预留订单 - 更新订单信息【成功】",
     "SKIPPED": "跳过",
+    "NEW_ORDER_CONFIRMED": "新订单",
 }
