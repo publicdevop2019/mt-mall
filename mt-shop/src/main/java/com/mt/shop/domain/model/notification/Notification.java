@@ -6,10 +6,7 @@ import com.mt.common.domain.model.event.MallNotificationEvent;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table
@@ -18,6 +15,7 @@ import javax.persistence.Table;
 public class Notification extends Auditable {
     @Id
     private Long id;
+    @Embedded
     private NotificationId notificationId;
     private Long timestamp;
     @Lob

@@ -29,12 +29,13 @@ export class MessageService extends EntityCommonService<INotification, INotifica
             const jwtBody = this.httpProxySvc.currentUserAuthInfo.access_token.split('.')[1];
             const raw = atob(jwtBody);
             this.httpProxySvc.createEntity('https://api.duoshu.org/auth-svc/tickets/0C8HPGLXHMET', null, UUID())
-            .subscribe(next => {
-                this.socket = new WebSocket(`${this.getProtocal()}://${this.getPath()}/monitor?jwt=${btoa(next)}`);
-                this.socket.addEventListener('message', (event) => {
-                    this.saveMessage(event.data as string);
+                .subscribe(next => {
+                    this.socket = new WebSocket(`${this.getProtocal()}://${this.getPath()}/monitor?jwt=${btoa(next)}`);
+                    this.socket.addEventListener('message', (event) => {
+                        if (event.data !== '_renew')
+                            this.saveMessage(event.data as string);
+                    });
                 });
-            });
         }
     }
     clear() {
