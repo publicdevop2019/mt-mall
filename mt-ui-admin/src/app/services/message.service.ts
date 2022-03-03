@@ -28,7 +28,7 @@ export class MessageService extends EntityCommonService<INotification, INotifica
         if (environment.mode !== 'offline') {
             const jwtBody = this.httpProxySvc.currentUserAuthInfo.access_token.split('.')[1];
             const raw = atob(jwtBody);
-            this.httpProxySvc.createEntity('https://api.duoshu.org/auth-svc/tickets/0C8HQM52YN7K', null, UUID())
+            this.httpProxySvc.createEntity('https://api.duoshu.org/auth-svc/tickets/0C8HPGLXHMET', null, UUID())
             .subscribe(next => {
                 this.socket = new WebSocket(`${this.getProtocal()}://${this.getPath()}/monitor?jwt=${btoa(next)}`);
                 this.socket.addEventListener('message', (event) => {
