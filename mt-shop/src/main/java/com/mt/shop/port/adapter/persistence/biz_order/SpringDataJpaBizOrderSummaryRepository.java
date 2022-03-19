@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 
 @Repository
 public interface SpringDataJpaBizOrderSummaryRepository extends JpaRepository<BizOrderSummary, Long>, BizOderSummaryRepository {
-    @Query("SELECT p FROM #{#entityName} as p WHERE p.modifiedByUserAt < ?1 AND p.paid = false AND p.orderSku = true AND p.deleted = false")
+    @Query("SELECT p FROM #{#entityName} as p WHERE p.modifiedByUserAt < ?1 AND p.paid = false AND p.orderSku = true AND p.deleted = 0")
     List<BizOrderSummary> findExpiredNotPaidReserved(Date expireAt);
 
-    @Query("SELECT p FROM #{#entityName} as p WHERE p.paid = true AND p.orderSku = true AND p.actualSku = false AND p.deleted = false")
+    @Query("SELECT p FROM #{#entityName} as p WHERE p.paid = true AND p.orderSku = true AND p.actualSku = false AND p.deleted = 0")
     List<BizOrderSummary> findPaidReservedDraft();
 
-    @Query("SELECT p FROM #{#entityName} as p WHERE p.paid = true AND p.orderSku = false AND p.deleted = false")
+    @Query("SELECT p FROM #{#entityName} as p WHERE p.paid = true AND p.orderSku = false AND p.deleted = 0")
     List<BizOrderSummary> findPaidRecycled();
 
     default SumPagedRep<BizOrderSummary> ordersOfQuery(BizOrderQuery bizOrderQuery) {

@@ -23,8 +23,7 @@ public interface SpringDataJpaAddressRepository extends JpaRepository<Address, L
     }
 
     default void remove(Address address) {
-        address.setDeleted(true);
-        address.setDeletedAt(Date.from(Instant.now()));
+        address.softDelete();
         save(address);
     }
 

@@ -1,5 +1,6 @@
 package com.mt.shop.port.adapter.persistence.filter;
 
+import com.mt.common.domain.model.audit.Auditable;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.QueryUtility;
@@ -33,14 +34,12 @@ public interface SpringDataJpaFilterRepository extends FilterRepository, JpaRepo
     }
 
     default void remove(Filter filter) {
-        filter.setDeleted(true);
+        filter.softDelete();
         save(filter);
     }
 
     default void remove(Set<Filter> filters) {
-        filters.forEach(e->{
-            e.setDeleted(true);
-        });
+        filters.forEach(Auditable::softDelete);
         saveAll(filters);
     }
 

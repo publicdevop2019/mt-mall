@@ -194,7 +194,7 @@ public class CartApplicationService {
             log.debug("num of cart needs to be restored is {}", allByQuery.size());
             if (allByQuery.size() != 0) {
                 allByQuery.forEach(e -> {
-                    e.setDeleted(false);
+                    e.restore();
                     DomainRegistry.getBizCartRepository().add(e);
                 });
             }

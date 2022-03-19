@@ -27,10 +27,6 @@ import java.util.Set;
 @NoArgsConstructor
 public class BizCart extends Auditable {
 
-    @Id
-    @Setter(AccessLevel.PRIVATE)
-    private Long id;
-
     @Column(nullable = false)
     private String name;
 

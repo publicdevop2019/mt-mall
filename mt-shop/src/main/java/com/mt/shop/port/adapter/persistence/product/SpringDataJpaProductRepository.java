@@ -1,5 +1,6 @@
 package com.mt.shop.port.adapter.persistence.product;
 
+import com.mt.common.domain.model.audit.Auditable;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.restful.PatchCommand;
 import com.mt.common.domain.model.restful.SumPagedRep;
@@ -48,14 +49,12 @@ public interface SpringDataJpaProductRepository extends ProductRepository, JpaRe
     }
 
     default void remove(Product product) {
-        product.setDeleted(true);
+        product.softDelete();
         save(product);
     }
 
     default void remove(Set<Product> products) {
-        products.forEach(e->{
-            e.setDeleted(true);
-        });
+        products.forEach(Auditable::softDelete);
         saveAll(products);
     }
 

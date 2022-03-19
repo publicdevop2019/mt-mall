@@ -56,9 +56,6 @@ import static com.mt.common.CommonConstant.*;
 @Where(clause = "deleted=0")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Product extends Auditable {
-    @Id
-    @Setter(AccessLevel.PRIVATE)
-    private Long id;
     private String imageUrlSmall;
     private String name;
     private String description;

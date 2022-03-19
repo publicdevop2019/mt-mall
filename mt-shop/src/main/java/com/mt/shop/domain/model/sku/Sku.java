@@ -22,9 +22,6 @@ import java.math.RoundingMode;
 @Where(clause = "deleted=0")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Sku extends Auditable {
-    @Id
-    @Setter(AccessLevel.PRIVATE)
-    private Long id;
 
     @Setter(AccessLevel.PRIVATE)
     @Column(nullable = false)

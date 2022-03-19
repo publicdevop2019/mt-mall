@@ -1,5 +1,6 @@
 package com.mt.shop.port.adapter.persistence.sku;
 
+import com.mt.common.domain.model.audit.Auditable;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.restful.PatchCommand;
 import com.mt.common.domain.model.restful.SumPagedRep;
@@ -35,14 +36,12 @@ public interface SpringDataJpaSkuRepository extends SkuRepository, JpaRepository
     }
 
     default void remove(Sku sku) {
-        sku.setDeleted(true);
+        sku.softDelete();
         save(sku);
     }
 
     default void remove(Set<Sku> skus) {
-        skus.forEach(e->{
-            e.setDeleted(true);
-        });
+        skus.forEach(Auditable::softDelete);
         saveAll(skus);
     }
 

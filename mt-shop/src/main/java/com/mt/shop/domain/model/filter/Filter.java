@@ -26,9 +26,6 @@ import java.util.Set;
 @Where(clause = "deleted=0")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Filter extends Auditable {
-    @Id
-    @Setter(AccessLevel.PRIVATE)
-    private Long id;
     @Convert(converter = FilterCatalogsConverter.class)
     private Set<CatalogId> catalogs;
 

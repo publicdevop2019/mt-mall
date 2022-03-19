@@ -27,9 +27,6 @@ import java.util.Set;
 @Where(clause = "deleted=0")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Catalog extends Auditable {
-    @Id
-    @Setter(AccessLevel.PRIVATE)
-    private Long id;
 
     @Column(nullable = false)
     private String name;

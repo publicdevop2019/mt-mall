@@ -1,5 +1,6 @@
 package com.mt.shop.port.adapter.persistence.tag;
 
+import com.mt.common.domain.model.audit.Auditable;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.QueryUtility;
@@ -28,14 +29,12 @@ public interface SpringDataJpaTagRepository extends TagRepository, JpaRepository
     }
 
     default void remove(Tag tag) {
-        tag.setDeleted(true);
+        tag.softDelete();
         save(tag);
     }
 
     default void remove(Set<Tag> tags) {
-        tags.forEach(e->{
-            e.setDeleted(true);
-        });
+        tags.forEach(Auditable::softDelete);
         saveAll(tags);
     }
 

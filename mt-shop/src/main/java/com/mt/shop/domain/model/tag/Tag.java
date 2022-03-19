@@ -24,9 +24,6 @@ import java.util.Set;
 @Where(clause = "deleted=0")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Tag extends Auditable {
-    @Id
-    @Setter(AccessLevel.PRIVATE)
-    private Long id;
 
     private String name;
 

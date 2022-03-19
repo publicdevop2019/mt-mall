@@ -1,6 +1,7 @@
 package com.mt.shop.port.adapter.persistence.catalog;
 
 import com.mt.common.CommonConstant;
+import com.mt.common.domain.model.audit.Auditable;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.QueryUtility;
@@ -42,14 +43,12 @@ public interface SpringDataJpaCatalogRepository extends CatalogRepository, JpaRe
     }
 
     default void remove(Catalog client) {
-        client.setDeleted(true);
+        client.softDelete();
         save(client);
     }
 
     default void remove(Set<Catalog> client) {
-        client.forEach(e->{
-            e.setDeleted(true);
-        });
+        client.forEach(Auditable::softDelete);
         saveAll(client);
     }
 

@@ -1,5 +1,6 @@
 package com.mt.shop.port.adapter.persistence.cart;
 
+import com.mt.common.domain.model.audit.Auditable;
 import com.mt.common.domain.model.audit.Auditable_;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.restful.SumPagedRep;
@@ -55,21 +56,17 @@ public interface SpringDataJpaBizCartRepository extends JpaRepository<BizCart, L
     }
 
     default void remove(BizCart e) {
-        e.setDeleted(true);
-        e.setDeletedAt(Date.from(Instant.now()));
+        e.softDelete();
         save(e);
     }
 
     default void removeAll(Set<BizCart> allByQuery) {
-        allByQuery.forEach((cart) -> {
-            cart.setDeletedAt(Date.from(Instant.now()));
-            cart.setDeleted(true);
-        });
+        allByQuery.forEach(Auditable::softDelete);
         saveAll(allByQuery);
     }
 
     default void restoreAll(Set<BizCart> allByQuery) {
-        allByQuery.forEach(e -> e.setDeleted(false));
+        allByQuery.forEach(Auditable::restore);
         saveAll(allByQuery);
     }
 }

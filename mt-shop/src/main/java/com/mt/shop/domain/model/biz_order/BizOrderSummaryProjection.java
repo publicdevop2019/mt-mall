@@ -1,5 +1,6 @@
 package com.mt.shop.domain.model.biz_order;
 
+import com.mt.common.domain.model.audit.Auditable;
 import com.mt.shop.domain.DomainRegistry;
 import com.mt.shop.domain.model.biz_order.event.CreateBizOrderEvent;
 import com.mt.shop.domain.model.biz_order.event.DeleteOrderEvent;
@@ -39,9 +40,7 @@ public class BizOrderSummaryProjection {
         log.debug("projecting {}", event);
         Optional<BizOrderSummary> bizOrderSummary = DomainRegistry.getBizOderSummaryRepository()
                 .ordersOfQuery(new BizOrderQuery(event.getOrderId(), true)).findFirst();
-        bizOrderSummary.ifPresentOrElse(order -> {
-            order.setDeleted(true);
-        }, () -> log.error("unable to find object"));
+        bizOrderSummary.ifPresentOrElse(Auditable::softDelete, () -> log.error("unable to find object"));
     }
 
     @EventHandler
@@ -56,13 +55,10 @@ public class BizOrderSummaryProjection {
             Optional.ofNullable(event.getOrderStorage()).ifPresent(order::setOrderSku);
             Optional.ofNullable(event.getPaid()).ifPresent(order::setPaid);
             Optional.ofNullable(event.getDeleted()).ifPresent(e -> {
-                order.setDeleted(e);
                 if (e) {
-                    order.setDeletedAt(event.getDeletedAt());
-                    order.setDeletedBy(event.getDeletedBy());
+                    order.softDelete();
                 } else {
-                    order.setDeletedAt(null);
-                    order.setDeletedBy(null);
+                    order.restore();
                 }
             });
         }, () -> log.error("unable to find object"));

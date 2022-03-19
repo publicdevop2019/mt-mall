@@ -34,8 +34,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DistributedTx extends Auditable implements AttributeConverter<Map<String, String>, String> {
     protected String name;
-    @Id
-    protected Long id;
     protected String changeId;
     protected String lockId;
     @Lob
@@ -67,7 +65,9 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
         distributedTx1.isCancel = true;
         return distributedTx1;
     }
-
+    public Long getId(){
+        return id;
+    }
     public static void retryStartedLtx(DistributedTxSuccessEvent deserialize) {
         if (!deserialize.isCancel()) {
             return;
