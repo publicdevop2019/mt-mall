@@ -18,9 +18,9 @@ export class MessageService extends EntityCommonService<INotification, INotifica
     }
     public latestMessage: INotification[] = [];
     saveMessage(message: string) {
-        if (this.latestMessage.length === 5) {
-            this.latestMessage.splice(0, 1)
-        }
+        // if (this.latestMessage.length === 5) {
+        //     this.latestMessage.splice(0, 1)
+        // }
         this.latestMessage.push(JSON.parse(message) as INotification);
     }
     private socket: WebSocket;

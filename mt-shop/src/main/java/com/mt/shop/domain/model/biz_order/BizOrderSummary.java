@@ -17,8 +17,6 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 public class BizOrderSummary extends Auditable {
-    @Id
-    private long id;
 
     @Embedded
     private BizOrderId orderId;
