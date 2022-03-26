@@ -1,7 +1,7 @@
 package com.mt.shop.application.notification;
 
 import com.mt.common.domain.CommonDomainRegistry;
-import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+
 import com.mt.common.domain.model.event.MallNotificationEvent;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.PageConfig;
@@ -19,7 +19,7 @@ public class NotificationApplicationService {
     public static final String MALL_NOTIFICATION = "Notification";
 
     @Transactional
-    @SubscribeForEvent
+    
     public void handle(MallNotificationEvent event) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(event.getId().toString(), (command) -> {
             Notification notification = new Notification(event);

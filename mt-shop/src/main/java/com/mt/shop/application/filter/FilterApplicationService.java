@@ -2,7 +2,7 @@ package com.mt.shop.application.filter;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.mt.common.domain.CommonDomainRegistry;
-import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.QueryUtility;
 import com.mt.shop.application.ApplicationServiceRegistry;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Service
 public class FilterApplicationService {
 
-    @SubscribeForEvent
+    
     @Transactional
     public String create(CreateFilterCommand command, String operationId) {
         return ApplicationServiceRegistry.getIdempotentWrapper().idempotent(operationId,
@@ -72,7 +72,7 @@ public class FilterApplicationService {
         return DomainRegistry.getFilterRepository().filterOfId(new FilterId(id));
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void replace(String id, UpdateFilterCommand command, String changeId) {
         FilterId filterId = new FilterId(id);
@@ -90,7 +90,7 @@ public class FilterApplicationService {
         }, "Filter");
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void removeFilter(String id, String changeId) {
         FilterId filterId = new FilterId(id);
@@ -104,7 +104,7 @@ public class FilterApplicationService {
         }, "Filter");
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void patch(String id, JsonPatch command, String changeId) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(changeId, (change) -> {

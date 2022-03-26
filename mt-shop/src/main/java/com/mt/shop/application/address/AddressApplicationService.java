@@ -1,6 +1,6 @@
 package com.mt.shop.application.address;
 
-import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.shop.application.ApplicationServiceRegistry;
 import com.mt.shop.application.address.command.CustomerCreateAddressCommand;
@@ -49,7 +49,7 @@ public class AddressApplicationService {
         return DomainRegistry.getAddressRepository().addressesOfQuery(new AddressQuery(false));
     }
 
-    @SubscribeForEvent
+    
     public String create(CustomerCreateAddressCommand command, String changeId) {
         RLock lock = redissonClient.getLock(UserThreadLocal.get() + "_address");
         lock.lock(5, TimeUnit.SECONDS);
@@ -77,7 +77,7 @@ public class AddressApplicationService {
         }
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void replace(CustomerUpdateAddressCommand command, String id, String changeId) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(changeId, (change) -> {
@@ -91,7 +91,7 @@ public class AddressApplicationService {
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void remove(String id, String changeId) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(changeId, (change) -> {

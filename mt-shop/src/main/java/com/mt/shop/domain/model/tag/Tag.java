@@ -2,7 +2,7 @@ package com.mt.shop.domain.model.tag;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.audit.Auditable;
-import com.mt.common.domain.model.domain_event.DomainEventPublisher;
+
 import com.mt.common.domain.model.sql.converter.StringSetConverter;
 import com.mt.common.domain.model.validate.Validator;
 import com.mt.common.infrastructure.HttpValidationNotificationHandler;
@@ -88,7 +88,7 @@ public class Tag extends Auditable {
                 || !copy.getMethod().equals(this.getMethod())
                 || !sameAs(copy.getSelectValues(), this.getSelectValues())
         ) {
-            DomainEventPublisher.instance().publish(new TagCriticalFieldChanged(tagId));
+            CommonDomainRegistry.getDomainEventRepository().append(new TagCriticalFieldChanged(tagId));
         }
     }
 

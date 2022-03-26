@@ -1,6 +1,6 @@
 package com.mt.shop.application.image;
 
-import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+
 import com.mt.shop.application.ApplicationServiceRegistry;
 import com.mt.shop.domain.DomainRegistry;
 import com.mt.shop.domain.model.image.Image;
@@ -23,7 +23,7 @@ public class ImageApplicationService {
     @Value("${allowed.size}")
     private Integer allowedSize;
 
-    @SubscribeForEvent
+    
     @Transactional
     public ImageId create(String changeId, MultipartFile file) {
         ImageId imageId = new ImageId();

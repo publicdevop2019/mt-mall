@@ -1,6 +1,7 @@
 package com.mt.shop.domain.model.biz_order;
 
-import com.mt.common.domain.model.domain_event.DomainEventPublisher;
+
+import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.validate.Validator;
 import com.mt.shop.application.biz_order.command.CustomerPlaceBizOrderCommand;
 import com.mt.shop.application.biz_order.command.CustomerUpdateBizOrderAddressCommand;
@@ -46,7 +47,7 @@ public class BizOrderService {
         event.setPaymentType(commandsProductList.getPaymentType());
         event.setAddress(commandsProductList.getAddress());
         event.setProductList(collect2);
-        DomainEventPublisher.instance().publish(event);
+        CommonDomainRegistry.getDomainEventRepository().append(event);
         log.debug("order submitted to saga");
         return bizOrderId;
     }
@@ -70,7 +71,7 @@ public class BizOrderService {
             event.setOrderState(rep.getOrderState());
             event.setTxId(changeId);
             event.setVersion(rep.getVersion());
-            DomainEventPublisher.instance().publish(event);
+            CommonDomainRegistry.getDomainEventRepository().append(event);
         } else {
             throw new IllegalArgumentException("invalid order id");
         }
@@ -91,7 +92,7 @@ public class BizOrderService {
             event.setOrderState(orderDetail.getOrderState());
             event.setTxId(changeId);
             event.setVersion(orderDetail.getVersion());
-            DomainEventPublisher.instance().publish(event);
+            CommonDomainRegistry.getDomainEventRepository().append(event);
         } else {
             throw new IllegalArgumentException("invalid order id");
         }
@@ -112,7 +113,7 @@ public class BizOrderService {
                 event.setVersion(expiredOrder.getVersion());
                 event.setProductList(expiredOrder.getProductList());
 
-                DomainEventPublisher.instance().publish(event);
+                CommonDomainRegistry.getDomainEventRepository().append(event);
             });
             log.info("expired order(s) found");
         }
@@ -131,7 +132,7 @@ public class BizOrderService {
                 event.setBizOrderEvent(BizOrderEvent.CONFIRM_ORDER);
                 event.setProductList(order.getProductList());
                 event.setVersion(order.getVersion());
-                DomainEventPublisher.instance().publish(event);
+                CommonDomainRegistry.getDomainEventRepository().append(event);
             });
         }
     }
@@ -148,7 +149,7 @@ public class BizOrderService {
                 event.setBizOrderEvent(BizOrderEvent.RESERVE);
                 event.setVersion(order.getVersion());
                 event.setProductList(order.getProductList());
-                DomainEventPublisher.instance().publish(event);
+                CommonDomainRegistry.getDomainEventRepository().append(event);
             });
         }
     }
@@ -171,7 +172,7 @@ public class BizOrderService {
                 event.setAddress(new CustomerPlaceBizOrderCommand.BizOrderAddressCmdRep(command));
                 event.setOriginalAddress(rep.getAddress());
                 event.setOriginalModifiedByUserAt(rep.getModifiedByUserAt().getTime());
-                DomainEventPublisher.instance().publish(event);
+                CommonDomainRegistry.getDomainEventRepository().append(event);
             } else {
                 throw new IllegalStateException("cannot update address of paid or cancelled request");
             }
@@ -196,7 +197,7 @@ public class BizOrderService {
                 event.setTxId(changeId);
                 event.setProductList(rep.getProductList());
                 event.setVersion(rep.getVersion());
-                DomainEventPublisher.instance().publish(event);
+                CommonDomainRegistry.getDomainEventRepository().append(event);
             } else {
                 throw new IllegalStateException("cannot re-cancel order");
             }

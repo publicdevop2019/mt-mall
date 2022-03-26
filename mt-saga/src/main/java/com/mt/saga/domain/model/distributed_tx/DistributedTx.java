@@ -3,7 +3,7 @@ package com.mt.saga.domain.model.distributed_tx;
 import com.mt.common.application.CommonApplicationServiceRegistry;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.audit.Auditable;
-import com.mt.common.domain.model.domain_event.DomainEventPublisher;
+
 import com.mt.common.domain.model.domain_event.StoredEvent;
 import com.mt.common.domain.model.domain_event.StoredEventQuery;
 import com.mt.common.domain.model.restful.SumPagedRep;
@@ -75,7 +75,7 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
         Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(deserialize.getOriginalTaskId());
         byId.ifPresent(dtx -> {
             if (dtx.getStatus().equals(DTXStatus.STARTED)) {
-                SumPagedRep<StoredEvent> relatedEvents = CommonDomainRegistry.getEventRepository().query(
+                SumPagedRep<StoredEvent> relatedEvents = CommonDomainRegistry.getDomainEventRepository().query(
                         new StoredEventQuery("domainId:" + dtx.getId(),
                                 PageConfig.defaultConfig().getRawValue()
                                 , QueryConfig.skipCount().value()));
@@ -131,7 +131,7 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
             if(!isCancel){
                 DomainRegistry.getIsolationService().removeActiveDtx(lockId);
             }
-            DomainEventPublisher.instance().publish(new DistributedTxSuccessEvent(this));
+            CommonDomainRegistry.getDomainEventRepository().append(new DistributedTxSuccessEvent(this));
         }
     }
 
@@ -140,7 +140,7 @@ public class DistributedTx extends Auditable implements AttributeConverter<Map<S
             throw new IllegalStateException("can not cancel cancel dtx");
         }
         if (status.equals(DTXStatus.STARTED)) {
-            DomainEventPublisher.instance().publish(new CancelDistributedTxEvent(this));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelDistributedTxEvent(this));
         } else {
             throw new IllegalStateException("can cancel started dtx only");
         }

@@ -3,9 +3,9 @@ package com.mt.shop.application.biz_order;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.constant.AppInfo;
 import com.mt.common.domain.model.distributed_lock.SagaDistLock;
-import com.mt.common.domain.model.domain_event.DomainEventPublisher;
+
 import com.mt.common.domain.model.domain_event.StoredEvent;
-import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+
 import com.mt.common.domain.model.event.MallNotificationEvent;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.exception.AggregateOutdatedException;
@@ -44,31 +44,31 @@ public class BizOrderApplicationService {
         this.commandGateway = commandGateway;
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public String handleUserPlaceOrderAction(CustomerPlaceBizOrderCommand command, String changeId) {
         return DomainRegistry.getBizOrderService().handlePlaceOrderAction(command, changeId).getDomainId();
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void updateAddress(CustomerUpdateBizOrderAddressCommand command, String id, String changeId) {
         DomainRegistry.getBizOrderService().updateAddress(id, changeId, command);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void confirmPayment(String id, String changeId) {
         DomainRegistry.getBizOrderService().confirmPayment(id, changeId);
     }
 
     @Transactional
-    @SubscribeForEvent
+    
     public void reserveOrder(String id, String changeId) {
         DomainRegistry.getBizOrderService().reserveOrder(id, changeId);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public CompletableFuture<ResponseEntity<Object>> deleteOrder(String id, String changeId, Integer version) {
         InternalAdminDeleteOrderEvent updateBizOrderCommand = new InternalAdminDeleteOrderEvent();
@@ -84,7 +84,7 @@ public class BizOrderApplicationService {
         });
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void deleteOrderByUser(String id, String changeId) {
         DomainRegistry.getBizOrderService().userCancelOrder(id, changeId);
@@ -106,25 +106,25 @@ public class BizOrderApplicationService {
         return DomainRegistry.getBizOderSummaryRepository().ordersOfQuery(new BizOrderQuery(new BizOrderId(id), false)).findFirst();
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void releaseExpiredOrder() {
         DomainRegistry.getBizOrderService().releaseExpiredOrder();
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void concludeOrder() {
         DomainRegistry.getBizOrderService().concludeOrder();
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void resubmitOrder() {
         DomainRegistry.getBizOrderService().resubmitOrder();
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(InternalCreateNewOrderCommand command) {
@@ -140,12 +140,12 @@ public class BizOrderApplicationService {
             }
             return null;
         }, (command1) -> {
-            DomainEventPublisher.instance().publish(new SaveNewOrderForCreateReplyEvent(command.getOrderId(), command1.isEmptyOpt(), command.getTaskId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new SaveNewOrderForCreateReplyEvent(command.getOrderId(), command1.isEmptyOpt(), command.getTaskId()));
             return null;
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(UpdateOrderForRecycleCommand command) {
@@ -161,13 +161,13 @@ public class BizOrderApplicationService {
             }
             return null;
         }, (command1) -> {
-            DomainEventPublisher.instance().publish(new UpdateOrderForRecycleReplyEvent(command1.isEmptyOpt(), command.getTaskId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new UpdateOrderForRecycleReplyEvent(command1.isEmptyOpt(), command.getTaskId()));
             return null;
         }, AGGREGATE_NAME);
     }
 
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(UpdateOrderForReserveCommand command) {
@@ -183,12 +183,12 @@ public class BizOrderApplicationService {
             }
             return null;
         }, (command1) -> {
-            DomainEventPublisher.instance().publish(new UpdateOrderForReserveReplyEvent(command1.isEmptyOpt(), command.getTaskId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new UpdateOrderForReserveReplyEvent(command1.isEmptyOpt(), command.getTaskId()));
             return null;
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(UpdateOrderPaymentSuccessCommand command) {
@@ -204,12 +204,12 @@ public class BizOrderApplicationService {
             }
             return null;
         }, (command1) -> {
-            DomainEventPublisher.instance().publish(new UpdateOrderPaymentSuccessReplyEvent(command1.isEmptyOpt(), command.getTaskId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new UpdateOrderPaymentSuccessReplyEvent(command1.isEmptyOpt(), command.getTaskId()));
             return null;
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(UpdateOrderForConcludeCommand command) {
@@ -225,13 +225,13 @@ public class BizOrderApplicationService {
             }
             return null;
         }, (command1) -> {
-            DomainEventPublisher.instance().publish(new UpdateOrderForConcludeReplyEvent(command1.isEmptyOpt(), command.getTaskId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new UpdateOrderForConcludeReplyEvent(command1.isEmptyOpt(), command.getTaskId()));
             return null;
         }, AGGREGATE_NAME);
     }
 
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(InternalCancelNewOrderEvent command) {
@@ -246,12 +246,12 @@ public class BizOrderApplicationService {
             }
             return null;
         }, (ignore) -> {
-            DomainEventPublisher.instance().publish(new CancelSaveNewOrderForCreateReplyEvent(ignore.isEmptyOpt(), command.getTaskId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelSaveNewOrderForCreateReplyEvent(ignore.isEmptyOpt(), command.getTaskId()));
             return null;
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(CancelUpdateOrderForReserveCommand command) {
@@ -267,13 +267,13 @@ public class BizOrderApplicationService {
 
             return null;
         }, (ignore) -> {
-            DomainEventPublisher.instance().publish(new CancelUpdateOrderForReserveReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelUpdateOrderForReserveReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
             return null;
 
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(CancelUpdateOrderForRecycleCommand command) {
@@ -289,13 +289,13 @@ public class BizOrderApplicationService {
 
             return null;
         }, (ignore) -> {
-            DomainEventPublisher.instance().publish(new CancelUpdateOrderForRecycleReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelUpdateOrderForRecycleReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
             return null;
 
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(CancelUpdateOrderForConcludeCommand command) {
@@ -310,13 +310,13 @@ public class BizOrderApplicationService {
             }
             return null;
         }, (ignore) -> {
-            DomainEventPublisher.instance().publish(new CancelUpdateOrderForConcludeReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelUpdateOrderForConcludeReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
             return null;
 
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(CancelUpdateOrderPaymentSuccessCommand command) {
@@ -331,13 +331,13 @@ public class BizOrderApplicationService {
             }
             return null;
         }, (ignore) -> {
-            DomainEventPublisher.instance().publish(new CancelUpdateOrderPaymentSuccessReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelUpdateOrderPaymentSuccessReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
             return null;
 
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(UpdateOrderForUpdateAddressCommand command) {
@@ -353,12 +353,12 @@ public class BizOrderApplicationService {
             }
             return null;
         }, (ignore) -> {
-            DomainEventPublisher.instance().publish(new UpdateOrderAddressForUpdateAddressReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new UpdateOrderAddressForUpdateAddressReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
             return null;
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(CancelUpdateOrderForUpdateOrderAddressCommand command) {
@@ -373,13 +373,13 @@ public class BizOrderApplicationService {
             }
             return null;
         }, (ignore) -> {
-            DomainEventPublisher.instance().publish(new CancelUpdateOrderAddressForUpdateAddressReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelUpdateOrderAddressForUpdateAddressReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
             return null;
 
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(UpdateOrderForInvalidCommand command) {
@@ -395,13 +395,13 @@ public class BizOrderApplicationService {
             }
             return null;
         }, (ignore) -> {
-            DomainEventPublisher.instance().publish(new UpdateOrderForInvalidReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new UpdateOrderForInvalidReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
             return null;
 
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(CancelUpdateOrderForInvalidCommand command) {
@@ -416,7 +416,7 @@ public class BizOrderApplicationService {
             }
             return null;
         }, (ignore) -> {
-            DomainEventPublisher.instance().publish(new CancelUpdateOrderForInvalidReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelUpdateOrderForInvalidReplyCommand(command.getTaskId(), ignore.isEmptyOpt()));
             return null;
         }, AGGREGATE_NAME);
     }

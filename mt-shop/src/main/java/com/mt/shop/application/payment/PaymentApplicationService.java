@@ -3,9 +3,9 @@ package com.mt.shop.application.payment;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.constant.AppInfo;
 import com.mt.common.domain.model.distributed_lock.SagaDistLock;
-import com.mt.common.domain.model.domain_event.DomainEventPublisher;
+
 import com.mt.common.domain.model.domain_event.StoredEvent;
-import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+
 import com.mt.common.domain.model.event.MallNotificationEvent;
 import com.mt.shop.application.ApplicationServiceRegistry;
 import com.mt.shop.application.payment.command.CancelPaymentQRLinkEvent;
@@ -37,7 +37,7 @@ public class PaymentApplicationService {
     @Value("${spring.application.name}")
     private String appName;
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void generatePaymentLink(GeneratePaymentLinkEvent event) {
@@ -50,13 +50,13 @@ public class PaymentApplicationService {
             changeRecordCommand.setReturnValue(paymentLink);
             return null;
         }), (ignore) -> {
-            DomainEventPublisher.instance().publish(new GeneratePaymentLinkReplyEvent(ignore.getReturnValue(), event.getTaskId(), ignore.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new GeneratePaymentLinkReplyEvent(ignore.getReturnValue(), event.getTaskId(), ignore.isEmptyOpt()));
             return null;
         }, AGGREGATE_NAME);
 
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void cancelPaymentLink(CancelPaymentQRLinkEvent event) {
@@ -70,13 +70,13 @@ public class PaymentApplicationService {
             DomainRegistry.getPaymentRepository().createOrUpdate(payment1);
             return null;
         }), (ignore) -> {
-            DomainEventPublisher.instance().publish(new CancelPaymentQRLinkReplyEvent(ignore.isEmptyOpt(), event.getTaskId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelPaymentQRLinkReplyEvent(ignore.isEmptyOpt(), event.getTaskId()));
             return null;
         }, AGGREGATE_NAME);
     }
 
     @Transactional
-    @SubscribeForEvent
+    
     public void handleQRCodeScan(String userId, String orderId, String changeId) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(changeId, (changeRecordCommand -> {
             Payment payment = new Payment(userId, orderId);
@@ -110,7 +110,7 @@ public class PaymentApplicationService {
         CommonDomainRegistry.getEventStreamService().next(appName, event.isInternal(), event.getTopic(), storedEvent);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(RemovePaymentLinkEvent event) {
@@ -124,12 +124,12 @@ public class PaymentApplicationService {
             DomainRegistry.getPaymentRepository().createOrUpdate(payment1);
             return null;
         }), (ignore) -> {
-            DomainEventPublisher.instance().publish(new RemovePaymentLinkReplyEvent(event.getTaskId(), ignore.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new RemovePaymentLinkReplyEvent(event.getTaskId(), ignore.isEmptyOpt()));
             return null;
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(CancelRemovePaymentLinkEvent event) {
@@ -143,7 +143,7 @@ public class PaymentApplicationService {
             DomainRegistry.getPaymentRepository().createOrUpdate(payment1);
             return null;
         }), (ignore) -> {
-            DomainEventPublisher.instance().publish(new CancelRemovePaymentLinkReplyEvent(event.getTaskId(), ignore.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelRemovePaymentLinkReplyEvent(event.getTaskId(), ignore.isEmptyOpt()));
             return null;
         }, AGGREGATE_NAME);
     }

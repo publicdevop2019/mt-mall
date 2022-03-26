@@ -2,8 +2,8 @@ package com.mt.shop.application.tag;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.mt.common.domain.CommonDomainRegistry;
-import com.mt.common.domain.model.domain_event.DomainEventPublisher;
-import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+
+
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.shop.application.ApplicationServiceRegistry;
 import com.mt.shop.application.tag.command.CreateTagCommand;
@@ -22,7 +22,7 @@ import java.util.Optional;
 @Service
 public class TagApplicationService {
 
-    @SubscribeForEvent
+    
     @Transactional
     public String create(CreateTagCommand command, String operationId) {
         return ApplicationServiceRegistry.getIdempotentWrapper().idempotent(operationId,
@@ -51,7 +51,7 @@ public class TagApplicationService {
         return DomainRegistry.getTagRepository().tagOfId(new TagId(id));
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void replace(String id, UpdateTagCommand command, String changeId) {
         TagId tagId = new TagId(id);
@@ -72,7 +72,7 @@ public class TagApplicationService {
         }, "Tag");
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void removeById(String id, String changeId) {
         TagId tagId = new TagId(id);
@@ -81,13 +81,13 @@ public class TagApplicationService {
             if (optionalTag.isPresent()) {
                 Tag tag = optionalTag.get();
                 DomainRegistry.getTagRepository().remove(tag);
-                DomainEventPublisher.instance().publish(new TagDeleted(tag.getTagId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new TagDeleted(tag.getTagId()));
             }
             return null;
         }, "Tag");
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void patch(String id, JsonPatch command, String changeId) {
         TagId tagId = new TagId(id);

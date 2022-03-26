@@ -1,6 +1,7 @@
 package com.mt.saga.infrastructure;
 
-import com.mt.common.domain.model.domain_event.DomainEventPublisher;
+
+import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.saga.appliction.order_state_machine.CommonOrderCommand;
 import com.mt.saga.appliction.order_state_machine.OrderStateMachineApplicationService;
 import com.mt.saga.domain.DomainRegistry;
@@ -158,7 +159,7 @@ public class SpringStateMachineBuilder implements OrderStateMachineBuilder {
             log.info("start of create invalid order dtx");
             log.info("order status is {}",context.getSource().getId());
             CommonOrderCommand command = context.getExtendedState().get(ORDER_COMMAND_DETAIL, CommonOrderCommand.class);
-            DomainEventPublisher.instance().publish(new CreateInvalidOrderDTXEvent(command));
+            CommonDomainRegistry.getDomainEventRepository().append(new CreateInvalidOrderDTXEvent(command));
             log.info("end of create invalid order dtx");
         };
     }
@@ -168,7 +169,7 @@ public class SpringStateMachineBuilder implements OrderStateMachineBuilder {
             log.info("start of create update address order dtx");
             log.info("order status is {}",context.getSource().getId());
             CommonOrderCommand command = context.getExtendedState().get(ORDER_COMMAND_DETAIL, CommonOrderCommand.class);
-            DomainEventPublisher.instance().publish(new CreateUpdateOrderAddressDTXEvent(command));
+            CommonDomainRegistry.getDomainEventRepository().append(new CreateUpdateOrderAddressDTXEvent(command));
             log.info("end of create update address order dtx");
         };
     }
@@ -177,7 +178,7 @@ public class SpringStateMachineBuilder implements OrderStateMachineBuilder {
         return context -> {
             log.info("start of create recycle order dtx");
             CommonOrderCommand command = context.getExtendedState().get(ORDER_COMMAND_DETAIL, CommonOrderCommand.class);
-            DomainEventPublisher.instance().publish(new CreateRecycleOrderDTXEvent(command));
+            CommonDomainRegistry.getDomainEventRepository().append(new CreateRecycleOrderDTXEvent(command));
             log.info("end of create recycle order dtx");
         };
     }
@@ -186,7 +187,7 @@ public class SpringStateMachineBuilder implements OrderStateMachineBuilder {
         return context -> {
             log.info("start of create reserve order dtx");
             CommonOrderCommand command = context.getExtendedState().get(ORDER_COMMAND_DETAIL, CommonOrderCommand.class);
-            DomainEventPublisher.instance().publish(new CreateReserveOrderDTXEvent(command, context.getTarget().getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CreateReserveOrderDTXEvent(command, context.getTarget().getId()));
             log.info("end of create reserve order dtx");
         };
     }
@@ -195,7 +196,7 @@ public class SpringStateMachineBuilder implements OrderStateMachineBuilder {
         return context -> {
             log.info("start of create confirm payment order dtx");
             CommonOrderCommand command = context.getExtendedState().get(ORDER_COMMAND_DETAIL, CommonOrderCommand.class);
-            DomainEventPublisher.instance().publish(new CreateConfirmOrderPaymentDTXEvent(command, context.getTarget().getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CreateConfirmOrderPaymentDTXEvent(command, context.getTarget().getId()));
             log.info("end of create confirm payment order dtx");
         };
     }
@@ -204,7 +205,7 @@ public class SpringStateMachineBuilder implements OrderStateMachineBuilder {
         return context -> {
             log.info("start of create create order dtx");
             CommonOrderCommand command = context.getExtendedState().get(ORDER_COMMAND_DETAIL, CommonOrderCommand.class);
-            DomainEventPublisher.instance().publish(new CreateCreateOrderDTXEvent(command));
+            CommonDomainRegistry.getDomainEventRepository().append(new CreateCreateOrderDTXEvent(command));
             log.info("end of create create order dtx");
         };
     }
@@ -229,7 +230,7 @@ public class SpringStateMachineBuilder implements OrderStateMachineBuilder {
             log.info("start of create conclude order dtx");
             CommonOrderCommand machineCommand = context.getExtendedState().get(ORDER_COMMAND_DETAIL, CommonOrderCommand.class);
             CreateConcludeOrderDTXEvent createConcludeOrderDTXEvent = new CreateConcludeOrderDTXEvent(machineCommand);
-            DomainEventPublisher.instance().publish(createConcludeOrderDTXEvent);
+            CommonDomainRegistry.getDomainEventRepository().append(createConcludeOrderDTXEvent);
             log.info("end of create conclude order dtx");
         };
     }

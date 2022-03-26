@@ -2,7 +2,7 @@ package com.mt.shop.domain.model.filter;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.audit.Auditable;
-import com.mt.common.domain.model.domain_event.DomainEventPublisher;
+
 import com.mt.common.domain.model.validate.Validator;
 import com.mt.common.infrastructure.HttpValidationNotificationHandler;
 import com.mt.shop.domain.DomainRegistry;
@@ -64,7 +64,7 @@ public class Filter extends Auditable {
         setCatalogs(catalogs);
         setFilterItems(filterItems);
         setDescription(description);
-        DomainEventPublisher.instance().publish(new FilterUpdated(filterId));
+        CommonDomainRegistry.getDomainEventRepository().append(new FilterUpdated(filterId));
     }
 
     public Filter(FilterId filterId, Set<CatalogId> catalogs, Set<FilterItem> filterItems, String description) {
@@ -78,6 +78,6 @@ public class Filter extends Auditable {
     public void replace(Set<CatalogId> catalogs, String description) {
         setCatalogs(catalogs);
         setDescription(description);
-        DomainEventPublisher.instance().publish(new FilterUpdated(filterId));
+        CommonDomainRegistry.getDomainEventRepository().append(new FilterUpdated(filterId));
     }
 }

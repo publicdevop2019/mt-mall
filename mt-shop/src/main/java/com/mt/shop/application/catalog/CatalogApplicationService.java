@@ -2,7 +2,7 @@ package com.mt.shop.application.catalog;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.mt.common.domain.CommonDomainRegistry;
-import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.QueryUtility;
 import com.mt.shop.application.ApplicationServiceRegistry;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CatalogApplicationService {
-    @SubscribeForEvent
+    
     @Transactional
     public String create(CreateCatalogCommand command, String changeId) {
         return ApplicationServiceRegistry.getIdempotentWrapper().idempotent(changeId,
@@ -69,7 +69,7 @@ public class CatalogApplicationService {
         return DomainRegistry.getCatalogRepository().catalogOfId(new CatalogId(id));
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void replace(String id, UpdateCatalogCommand command, String changeId) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(changeId, (change) -> {
@@ -84,7 +84,7 @@ public class CatalogApplicationService {
         }, "Catalog");
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void removeCatalog(String id, String changeId) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(changeId, (change) -> {
@@ -98,7 +98,7 @@ public class CatalogApplicationService {
         }, "Catalog");
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void patch(String id, JsonPatch command, String changeId) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(changeId, (change) -> {

@@ -33,7 +33,7 @@ public class DistributedTxRepresentation {
         setChangeId(var0.getChangeId());
         setOrderId(var0.getLockId());
         setCreatedAt(var0.getCreatedAt().getTime());
-        SumPagedRep<StoredEvent> query = CommonDomainRegistry.getEventRepository().query(
+        SumPagedRep<StoredEvent> query = CommonDomainRegistry.getDomainEventRepository().query(
                 new StoredEventQuery("domainId:" + var0.getId(),
                         PageConfig.defaultConfig().getRawValue()
                         , QueryConfig.skipCount().value()));

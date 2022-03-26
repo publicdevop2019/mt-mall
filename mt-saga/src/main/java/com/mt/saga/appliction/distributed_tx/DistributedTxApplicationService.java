@@ -3,8 +3,8 @@ package com.mt.saga.appliction.distributed_tx;
 import com.mt.common.application.CommonApplicationServiceRegistry;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.distributed_lock.DTXDistLock;
-import com.mt.common.domain.model.domain_event.DomainEventPublisher;
-import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+
+
 import com.mt.common.domain.model.event.MallNotificationEvent;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.saga.appliction.distributed_tx.command.*;
@@ -73,7 +73,7 @@ public class DistributedTxApplicationService {
     private static final String CREATE_DTX = "CreateDtx";
 
     @Transactional
-    @SubscribeForEvent
+    
     public void handle(CancelDistributedTxEvent event) {
         if (CREATE_ORDER_DTX.equals(event.getDistributedTx().getName())) {
             createOrderFailed(event);
@@ -104,8 +104,8 @@ public class DistributedTxApplicationService {
             dtx.startAllLocalTx();
             DomainRegistry.getDistributedTxRepository().store(dtx);
             CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(dtx.getParameters().get(DTX_COMMAND), CommonOrderCommand.class);
-            DomainEventPublisher.instance().publish(new CancelUpdateOrderForConcludeEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
-            DomainEventPublisher.instance().publish(new CancelDecreaseActualStorageForConcludeEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelUpdateOrderForConcludeEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelDecreaseActualStorageForConcludeEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
             return null;
         }, CREATE_DTX);
     }
@@ -119,7 +119,7 @@ public class DistributedTxApplicationService {
             DistributedTx dtx = DistributedTx.cancelOf(deserialize.getDistributedTx(), localTxes);
             dtx.startAllLocalTx();
             CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(dtx.getParameters().get(DTX_COMMAND), CommonOrderCommand.class);
-            DomainEventPublisher.instance().publish(new CancelUpdateOrderPaymentEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelUpdateOrderPaymentEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
             DomainRegistry.getDistributedTxRepository().store(dtx);
             return null;
         }, CREATE_DTX);
@@ -140,10 +140,10 @@ public class DistributedTxApplicationService {
             dtx.startAllLocalTx();
             CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(dtx.getParameters().get(DTX_COMMAND), CommonOrderCommand.class);
             log.info("start of cancel task of {} with changeId {}", dtx.getId(), dtx.getChangeId());
-            DomainEventPublisher.instance().publish(new CancelGeneratePaymentQRLinkEvent(event.getDistributedTx().getLockId(), dtx.getChangeId(), dtx.getId()));
-            DomainEventPublisher.instance().publish(new CancelDecreaseOrderStorageForCreateEvent(command, event.getDistributedTx().getLockId(), dtx.getChangeId(), dtx.getId()));
-            DomainEventPublisher.instance().publish(new CancelClearCartEvent(command, dtx.getChangeId(), dtx.getId()));
-            DomainEventPublisher.instance().publish(new CancelSaveNewOrderEvent(command, dtx.getChangeId(), dtx.getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelGeneratePaymentQRLinkEvent(event.getDistributedTx().getLockId(), dtx.getChangeId(), dtx.getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelDecreaseOrderStorageForCreateEvent(command, event.getDistributedTx().getLockId(), dtx.getChangeId(), dtx.getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelClearCartEvent(command, dtx.getChangeId(), dtx.getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelSaveNewOrderEvent(command, dtx.getChangeId(), dtx.getId()));
             dtx.startAllLocalTx();
             DomainRegistry.getDistributedTxRepository().store(dtx);
             return null;
@@ -165,28 +165,28 @@ public class DistributedTxApplicationService {
             DistributedTx distributedTx = DistributedTx.cancelOf(event.getDistributedTx(), localTxes);
 
             if (command.getOrderState().equals(BizOrderStatus.PAID_RECYCLED)) {
-                DomainEventPublisher.instance().publish(new CancelRemovePaymentQRLinkForInvalidEvent(distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
-                DomainEventPublisher.instance().publish(new CancelRestoreCartForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
-                DomainEventPublisher.instance().publish(new CancelRemoveOrderForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new CancelRemovePaymentQRLinkForInvalidEvent(distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new CancelRestoreCartForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new CancelRemoveOrderForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
 
                 distributedTx.skipLocalTx(CancelIncreaseStorageForInvalidEvent.name);
                 distributedTx.startLocalTx(CancelRestoreCartForInvalidEvent.name);
                 distributedTx.startLocalTx(CancelRemoveOrderForInvalidEvent.name);
                 distributedTx.startLocalTx(CancelRemovePaymentQRLinkForInvalidEvent.name);
             } else if (command.getOrderState().equals(BizOrderStatus.PAID_RESERVED) || command.getOrderState().equals(BizOrderStatus.CONFIRMED)) {
-                DomainEventPublisher.instance().publish(new CancelRemovePaymentQRLinkForInvalidEvent(distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
-                DomainEventPublisher.instance().publish(new CancelRestoreCartForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
-                DomainEventPublisher.instance().publish(new CancelRemoveOrderForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
-                DomainEventPublisher.instance().publish(new CancelIncreaseStorageForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new CancelRemovePaymentQRLinkForInvalidEvent(distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new CancelRestoreCartForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new CancelRemoveOrderForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new CancelIncreaseStorageForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
 
                 distributedTx.startLocalTx(CancelIncreaseStorageForInvalidEvent.name);
                 distributedTx.startLocalTx(CancelRestoreCartForInvalidEvent.name);
                 distributedTx.startLocalTx(CancelRemoveOrderForInvalidEvent.name);
                 distributedTx.startLocalTx(CancelRemovePaymentQRLinkForInvalidEvent.name);
             } else if (command.getOrderState().equals(BizOrderStatus.NOT_PAID_RESERVED)) {
-                DomainEventPublisher.instance().publish(new CancelRestoreCartForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
-                DomainEventPublisher.instance().publish(new CancelRemoveOrderForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
-                DomainEventPublisher.instance().publish(new CancelIncreaseStorageForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new CancelRestoreCartForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new CancelRemoveOrderForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new CancelIncreaseStorageForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
 
                 distributedTx.skipLocalTx(CancelRemovePaymentQRLinkForInvalidEvent.name);
                 distributedTx.startLocalTx(CancelIncreaseStorageForInvalidEvent.name);
@@ -194,8 +194,8 @@ public class DistributedTxApplicationService {
                 distributedTx.startLocalTx(CancelRemoveOrderForInvalidEvent.name);
 
             } else if (command.getOrderState().equals(BizOrderStatus.NOT_PAID_RECYCLED)) {
-                DomainEventPublisher.instance().publish(new CancelRestoreCartForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
-                DomainEventPublisher.instance().publish(new CancelRemoveOrderForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new CancelRestoreCartForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new CancelRemoveOrderForInvalidEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
 
                 distributedTx.skipLocalTx(CancelIncreaseStorageForInvalidEvent.name);
                 distributedTx.skipLocalTx(CancelRemovePaymentQRLinkForInvalidEvent.name);
@@ -220,8 +220,8 @@ public class DistributedTxApplicationService {
             dtx.startAllLocalTx();
             DomainRegistry.getDistributedTxRepository().store(dtx);
             CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(dtx.getParameters().get(DTX_COMMAND), CommonOrderCommand.class);
-            DomainEventPublisher.instance().publish(new CancelIncreaseOrderStorageForRecycleEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
-            DomainEventPublisher.instance().publish(new CancelUpdateOrderForRecycleEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelIncreaseOrderStorageForRecycleEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelUpdateOrderForRecycleEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
 
             return null;
         }, CREATE_DTX);
@@ -239,8 +239,8 @@ public class DistributedTxApplicationService {
             dtx.startAllLocalTx();
             DomainRegistry.getDistributedTxRepository().store(dtx);
             CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(dtx.getParameters().get(DTX_COMMAND), CommonOrderCommand.class);
-            DomainEventPublisher.instance().publish(new CancelDecreaseOrderStorageForReserveEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
-            DomainEventPublisher.instance().publish(new CancelUpdateOrderForReserveEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelDecreaseOrderStorageForReserveEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelUpdateOrderForReserveEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
 
             return null;
         }, CREATE_DTX);
@@ -257,12 +257,12 @@ public class DistributedTxApplicationService {
             dtx.startAllLocalTx();
             DomainRegistry.getDistributedTxRepository().store(dtx);
             CommonOrderCommand command = CommonDomainRegistry.getCustomObjectSerializer().deserialize(dtx.getParameters().get(DTX_COMMAND), CommonOrderCommand.class);
-            DomainEventPublisher.instance().publish(new CancelUpdateOrderForUpdateOrderAddressEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelUpdateOrderForUpdateOrderAddressEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
             return null;
         }, CREATE_DTX);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void createCreateOrderTask(CreateCreateOrderDTXEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
@@ -282,9 +282,9 @@ public class DistributedTxApplicationService {
                 distributedTx.startLocalTx(DecreaseOrderStorageForCreateEvent.name);
                 distributedTx.startLocalTx(ClearCartEvent.name);
                 distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
-                DomainEventPublisher.instance().publish(new GeneratePaymentQRLinkEvent(event.getCommand().getOrderId(), event.getCommand().getTxId(), distributedTx.getId()));
-                DomainEventPublisher.instance().publish(new DecreaseOrderStorageForCreateEvent(event.getCommand().getOrderId(), event.getCommand().getTxId(), distributedTx.getId(), command));
-                DomainEventPublisher.instance().publish(new ClearCartEvent(command, event.getCommand().getTxId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new GeneratePaymentQRLinkEvent(event.getCommand().getOrderId(), event.getCommand().getTxId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new DecreaseOrderStorageForCreateEvent(event.getCommand().getOrderId(), event.getCommand().getTxId(), distributedTx.getId(), command));
+                CommonDomainRegistry.getDomainEventRepository().append(new ClearCartEvent(command, event.getCommand().getTxId(), distributedTx.getId()));
                 DomainRegistry.getDistributedTxRepository().store(distributedTx);
             }, command.getOrderId());
             return null;
@@ -293,7 +293,7 @@ public class DistributedTxApplicationService {
 
 
     @Transactional
-    @SubscribeForEvent
+    
     public void handle(CreateConcludeOrderDTXEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             String orderId = event.getCommand().getOrderId();
@@ -309,8 +309,8 @@ public class DistributedTxApplicationService {
                 distributedTx.startLocalTx(DecreaseActualStorageForConcludeEvent.name);
                 distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 CommonOrderCommand command = event.getCommand();
-                DomainEventPublisher.instance().publish(new UpdateOrderForConcludeEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
-                DomainEventPublisher.instance().publish(new DecreaseActualStorageForConcludeEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new UpdateOrderForConcludeEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new DecreaseActualStorageForConcludeEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
                 DomainRegistry.getDistributedTxRepository().store(distributedTx);
 
             }, orderId);
@@ -318,7 +318,7 @@ public class DistributedTxApplicationService {
         }, CREATE_DTX);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void handle(CreateConfirmOrderPaymentDTXEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
@@ -333,7 +333,7 @@ public class DistributedTxApplicationService {
                 distributedTx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 CommonOrderCommand command = event.getCommand();
 
-                DomainEventPublisher.instance().publish(new UpdateOrderPaymentSuccessEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new UpdateOrderPaymentSuccessEvent(command, distributedTx.getLockId(), distributedTx.getChangeId(), distributedTx.getId()));
                 DomainRegistry.getDistributedTxRepository().store(distributedTx);
             }, orderId);
 
@@ -342,7 +342,7 @@ public class DistributedTxApplicationService {
     }
 
     @Transactional
-    @SubscribeForEvent
+    
     public void handle(CreateInvalidOrderDTXEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             CommonOrderCommand command = event.getCommand();
@@ -365,9 +365,9 @@ public class DistributedTxApplicationService {
                     distributedTx.startLocalTx(RemoveOrderForInvalidEvent.name);
                     distributedTx.skipLocalTx(IncreaseStorageForInvalidEvent.name);
 
-                    DomainEventPublisher.instance().publish(new RemovePaymentQRLinkForInvalidEvent(command.getOrderId(), command.getTxId(), distributedTx.getId()));
-                    DomainEventPublisher.instance().publish(new RestoreCartForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
-                    DomainEventPublisher.instance().publish(new RemoveOrderForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
+                    CommonDomainRegistry.getDomainEventRepository().append(new RemovePaymentQRLinkForInvalidEvent(command.getOrderId(), command.getTxId(), distributedTx.getId()));
+                    CommonDomainRegistry.getDomainEventRepository().append(new RestoreCartForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
+                    CommonDomainRegistry.getDomainEventRepository().append(new RemoveOrderForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
                 } else if (command.getOrderState().equals(BizOrderStatus.PAID_RESERVED) || command.getOrderState().equals(BizOrderStatus.CONFIRMED)) {
 
                     distributedTx.startLocalTx(RemovePaymentQRLinkForInvalidEvent.name);
@@ -375,10 +375,10 @@ public class DistributedTxApplicationService {
                     distributedTx.startLocalTx(RemoveOrderForInvalidEvent.name);
                     distributedTx.startLocalTx(IncreaseStorageForInvalidEvent.name);
 
-                    DomainEventPublisher.instance().publish(new RemovePaymentQRLinkForInvalidEvent(command.getOrderId(), command.getTxId(), distributedTx.getId()));
-                    DomainEventPublisher.instance().publish(new RestoreCartForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
-                    DomainEventPublisher.instance().publish(new RemoveOrderForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
-                    DomainEventPublisher.instance().publish(new IncreaseStorageForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
+                    CommonDomainRegistry.getDomainEventRepository().append(new RemovePaymentQRLinkForInvalidEvent(command.getOrderId(), command.getTxId(), distributedTx.getId()));
+                    CommonDomainRegistry.getDomainEventRepository().append(new RestoreCartForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
+                    CommonDomainRegistry.getDomainEventRepository().append(new RemoveOrderForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
+                    CommonDomainRegistry.getDomainEventRepository().append(new IncreaseStorageForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
 
                 } else if (command.getOrderState().equals(BizOrderStatus.NOT_PAID_RESERVED)) {
 
@@ -387,9 +387,9 @@ public class DistributedTxApplicationService {
                     distributedTx.startLocalTx(RemoveOrderForInvalidEvent.name);
                     distributedTx.startLocalTx(IncreaseStorageForInvalidEvent.name);
 
-                    DomainEventPublisher.instance().publish(new RestoreCartForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
-                    DomainEventPublisher.instance().publish(new RemoveOrderForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
-                    DomainEventPublisher.instance().publish(new IncreaseStorageForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
+                    CommonDomainRegistry.getDomainEventRepository().append(new RestoreCartForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
+                    CommonDomainRegistry.getDomainEventRepository().append(new RemoveOrderForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
+                    CommonDomainRegistry.getDomainEventRepository().append(new IncreaseStorageForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
 
                 } else if (command.getOrderState().equals(BizOrderStatus.NOT_PAID_RECYCLED)) {
 
@@ -398,8 +398,8 @@ public class DistributedTxApplicationService {
                     distributedTx.startLocalTx(RemoveOrderForInvalidEvent.name);
                     distributedTx.skipLocalTx(IncreaseStorageForInvalidEvent.name);
 
-                    DomainEventPublisher.instance().publish(new RestoreCartForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
-                    DomainEventPublisher.instance().publish(new RemoveOrderForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
+                    CommonDomainRegistry.getDomainEventRepository().append(new RestoreCartForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
+                    CommonDomainRegistry.getDomainEventRepository().append(new RemoveOrderForInvalidEvent(command, command.getOrderId(), command.getTxId(), distributedTx.getId()));
 
                 }
 
@@ -410,7 +410,7 @@ public class DistributedTxApplicationService {
     }
 
     @Transactional
-    @SubscribeForEvent
+    
     public void handle(CreateRecycleOrderDTXEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             String orderId = event.getCommand().getOrderId();
@@ -424,8 +424,8 @@ public class DistributedTxApplicationService {
                 dtx.startAllLocalTx();
                 dtx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 CommonOrderCommand command = event.getCommand();
-                DomainEventPublisher.instance().publish(new IncreaseOrderStorageForRecycleEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
-                DomainEventPublisher.instance().publish(new UpdateOrderForRecycleEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new IncreaseOrderStorageForRecycleEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new UpdateOrderForRecycleEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
                 DomainRegistry.getDistributedTxRepository().store(dtx);
 
 
@@ -435,7 +435,7 @@ public class DistributedTxApplicationService {
     }
 
     @Transactional
-    @SubscribeForEvent
+    
     public void handle(CreateReserveOrderDTXEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             String orderId = event.getCommand().getOrderId();
@@ -450,8 +450,8 @@ public class DistributedTxApplicationService {
                 dtx.startAllLocalTx();
                 dtx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 CommonOrderCommand command = event.getCommand();
-                DomainEventPublisher.instance().publish(new DecreaseOrderStorageForReserveEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
-                DomainEventPublisher.instance().publish(new UpdateOrderForReserveEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new DecreaseOrderStorageForReserveEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new UpdateOrderForReserveEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
                 DomainRegistry.getDistributedTxRepository().store(dtx);
 
             }, orderId);
@@ -460,7 +460,7 @@ public class DistributedTxApplicationService {
     }
 
     @Transactional
-    @SubscribeForEvent
+    
     public void handle(CreateUpdateOrderAddressDTXEvent event) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(event.getId().toString(), (change) -> {
             String orderId = event.getCommand().getOrderId();
@@ -473,7 +473,7 @@ public class DistributedTxApplicationService {
                 dtx.startAllLocalTx();
                 dtx.updateParams(DTX_COMMAND, CommonDomainRegistry.getCustomObjectSerializer().serialize(event.getCommand()));
                 CommonOrderCommand command = event.getCommand();
-                DomainEventPublisher.instance().publish(new UpdateOrderForUpdateOrderAddressEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
+                CommonDomainRegistry.getDomainEventRepository().append(new UpdateOrderForUpdateOrderAddressEvent(command, dtx.getLockId(), dtx.getChangeId(), dtx.getId()));
                 DomainRegistry.getDistributedTxRepository().store(dtx);
 
             }, orderId);
@@ -484,7 +484,7 @@ public class DistributedTxApplicationService {
 
     @Transactional
     @DTXDistLock(keyExpression = "#p0.taskId")
-    @SubscribeForEvent
+    
     public void handle(GeneratePaymentQRLinkReplyCommand command) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(command.getId().toString(), (change) -> {
             Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
@@ -494,7 +494,7 @@ public class DistributedTxApplicationService {
                         CommonDomainRegistry.getCustomObjectSerializer().deserialize(e.getParameters().get(DTX_COMMAND), CommonOrderCommand.class), e.getId(),
                         e.getChangeId());
                 e.startLocalTx(SaveNewOrderEvent.name);
-                DomainEventPublisher.instance().publish(event);
+                CommonDomainRegistry.getDomainEventRepository().append(event);
                 DomainRegistry.getDistributedTxRepository().store(e);
             });
             return null;
@@ -503,7 +503,7 @@ public class DistributedTxApplicationService {
 
     @Transactional
     @DTXDistLock(keyExpression = "#p0.taskId")
-    @SubscribeForEvent
+    
     public void handle(ReplyEvent command, String name) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(command.getId().toString(), (change) -> {
             Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(command.getTaskId());
@@ -516,7 +516,7 @@ public class DistributedTxApplicationService {
     }
 
     @Transactional
-    @SubscribeForEvent
+    
     @DTXDistLock(keyExpression = "#p0")
     public void cancel(long dtxId) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(String.valueOf(dtxId), (change) -> {
@@ -539,7 +539,7 @@ public class DistributedTxApplicationService {
      * retry start ltx
      */
     @Transactional
-    @SubscribeForEvent
+    
     public void handle(DistributedTxSuccessEvent deserialize) {
         DistributedTx.retryStartedLtx(deserialize);
     }
@@ -557,7 +557,7 @@ public class DistributedTxApplicationService {
     }
 
     @Transactional
-    @SubscribeForEvent
+    
     public void handle(LocalTxFailedEvent deserialize) {
         CommonApplicationServiceRegistry.getIdempotentService().idempotent(String.valueOf(deserialize.getTaskId()), (change) -> {
             Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(deserialize.getTaskId());
@@ -567,7 +567,7 @@ public class DistributedTxApplicationService {
     }
 
     @Transactional
-    @SubscribeForEvent
+    
     public void notifyAdmin(DistributedTxSuccessEvent deserialize) {
         Optional<DistributedTx> byId = DomainRegistry.getDistributedTxRepository().getById(deserialize.getTaskId());
         byId.ifPresent(e -> {
@@ -575,7 +575,7 @@ public class DistributedTxApplicationService {
                 CommonApplicationServiceRegistry.getIdempotentService().idempotent(String.valueOf(deserialize.getOrderId()), (change) -> {
                     MallNotificationEvent new_order_confirmed = MallNotificationEvent.create("NEW_ORDER_CONFIRMED");
                     new_order_confirmed.setOrderId(deserialize.getOrderId());
-                    DomainEventPublisher.instance().publish(new_order_confirmed);
+                    CommonDomainRegistry.getDomainEventRepository().append(new_order_confirmed);
                     return null;
                 }, "order_notification");
             }

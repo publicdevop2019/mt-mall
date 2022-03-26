@@ -3,9 +3,9 @@ package com.mt.shop.application.cart;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.constant.AppInfo;
 import com.mt.common.domain.model.distributed_lock.SagaDistLock;
-import com.mt.common.domain.model.domain_event.DomainEventPublisher;
+
 import com.mt.common.domain.model.domain_event.StoredEvent;
-import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+
 import com.mt.common.domain.model.event.MallNotificationEvent;
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.common.domain.model.restful.query.QueryUtility;
@@ -51,7 +51,7 @@ public class CartApplicationService {
         return DomainRegistry.getBizCartRepository().cartItemOfQuery(new CartQuery());
     }
 
-    @SubscribeForEvent
+    
     public String addToCart(UserCreateBizCartItemCommand command, String changeId) {
         log.debug("before adding cart for user {}, acquire lock", UserThreadLocal.get());
         RLock lock = redissonClient.getLock(UserThreadLocal.get() + "_cart");
@@ -80,7 +80,7 @@ public class CartApplicationService {
         }
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void removeFromCart(String id, String changeId) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(changeId, (change) -> {
@@ -94,7 +94,7 @@ public class CartApplicationService {
     }
 
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(ClearCartForCreateEvent event) {
@@ -120,7 +120,7 @@ public class CartApplicationService {
             DomainRegistry.getBizCartRepository().removeAll(allByQuery);
             return null;
         }, (command) -> {
-            DomainEventPublisher.instance().publish(new ClearCartForCreateReplyEvent(taskId, command.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new ClearCartForCreateReplyEvent(taskId, command.isEmptyOpt()));
             return null;
         }, AGGREGATE_NAME);
     }
@@ -132,7 +132,7 @@ public class CartApplicationService {
         CommonDomainRegistry.getEventStreamService().next(appName, event.isInternal(), event.getTopic(), storedEvent);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void cancelClearCart(CancelClearCartForCreateCommand event) {
@@ -173,13 +173,13 @@ public class CartApplicationService {
             }
             return null;
         }, (command) -> {
-            DomainEventPublisher.instance().publish(new CancelClearCartForCreateReplyEvent(event.getTaskId(), command.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelClearCartForCreateReplyEvent(event.getTaskId(), command.isEmptyOpt()));
             return null;
         }, AGGREGATE_NAME);
 
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void restoreRemoved(String queryString, String changeId) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(changeId, (change) -> {
@@ -202,7 +202,7 @@ public class CartApplicationService {
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(RestoreCartForInvalidEvent event) {
@@ -224,12 +224,12 @@ public class CartApplicationService {
             }
             return null;
         }, (command) -> {
-            DomainEventPublisher.instance().publish(new RestoreCartForInvalidReplyEvent(event.getTaskId(), command.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new RestoreCartForInvalidReplyEvent(event.getTaskId(), command.isEmptyOpt()));
             return null;
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(CancelRestoreCartForInvalidEvent event) {
@@ -267,7 +267,7 @@ public class CartApplicationService {
             }
             return null;
         }, (command) -> {
-            DomainEventPublisher.instance().publish(new CancelRestoreCartForInvalidReplyEvent(event.getTaskId(), command.isEmptyOpt()));
+            CommonDomainRegistry.getDomainEventRepository().append(new CancelRestoreCartForInvalidReplyEvent(event.getTaskId(), command.isEmptyOpt()));
             return null;
         }, AGGREGATE_NAME);
     }

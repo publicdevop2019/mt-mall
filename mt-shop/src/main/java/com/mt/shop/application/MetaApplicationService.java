@@ -3,7 +3,7 @@ package com.mt.shop.application;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.domainId.DomainId;
 import com.mt.common.domain.model.domain_event.StoredEvent;
-import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+
 import com.mt.common.domain.model.restful.SumPagedRep;
 import com.mt.shop.domain.DomainRegistry;
 import com.mt.shop.domain.model.catalog.event.CatalogUpdated;
@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @Service
 public class MetaApplicationService {
-    @SubscribeForEvent
+    
     @Transactional
     public void handleChange(StoredEvent event) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(event.getId().toString(), (ignored) -> {

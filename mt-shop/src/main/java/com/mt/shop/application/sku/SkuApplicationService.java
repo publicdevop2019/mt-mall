@@ -4,9 +4,9 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.constant.AppInfo;
 import com.mt.common.domain.model.distributed_lock.SagaDistLock;
-import com.mt.common.domain.model.domain_event.DomainEventPublisher;
+
 import com.mt.common.domain.model.domain_event.StoredEvent;
-import com.mt.common.domain.model.domain_event.SubscribeForEvent;
+
 import com.mt.common.domain.model.event.MallNotificationEvent;
 import com.mt.common.domain.model.restful.PatchCommand;
 import com.mt.common.domain.model.restful.SumPagedRep;
@@ -51,7 +51,7 @@ public class SkuApplicationService {
     private PlatformTransactionManager transactionManager;
 
 
-    @SubscribeForEvent
+    
     @Transactional
     public String create(CreateSkuCommand command, String operationId) {
         SkuId skuId = new SkuId();
@@ -84,7 +84,7 @@ public class SkuApplicationService {
         return DomainRegistry.getSkuRepository().skuOfId(new SkuId(id));
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void replace(String id, UpdateSkuCommand command, String changeId) {
         SkuId skuId = new SkuId(id);
@@ -107,7 +107,7 @@ public class SkuApplicationService {
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void removeById(String id, String changeId) {
         SkuId skuId = new SkuId(id);
@@ -125,7 +125,7 @@ public class SkuApplicationService {
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void patch(String id, JsonPatch command, String changeId) {
         ApplicationServiceRegistry.getIdempotentWrapper().idempotent(changeId, (ignored) -> {
@@ -145,7 +145,7 @@ public class SkuApplicationService {
         }, AGGREGATE_NAME);
     }
 
-    @SubscribeForEvent
+    
     public void patchBatch(List<PatchCommand> commands, String changeId) {
         List<PatchCommand> patchCommands = List.copyOf(CommonDomainRegistry.getCustomObjectSerializer().deepCopyCollection(commands, PatchCommand.class));
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
@@ -183,7 +183,7 @@ public class SkuApplicationService {
         }
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     public void handleChange(StoredEvent event) {
         log.debug("handling event with id {}", event.getId());
@@ -223,7 +223,7 @@ public class SkuApplicationService {
         createSkuCommands.forEach(command -> doCreate(command, changId + "_" + command.getSkuId(), command.getSkuId()));
     }
 
-    @SubscribeForEvent
+    
     @Transactional
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handle(InternalSkuPatchCommand event, String eventName) {
@@ -239,7 +239,7 @@ public class SkuApplicationService {
                         DomainRegistry.getSkuRepository().patchBatch(commands);
                         return null;
                     }, (ignored) -> {
-                        DomainEventPublisher.instance().publish(new SkuPatchedReplyEvent(ignored.isEmptyOpt(), event.getTaskId(), eventName));
+                        CommonDomainRegistry.getDomainEventRepository().append(new SkuPatchedReplyEvent(ignored.isEmptyOpt(), event.getTaskId(), eventName));
                         return null;
                     }, AGGREGATE_NAME);
                 }
@@ -251,7 +251,7 @@ public class SkuApplicationService {
         }
     }
 
-    @SubscribeForEvent
+    
     @SagaDistLock(keyExpression = "#p0.changeId", aggregateName = AGGREGATE_NAME)
     public void handleCancel(InternalSkuPatchCommand event, String eventName) {
         //deep copy bcz we are optimizing patch command after
@@ -268,7 +268,7 @@ public class SkuApplicationService {
                         DomainRegistry.getSkuRepository().patchBatch(patchCommands);
                         return null;
                     }, (ignored) -> {
-                        DomainEventPublisher.instance().publish(new SkuPatchedReplyEvent(ignored.isEmptyOpt(), event.getTaskId(), eventName));
+                        CommonDomainRegistry.getDomainEventRepository().append(new SkuPatchedReplyEvent(ignored.isEmptyOpt(), event.getTaskId(), eventName));
                         return null;
                     }, AGGREGATE_NAME);
                 }

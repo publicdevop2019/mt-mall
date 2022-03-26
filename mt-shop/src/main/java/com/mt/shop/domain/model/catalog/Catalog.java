@@ -2,7 +2,7 @@ package com.mt.shop.domain.model.catalog;
 
 import com.mt.common.domain.CommonDomainRegistry;
 import com.mt.common.domain.model.audit.Auditable;
-import com.mt.common.domain.model.domain_event.DomainEventPublisher;
+
 import com.mt.common.domain.model.validate.ValidationNotificationHandler;
 import com.mt.common.domain.model.validate.Validator;
 import com.mt.common.infrastructure.HttpValidationNotificationHandler;
@@ -81,7 +81,7 @@ public class Catalog extends Auditable {
         HttpValidationNotificationHandler handler = new HttpValidationNotificationHandler();
         validate(handler);
         DomainRegistry.getCatalogValidationService().validate(linkedTags, handler);
-        DomainEventPublisher.instance().publish(new CatalogUpdated(catalogId));
+        CommonDomainRegistry.getDomainEventRepository().append(new CatalogUpdated(catalogId));
     }
 
     @Override
